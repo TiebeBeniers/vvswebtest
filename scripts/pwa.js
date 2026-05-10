@@ -176,7 +176,7 @@
           <div class="pwa-banner-title">Toevoegen aan startscherm</div>
           <div class="pwa-banner-sub">Gebruik V.V.S Rotselaar als een echte app — sneller en altijd bij de hand.</div>
           <div class="pwa-banner-btns">
-            <button class="pwa-install-btn" id="pwaInstallBtn">📲 Installeren</button>
+            <button class="pwa-install-btn" id="pwaInstallBtn">Installeren</button>
             <button class="pwa-dismiss-btn" id="pwaDismissBtn">Nee, bedankt</button>
           </div>
         </div>
