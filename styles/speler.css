@@ -1,0 +1,1071 @@
+/* ===============================================
+   SPELERSPROFIEL - Pagina-specifieke stijlen
+   V.V.S Rotselaar
+   Importeert de algemene stijlen via styles.css
+   =============================================== */
+
+/* ── Fonts ─────────────────────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
+/* ── Barlow enkel op pagina-inhoud, NIET op de header ─────────────────────── */
+.player-page main,
+.player-page .player-hero,
+.player-page .state-card {
+    font-family: 'Barlow', 'Segoe UI', sans-serif;
+}
+
+/* ════════════════════════════════════════════════
+   STATES (laden / niet gevonden / niet ingelogd)
+   ════════════════════════════════════════════════ */
+
+.state-card {
+    max-width: 960px;
+    margin: 80px auto;
+    padding: 60px 24px;
+    text-align: center;
+}
+
+.state-icon {
+    font-size: 3rem;
+    margin-bottom: 16px;
+}
+
+.state-card h2 {
+    margin-bottom: 8px;
+    color: var(--primary-blue);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    letter-spacing: 2px;
+}
+
+.state-card p {
+    color: var(--text-gray);
+}
+
+.state-card .state-action-btn {
+    display: inline-block;
+    margin-top: 24px;
+    background: var(--primary-blue);
+    color: white;
+    padding: 12px 32px;
+    border-radius: 8px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    transition: background 0.2s;
+}
+
+.state-card .state-action-btn:hover {
+    background: var(--dark-blue);
+}
+
+/* ════════════════════════════════════════════════
+   HERO BANNER
+   ════════════════════════════════════════════════ */
+
+.player-hero {
+    background: linear-gradient(135deg, var(--dark-blue) 0%, var(--primary-blue) 55%, var(--accent-blue) 100%);
+    padding: 0 24px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Diagonaal ruitpatroon als textuur */
+.player-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 44px,
+        rgba(255, 255, 255, 0.04) 44px,
+        rgba(255, 255, 255, 0.04) 88px
+    );
+    pointer-events: none;
+}
+
+.player-hero-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    position: relative;
+    padding: 32px 0;
+}
+
+/* ── Avatar ─────────────────────────────────────── */
+
+.player-avatar-wrap {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.player-avatar {
+    width: 112px;
+    height: 112px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+    border: 3px solid rgba(255, 255, 255, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    backdrop-filter: blur(6px);
+}
+
+.player-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.player-avatar svg {
+    width: 56px;
+    height: 56px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* Camera-overlay knop bij hover */
+.avatar-upload-overlay {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+    gap: 4px;
+}
+
+.player-avatar-wrap:hover .avatar-upload-overlay {
+    opacity: 1;
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+.avatar-upload-overlay svg {
+    width: 24px;
+    height: 24px;
+    color: white;
+}
+
+.avatar-upload-overlay span {
+    font-size: 10px;
+    font-weight: 700;
+    color: white;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* Upload spinner */
+.avatar-uploading {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: rgba(0, 47, 120, 0.7);
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatar-uploading.active {
+    display: flex;
+}
+
+.avatar-spinner {
+    width: 28px;
+    height: 28px;
+    border: 3px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Hero tekst ─────────────────────────────────── */
+
+.player-hero-info {
+    color: white;
+}
+
+.player-hero-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2rem, 7vw, 3.6rem);
+    letter-spacing: 3px;
+    line-height: 1;
+    margin-bottom: 8px;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+}
+
+/* ════════════════════════════════════════════════
+   MAIN CONTENT
+   ════════════════════════════════════════════════ */
+
+.player-content {
+    max-width: 960px;
+    margin: 40px auto;
+    padding: 0 24px;
+}
+
+/* ── Sectietitels ─────────────────────────────── */
+
+.section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.45rem;
+    letter-spacing: 2.5px;
+    color: var(--dark-blue);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.section-title::after {
+    content: '';
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary-blue) 0%, transparent 100%);
+    border-radius: 2px;
+}
+
+/* ── Stat-kaarten ─────────────────────────────── */
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 14px;
+    margin-bottom: 44px;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px 14px;
+    text-align: center;
+    box-shadow: 0 2px 14px rgba(0, 0, 0, 0.07);
+    border-top: 3px solid var(--primary-blue);
+    transition: transform 0.18s, box-shadow 0.18s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0, 71, 171, 0.13);
+}
+
+.stat-card.goals   { border-color: var(--success); }
+.stat-card.assists { border-color: var(--accent-blue); }
+.stat-card.minutes { border-color: var(--primary-blue); }
+.stat-card.matches { border-color: var(--dark-blue); }
+.stat-card.yellow  { border-color: var(--warning); }
+.stat-card.red     { border-color: var(--danger); }
+
+.stat-icon {
+    font-size: 1.3rem;
+    display: block;
+    margin-bottom: 6px;
+}
+
+.stat-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.8rem;
+    line-height: 1;
+    color: var(--text-dark);
+    margin-bottom: 4px;
+}
+
+.stat-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-gray);
+}
+
+/* ── Profielinfo kaart ───────────────────────── */
+
+.info-card {
+    background: white;
+    border-radius: 12px;
+    padding: 8px 24px;
+    box-shadow: 0 2px 14px rgba(0, 0, 0, 0.07);
+    margin-bottom: 44px;
+}
+
+/* Rij: key links, waarde + edit-knop rechts */
+.info-row {
+    display: flex;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border-color);
+    gap: 0.5rem;
+    /* Voorkom dat inhoud buiten de card valt */
+    min-width: 0;
+    overflow: hidden;
+}
+
+.info-row:last-child { border-bottom: none; }
+
+.info-key {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-gray);
+    flex-shrink: 0;
+    white-space: nowrap;  /* elke label neemt exact zijn eigen breedte */
+}
+
+/* Waarde: neemt resterende ruimte, knipt af met ellipsis als te lang */
+.info-val {
+    flex: 1;
+    min-width: 0;         /* cruciaal: laat flex-child krimpen */
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-dark);
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Edit-knop: altijd vaste breedte zodat alle iconen op dezelfde kolom staan */
+.edit-contact-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 6px;
+    color: var(--text-gray);
+    opacity: 0.5;
+    transition: opacity 0.2s, background 0.2s, color 0.2s;
+    flex-shrink: 0;
+    width: 28px;          /* vaste breedte = beide icoontjes in één verticale lijn */
+    height: 28px;
+}
+.edit-contact-btn:hover {
+    opacity: 1;
+    background: rgba(0, 71, 171, 0.09);
+    color: var(--primary-blue);
+}
+
+
+/* Badge stijlen */
+.badge-player {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    /* Tekst afkappen zonder de ronde border-radius te beschadigen */
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.badge-team-player {
+    background: var(--primary-blue);
+    color: white;
+}
+
+/* De info-val die een badge bevat mag niet de padding/rondingen clippen */
+.info-val:has(.badge-player) {
+    overflow: visible;
+    white-space: normal;
+}
+
+
+
+/* UID — monospace, gedimpt; flex zodat tekst, copy-knop en ? altijd zichtbaar zijn */
+.uid-val {
+    font-size: 12px;
+    font-family: monospace;
+    color: #aaa;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    overflow: visible; /* tooltip mag boven de kaart uitsteken */
+}
+
+/* De uid-tekst zelf knipt af zodra er te weinig ruimte is */
+.uid-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+    flex: 1;
+}
+
+/* Klembord-knop naast de UID */
+.uid-copy-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    padding: 3px;
+    border-radius: 4px;
+    cursor: pointer;
+    color: #aaa;
+    flex-shrink: 0;
+    transition: color 0.15s, background 0.15s;
+}
+.uid-copy-btn:hover {
+    color: var(--primary-blue);
+    background: rgba(0, 71, 171, 0.08);
+}
+html.dark .uid-copy-btn { color: var(--text-gray); }
+
+/* ── Wedstrijdgeschiedenis kaarten ──────────── */
+
+.match-history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 44px;
+}
+
+.match-history-card {
+    background: white;
+    border-radius: 12px;
+    padding: 16px 20px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border-left: 4px solid var(--primary-blue);
+    transition: transform 0.15s;
+}
+
+.match-history-card:hover {
+    transform: translateX(3px);
+}
+
+.match-history-card.win   { border-color: var(--success); }
+.match-history-card.loss  { border-color: var(--danger); }
+.match-history-card.draw  { border-color: var(--warning); }
+
+.match-result-badge {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: white;
+    letter-spacing: 1px;
+}
+
+.match-result-badge.win  { background: var(--success); }
+.match-result-badge.loss { background: var(--danger); }
+.match-result-badge.draw { background: var(--warning); color: #333; }
+
+.match-history-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.match-history-teams {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--text-dark);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.match-history-meta {
+    font-size: 12px;
+    color: var(--text-gray);
+    margin-top: 2px;
+}
+
+.match-history-score {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 2px;
+    color: var(--text-dark);
+    flex-shrink: 0;
+}
+
+/* ── Coming soon placeholder ────────────────── */
+
+.coming-soon {
+    background: white;
+    border-radius: 12px;
+    padding: 36px;
+    text-align: center;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+    border: 2px dashed var(--border-color);
+    margin-bottom: 44px;
+}
+
+.coming-soon .coming-icon {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.coming-soon p {
+    color: var(--text-gray);
+    font-size: 14px;
+}
+
+
+/* ── UID tooltip ─────────────────────────────── */
+
+.uid-help {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--border-color);
+    color: var(--text-gray);
+    font-size: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-left: 6px;
+    flex-shrink: 0;
+    position: relative;
+    user-select: none;
+    transition: background 0.15s;
+    vertical-align: middle;
+}
+
+.uid-help:hover,
+.uid-help.active {
+    background: var(--primary-blue);
+    color: white;
+}
+
+/* Tooltip via JS als position:fixed — nooit geclipped door overflow:hidden op .info-row */
+#uidTooltipFixed {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    pointer-events: none;
+    background: var(--text-dark, #1A1A1A);
+    color: white;
+    font-size: 12px;
+    font-weight: 400;
+    font-family: 'Barlow', 'Segoe UI', sans-serif;
+    line-height: 1.5;
+    padding: 10px 12px;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.22);
+    width: max-content;
+    max-width: 220px;
+    white-space: normal;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.uid-info-row {
+    align-items: center;
+}
+/* ════════════════════════════════════════════════
+   UPLOAD INPUT (verborgen)
+   ════════════════════════════════════════════════ */
+
+#avatarFileInput {
+    display: none;
+}
+
+/* ════════════════════════════════════════════════
+   RESPONSIVE
+   ════════════════════════════════════════════════ */
+
+@media (max-width: 600px) {
+    .player-hero-inner {
+        flex-direction: row;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+
+    .player-avatar {
+        width: 80px;
+        height: 80px;
+    }
+
+    .player-avatar svg {
+        width: 40px;
+        height: 40px;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .match-history-score {
+        font-size: 1.3rem;
+    }
+}
+
+@media (max-width: 380px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* ════════════════════════════════════════════════
+   WACHTWOORD WIJZIGEN
+   ════════════════════════════════════════════════ */
+
+.password-card {
+    padding: 1.5rem;
+}
+
+.password-intro {
+    font-size: 0.9rem;
+    color: var(--text-gray, #718096);
+    margin-bottom: 1.25rem;
+}
+
+.password-field-wrap {
+    margin-bottom: 1.1rem;
+}
+
+.password-field-wrap label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 0.4rem;
+}
+
+.pw-input-row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.pw-input-row input {
+    flex: 1;
+    padding: 0.7rem 0.9rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    transition: border-color 0.2s;
+    background: #fafafa;
+}
+
+.pw-input-row input:focus {
+    outline: none;
+    border-color: var(--primary-blue, #0047AB);
+    background: white;
+}
+
+.pw-toggle {
+    background: none;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    font-size: 1rem;
+    line-height: 1;
+    transition: border-color 0.2s;
+    flex-shrink: 0;
+}
+
+.pw-toggle:hover { border-color: var(--primary-blue, #0047AB); }
+
+.password-actions { margin-top: 1.25rem; }
+
+.pw-save-btn {
+    width: 100%;
+    padding: 0.85rem;
+    background: var(--primary-blue, #0047AB);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.2s, opacity 0.2s;
+}
+
+.pw-save-btn:hover   { background: #003a8c; }
+.pw-save-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.password-divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1.5rem 0;
+    color: #aaa;
+    font-size: 0.85rem;
+}
+
+.password-divider::before,
+.password-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #e2e8f0;
+}
+
+.password-reset-alt p {
+    font-size: 0.88rem;
+    color: var(--text-gray, #718096);
+    margin-bottom: 0.75rem;
+}
+
+.pw-email-btn {
+    width: 100%;
+    padding: 0.8rem;
+    background: transparent;
+    color: var(--primary-blue, #0047AB);
+    border: 2px solid var(--primary-blue, #0047AB);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.pw-email-btn:hover {
+    background: var(--primary-blue, #0047AB);
+    color: white;
+}
+
+.pw-email-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.password-status {
+    margin-top: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 500;
+}
+
+.password-status.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.password-status.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* ── Gastprofiel banner ── */
+.guest-banner {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.85rem 1.1rem;
+    background: #eff6ff;
+    border: 1.5px solid #bfdbfe;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    font-size: 0.92rem;
+    color: #1e40af;
+    flex-wrap: wrap;
+}
+
+html.dark .guest-banner { color: white; }
+
+.guest-banner svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    stroke: #3b82f6;
+}
+
+.guest-banner span {
+    flex: 1;
+    font-weight: 500;
+}
+
+.guest-banner-btn {
+    display: inline-block;
+    padding: 0.35rem 0.9rem;
+    background: #1d4ed8;
+    color: #fff;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 0.2s;
+}
+
+.guest-banner-btn:hover {
+    background: #1e3a8a;
+}
+
+/* Publiek (niet ingelogd) banner — lichtere grijze stijl zonder knop */
+.guest-banner--public {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    color: #475569;
+}
+
+html.dark .guest-banner--public { color: var(--text-gray); }
+
+.guest-banner--public svg {
+    stroke: #94a3b8;
+}
+
+/* ── Spelersprofiel ── */
+html.dark .state-card               { background: transparent; }
+html.dark .state-card p             { color: var(--text-gray); }
+html.dark .player-content .stat-card { background: var(--white); }
+html.dark .player-content .stat-value { color: var(--text-dark); }
+html.dark .player-content .stat-label { color: var(--text-gray); }
+html.dark .info-card                { background: var(--white); }
+html.dark .info-row                 { border-color: var(--border-color); }
+html.dark .info-key                 { color: var(--text-gray); }
+html.dark .info-val                 { color: var(--text-dark); }
+html.dark .uid-val                  { color: var(--text-gray); }
+html.dark .match-history-card       { background: var(--white); }
+html.dark .match-history-teams      { color: var(--text-dark); }
+html.dark .match-history-score      { color: var(--text-dark); }
+html.dark .coming-soon              { background: var(--white); border-color: var(--border-color); }
+html.dark .coming-soon p            { color: var(--text-gray); }
+html.dark .section-title            { color: var(--primary-blue); }
+html.dark .guest-banner             { background: var(--white); border-color: var(--border-color); }
+html.dark .profile-info p           { color: var(--text-dark); }
+html.dark .profile-info .user-role  { background: var(--dark-blue); color: var(--white); }
+html.dark .password-card            { background: var(--white); }
+html.dark .password-intro           { color: var(--text-gray); }
+html.dark #uidTooltipFixed          { background: var(--dark-blue, #003380); }
+/* ═══════════════════════════════════════════════════
+   CONTACTGEGEVENS BEWERKEN — MODAL
+   ═══════════════════════════════════════════════════ */
+
+.ec-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 4000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    backdrop-filter: blur(3px);
+    animation: ec-fade-in 0.18s ease;
+}
+
+@keyframes ec-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.ec-modal {
+    background: var(--white, #fff);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 430px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.22);
+    animation: ec-slide-up 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+    overflow: hidden;
+}
+
+@keyframes ec-slide-up {
+    from { transform: translateY(20px) scale(0.96); opacity: 0; }
+    to   { transform: translateY(0)    scale(1);    opacity: 1; }
+}
+
+.ec-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.15rem 1.5rem 1rem;
+    border-bottom: 1px solid var(--border-color, #e0e0e0);
+}
+
+.ec-modal-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--primary-blue, #0047AB);
+    margin: 0;
+}
+
+.ec-modal-close {
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    line-height: 1;
+    cursor: pointer;
+    color: var(--text-gray, #4A4A4A);
+    padding: 2px 6px;
+    border-radius: 6px;
+    transition: background 0.15s, color 0.15s;
+}
+.ec-modal-close:hover {
+    background: var(--off-white, #f8f9fa);
+    color: var(--text-dark, #1A1A1A);
+}
+
+.ec-modal-body {
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+}
+
+/* Infobalk (bij e-mail) */
+.ec-hint {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.7rem 0.9rem;
+    background: #EFF6FF;
+    border-left: 3px solid var(--primary-blue, #0047AB);
+    border-radius: 6px;
+    font-size: 0.83rem;
+    color: #1e40af;
+    line-height: 1.5;
+}
+.ec-hint svg { flex-shrink: 0; margin-top: 1px; }
+
+/* Veld */
+.ec-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.ec-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-dark, #1A1A1A);
+}
+
+.ec-required { color: var(--danger, #DC3545); }
+
+.ec-input {
+    width: 100%;
+    padding: 0.65rem 0.9rem;
+    border: 1.5px solid var(--border-color, #e0e0e0);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    background: var(--white, #fff);
+    color: var(--text-dark, #1A1A1A);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
+}
+.ec-input:focus {
+    outline: none;
+    border-color: var(--primary-blue, #0047AB);
+    box-shadow: 0 0 0 3px rgba(0, 71, 171, 0.12);
+}
+
+/* Wachtwoord met oog-knop */
+.ec-pw-wrap {
+    position: relative;
+}
+.ec-pw-wrap .ec-input {
+    padding-right: 2.8rem;
+}
+.ec-eye-btn {
+    position: absolute;
+    right: 0.6rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    color: var(--text-gray, #4A4A4A);
+    display: flex;
+    align-items: center;
+    border-radius: 4px;
+    transition: color 0.15s;
+}
+.ec-eye-btn:hover { color: var(--primary-blue, #0047AB); }
+
+/* Foutmelding */
+.ec-error {
+    padding: 0.55rem 0.85rem;
+    background: #FEF2F2;
+    border: 1px solid #FECACA;
+    border-radius: 6px;
+    font-size: 0.83rem;
+    font-weight: 600;
+    color: #991B1B;
+}
+
+/* Footer */
+.ec-modal-footer {
+    display: flex;
+    gap: 0.65rem;
+    padding: 1rem 1.5rem 1.25rem;
+    border-top: 1px solid var(--border-color, #e0e0e0);
+    background: var(--off-white, #f8f9fa);
+}
+
+.ec-btn {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    font-size: 0.92rem;
+    font-weight: 700;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    transition: opacity 0.2s, transform 0.15s;
+}
+.ec-btn:hover:not(:disabled) { opacity: 0.88; transform: translateY(-1px); }
+.ec-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.ec-btn-cancel {
+    background: var(--border-color, #e0e0e0);
+    color: var(--text-dark, #1A1A1A);
+}
+.ec-btn-save {
+    background: var(--primary-blue, #0047AB);
+    color: #fff;
+}
+
+/* Dark mode */
+html.dark .ec-modal          { background: #1e2130; }
+html.dark .ec-modal-header   { border-color: rgba(255,255,255,0.1); }
+html.dark .ec-modal-close    { color: #aaa; }
+html.dark .ec-modal-close:hover { background: rgba(255,255,255,0.08); color: #fff; }
+html.dark .ec-label          { color: #e0e0e0; }
+html.dark .ec-input          { background: #252840; border-color: rgba(255,255,255,0.15); color: #fff; }
+html.dark .ec-input:focus    { border-color: var(--primary-blue, #0047AB); }
+html.dark .ec-hint           { background: rgba(0,71,171,0.2); }
+html.dark .ec-modal-footer   { background: #12152a; border-color: rgba(255,255,255,0.1); }
+html.dark .ec-btn-cancel     { background: rgba(255,255,255,0.1); color: #e0e0e0; }
+html.dark .info-card         { background: #1e2130; }
+html.dark .info-val          { color: #e0e0e0; }
+html.dark .edit-contact-btn  { color: #aaa; }
+html.dark .edit-contact-btn:hover { background: rgba(0,71,171,0.2); color: #60a5fa; }
+
+@media (max-width: 480px) {
+    .ec-modal         { border-radius: 12px; }
+    .ec-modal-backdrop { align-items: center; }
+    .ec-modal-body    { padding: 1rem 1.15rem; }
+    .ec-modal-footer  { padding: 0.85rem 1.15rem 1.15rem; flex-direction: column; }
+}

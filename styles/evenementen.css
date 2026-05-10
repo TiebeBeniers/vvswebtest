@@ -1,0 +1,576 @@
+/* ===============================================
+   VVS ROTSELAAR - EVENEMENTEN PAGE STYLES
+   =============================================== */
+
+.evenementen-page {
+    min-height: calc(100vh - 200px);
+    padding: 40px 20px;
+    background: var(--off-white);
+}
+
+.evenementen-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.evenementen-container > h1 {
+    text-align: center;
+    color: var(--primary-blue);
+    margin-bottom: 40px;
+    font-size: 2.5rem;
+}
+
+/* ── Featured Evenement ── */
+.featured-evenement {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px var(--shadow-lg);
+    margin-bottom: 40px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+}
+
+/* Meerdere uitgelichte evenementen — responsive grid */
+.uitgelicht-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+}
+
+/* Grid-variant van featured card: stacked (afbeelding boven, content onder) */
+.featured-evenement--grid {
+    grid-template-columns: 1fr;
+    margin-bottom: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.featured-evenement--grid .evenement-image {
+    /* Vierkant net als de kleine kaartjes */
+    aspect-ratio: 1 / 1;
+    min-height: unset;
+    max-height: unset;
+}
+
+.featured-evenement--grid .featured-evenement-content {
+    padding: 24px 28px;
+    justify-content: flex-start;
+}
+
+.featured-evenement--grid .featured-evenement-content h2 {
+    font-size: 1.5rem;
+}
+
+.evenement-image {
+    min-height: 400px;
+    overflow: hidden;
+}
+
+.evenement-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.featured-evenement-content {
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.evenement-badge {
+    display: inline-block;
+    background: var(--primary-blue);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    align-self: flex-start;
+}
+
+.featured-evenement-content h2 {
+    color: var(--text-dark);
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.evenement-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-gray);
+}
+
+.meta-item svg {
+    width: 20px;
+    height: 20px;
+    color: var(--primary-blue);
+    flex-shrink: 0;
+}
+
+.evenement-beschrijving {
+    color: var(--text-dark);
+    line-height: 1.8;
+    margin-bottom: 20px;
+    font-size: 1.05rem;
+}
+
+.evenement-link {
+    display: inline-block;
+    background: var(--primary-blue);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: background 0.3s;
+    align-self: flex-start;
+    text-decoration: none;
+}
+
+.evenement-link:hover { background: var(--dark-blue); }
+
+/* ── Upcoming Evenementen Grid ── */
+#upcomingEvenementen {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 40px;
+}
+
+#upcomingEvenementen .evenement-card {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px var(--shadow);
+    opacity: 0.6;
+    position: relative;
+    transition: opacity 0.3s, transform 0.3s;
+    display: flex;
+    flex-direction: column;
+}
+
+#upcomingEvenementen .evenement-card:hover {
+    opacity: 0.8;
+    transform: translateY(-4px);
+}
+
+#upcomingEvenementen .evenement-card.disabled::after {
+    content: 'Binnenkort';
+    position: absolute;
+    top: 10px; right: 10px;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    z-index: 1;
+}
+
+.evenement-card-image {
+    width: 100%;
+    /* Vierkant zodat alle foto's dezelfde hoogte krijgen */
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: 8px 8px 0 0;
+}
+
+.evenement-card-image img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    object-position: center;
+}
+
+.evenement-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--light-blue) 0%, var(--primary-blue) 100%);
+}
+
+.evenement-card-content {
+    padding: 20px;
+}
+
+.evenement-card-content h3 {
+    color: var(--primary-blue);
+    margin-bottom: 10px;
+    font-size: 1.3rem;
+}
+
+.evenement-date     { font-weight: 600; color: var(--text-dark); margin-bottom: 5px; font-size: 0.95rem; }
+.evenement-location { color: var(--text-gray); margin-bottom: 10px; font-size: 0.9rem; }
+.evenement-preview  { color: var(--text-gray); line-height: 1.6; font-size: 0.9rem; }
+
+.no-events {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-gray);
+    font-size: 1.2rem;
+}
+
+/* ── Admin evenement cards ── */
+#evenementenList .evenement-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 4px var(--shadow);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+#evenementenList .evenement-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px var(--shadow-lg);
+}
+
+#evenementenList .evenement-info { flex: 1; }
+#evenementenList .evenement-info h4 { color: var(--primary-blue); margin-bottom: 10px; font-size: 1.2rem; }
+#evenementenList .evenement-info p  { color: var(--text-gray); font-size: 0.95rem; margin-bottom: 5px; }
+
+#evenementenList .evenement-description {
+    color: var(--text-gray);
+    font-size: 0.9rem;
+    margin-top: 10px;
+    font-style: italic;
+    padding-left: 10px;
+    border-left: 3px solid var(--light-blue);
+}
+
+.match-description {
+    font-style: italic;
+    color: var(--text-gray);
+    font-size: 0.9rem;
+    margin-top: 5px;
+}
+
+@media (max-width: 768px) {
+    .featured-evenement { grid-template-columns: 1fr; }
+    .evenement-image { min-height: 250px; }
+    .featured-evenement-content { padding: 30px 20px; }
+    .featured-evenement-content h2 { font-size: 1.5rem; }
+    #upcomingEvenementen { grid-template-columns: 1fr; }
+    .evenementen-container > h1 { font-size: 2rem; }
+}
+
+@media (max-width: 480px) {
+    .evenement-card-content { padding: 15px; }
+    .evenement-card-content h3 { font-size: 1.1rem; }
+}
+
+
+/* ── Inschrijf popup overlay ── */
+.inschrijf-popup-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 3000;
+    padding: 1rem;
+}
+
+.inschrijf-popup-card {
+    background: var(--white);
+    border-radius: 14px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 460px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+}
+
+.inschrijf-popup-card h3 {
+    color: var(--primary-blue);
+    font-size: 1.4rem;
+    margin-bottom: 0.75rem;
+}
+
+.inschrijf-popup-beschrijving {
+    color: var(--text-gray);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+    padding: 0.75rem 1rem;
+    background: var(--off-white);
+    border-left: 3px solid var(--primary-blue);
+    border-radius: 4px;
+}
+
+/* Jijzelf rij */
+.inschrijf-popup-jijzelf {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.65rem 1rem;
+    background: #e8f5e9;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    color: #2e7d32;
+    font-size: 0.95rem;
+}
+.inschrijf-popup-check {
+    font-size: 1.1rem;
+}
+
+/* Extra sectie */
+.inschrijf-popup-extra-sectie {
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background: var(--off-white);
+}
+
+.inschrijf-popup-extra-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    font-size: 0.95rem;
+}
+
+.inschrijf-popup-optioneel {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--white);
+    background: var(--text-gray);
+    padding: 2px 8px;
+    border-radius: 20px;
+}
+
+/* Veld per rij */
+.inschrijf-popup-veld {
+    margin-bottom: 0.9rem;
+}
+.inschrijf-popup-veld:last-child { margin-bottom: 0; }
+
+.inschrijf-popup-veld-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.2rem;
+}
+
+.inschrijf-popup-veld label {
+    font-weight: 600;
+    color: var(--text-dark);
+    font-size: 0.92rem;
+}
+
+.inschrijf-popup-veld small {
+    display: block;
+    color: var(--text-gray);
+    font-size: 0.8rem;
+    margin-bottom: 0.3rem;
+}
+
+.inschrijf-prijs-hint {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--primary-blue);
+}
+.inschrijf-prijs-hint.gratis { color: #2e7d32; }
+
+/* +/- stepper */
+.inschrijf-aantal-control {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    width: fit-content;
+}
+
+.aantal-minus, .aantal-plus {
+    width: 38px;
+    height: 38px;
+    background: var(--off-white);
+    border: none;
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    color: var(--primary-blue);
+    transition: background 0.15s;
+    flex-shrink: 0;
+}
+.aantal-minus:hover, .aantal-plus:hover { background: #e3f2fd; }
+
+.inschrijf-popup-input {
+    width: 54px;
+    padding: 0.5rem 0;
+    border: none;
+    border-left: 1px solid var(--border-color);
+    border-right: 1px solid var(--border-color);
+    font-size: 1rem;
+    font-family: inherit;
+    text-align: center;
+}
+.inschrijf-popup-input::-webkit-inner-spin-button,
+.inschrijf-popup-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+.inschrijf-popup-input:focus { outline: none; }
+
+/* Samenvatting */
+.inschrijf-popup-samenvatting {
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    transition: background 0.2s, color 0.2s;
+}
+.inschrijf-popup-samenvatting.neutraal {
+    background: var(--off-white);
+    color: var(--text-gray);
+    border: 1px solid var(--border-color);
+}
+.inschrijf-popup-samenvatting.actief {
+    background: #e3f2fd;
+    color: var(--primary-blue);
+    border: 1px solid #90caf9;
+}
+
+.inschrijf-popup-kosten {
+    background: #e8f5e9;
+    color: #2e7d32;
+    font-weight: 700;
+    font-size: 0.95rem;
+    padding: 0.65rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 0.75rem;
+    text-align: center;
+}
+
+#inschrijfPopupStatus {
+    color: var(--danger);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    min-height: 1.2rem;
+}
+
+.inschrijf-popup-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.inschrijf-popup-btn {
+    flex: 1;
+    padding: 0.85rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+    font-family: inherit;
+}
+.inschrijf-popup-btn:hover:not(:disabled) { opacity: 0.88; transform: translateY(-1px); }
+.inschrijf-popup-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.inschrijf-popup-btn.confirm { background: var(--primary-blue); color: var(--white); }
+.inschrijf-popup-btn.cancel  { background: var(--border-color); color: var(--text-dark); }
+
+/* Ingeschreven + extra aanpassen: naast elkaar */
+.inschrijf-btn-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+}
+
+.inschrijf-btn-row .inschrijf-btn {
+    margin-top: 0;
+    flex: 1;
+    min-width: 0;
+}
+
+.inschrijf-extra-btn {
+    padding: 0.65rem 0.9rem;
+    background: transparent;
+    border: 2px solid var(--primary-blue);
+    border-radius: 6px;
+    color: var(--primary-blue);
+    font-size: 0.82rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.inschrijf-extra-btn:hover { background: var(--primary-blue); color: var(--white); }
+
+@media (max-width: 480px) {
+    .inschrijf-popup-card { padding: 1.5rem 1rem; }
+    .inschrijf-popup-actions { flex-direction: column; }
+}
+
+.inschrijf-btn {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.65rem 1.4rem;
+    background: var(--primary-blue, #1a73e8);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+}
+.inschrijf-btn:hover:not(:disabled) { background: #1558b0; transform: translateY(-1px); }
+.inschrijf-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.inschrijf-btn.ingeschreven { background: #2e7d32; }
+.inschrijf-btn.ingeschreven:hover:not(:disabled) { background: #1b5e20; }
+.inschrijf-btn.volzet { background: #888; }
+.inschrijf-btn-wrap {
+    margin-top: 1rem;
+}
+
+/* ── Evenementen ── */
+html.dark .evenementen-page         { background: var(--off-white); }
+html.dark .featured-evenement       { background: var(--white); }
+html.dark .featured-evenement-content h2 { color: var(--text-dark); }
+html.dark .evenement-beschrijving   { color: var(--text-dark); }
+html.dark #upcomingEvenementen .evenement-card { background: var(--white); }
+html.dark .evenement-card-content   { background: var(--white); }
+html.dark .evenement-card-content h3 { color: var(--primary-blue); }
+html.dark .evenement-date           { color: var(--text-dark); }
+html.dark .evenement-preview        { color: var(--text-gray); }
+
+/* ── Inschrijf popup ── */
+html.dark .inschrijf-popup-card     { background: var(--white); }
+html.dark .inschrijf-popup-beschrijving { background: var(--off-white); color: var(--text-gray); }
+html.dark .inschrijf-popup-jijzelf  { background: #1a3a2a; color: #4caf74; }
+html.dark .inschrijf-popup-extra-sectie { background: #252840; border-color: var(--border-color); }
+html.dark .inschrijf-popup-extra-header { color: var(--text-dark); }
+html.dark .inschrijf-popup-veld label { color: var(--text-dark); }
+html.dark .inschrijf-popup-samenvatting.neutraal { background: var(--off-white); color: var(--text-gray); }
+html.dark .inschrijf-popup-kosten   { background: #1a3a2a; color: #4caf74; }
+html.dark .aantal-minus, html.dark .aantal-plus { background: #2d3148; color: var(--primary-blue); }
+html.dark .inschrijf-popup-input    { background: var(--white); color: var(--text-dark); border-color: var(--border-color); }

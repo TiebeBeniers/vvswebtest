@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#4B6CB7">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="VVS Rotselaar">
+    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+    <title>V.V.S Rotselaar - Admin 2</title>
+    <link rel="icon" type="image/png" href="assets/logo.png">
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/admin.css">
+    <script>if(localStorage.getItem('vvs_theme')==='dark')document.documentElement.classList.add('dark');</script>
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo-section">
+                <img src="assets/logo.png" alt="VVS Rotselaar Logo" class="team-logo">
+            </div>
+            <div class="title-section">
+                <h1><a href="index.html">V.V.S ROTSELAAR</a></h1>
+            </div>
+            <nav class="nav-section">
+                <button class="hamburger" id="hamburger" aria-label="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                                <ul class="nav-menu" id="navMenu">
+                    <li><a href="index.html">HOME</a></li>
+                    <li class="nav-dropdown">
+                        <button class="nav-dropdown-btn" id="teamsDropdownBtn" aria-expanded="false" aria-haspopup="true">
+                            TEAMS <svg class="dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="6 9 12 15 18 9"/></svg>
+                        </button>
+                        <ul class="nav-dropdown-menu" id="teamsDropdownMenu">
+                            <li><a href="veteranen.html">Veteranen</a></li>
+                            <li><a href="zaterdag.html">Zaterdag</a></li>
+                            <li><a href="zondag.html">Zondag</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-dropdown">
+                        <button class="nav-dropdown-btn" id="evenementenDropdownBtn"
+                                aria-expanded="false" aria-haspopup="true">
+                            EVENEMENTEN <svg class="dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="6 9 12 15 18 9"/></svg>
+                        </button>
+                        <ul class="nav-dropdown-menu" id="evenementenDropdownMenu">
+                            <li><a href="evenementen.html">Evenementen</a></li>
+                            <li><a href="kalender.html">Kalender</a></li>
+                            <li style="display:none;"><a href="werklijst.html">Werklijst</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="sponsors.html">SPONSORS</a></li>
+                    <li><a href="galerij.html">GALERIJ</a></li>
+                    <li><a href="contact.html">CONTACT</a></li>
+                    <li><a href="login.html" id="loginLink">LOGIN</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="admin-page">
+        <div class="admin-container">
+            <div class="admin-header-row">
+                <h2>Administratie</h2>
+                <div class="admin-page-nav">
+                    <a class="page-nav-btn" href="admin.html" title="Pagina 1">1</a>
+                    <a class="page-nav-btn active" href="admin2.html" title="Pagina 2">2</a>
+                    <a class="page-nav-btn" href="admin3.html" title="Pagina 3">3</a>
+                </div>
+            </div>
+
+            <div class="admin-tabs">
+                <button class="tab-btn active" data-tab="werklijst">Werklijst Beheren</button>
+                <button class="tab-btn" data-tab="training">Training</button>
+                <button class="tab-btn" data-tab="sponsors">Sponsors</button>
+                <button class="tab-btn" data-tab="galerij">Galerij</button>
+                <button class="tab-btn" data-tab="meldingen">Meldingen</button>
+                <button class="tab-btn" data-tab="rockwerchter">Rock Werchter</button>
+                <button class="tab-btn" data-tab="data">Data</button>
+            </div>
+
+            <!-- ══ Training tab ══════════════════════════════════════════════════ -->
+            <div class="tab-content" id="trainingTab">
+                <div class="section-header">
+                    <h3>Trainingen</h3>
+                    <button class="add-btn" id="addTrainingBtn">+ Training Toevoegen</button>
+                </div>
+                <p class="wl-admin-hint">Beheer hier alle geplande trainingen. Leden kunnen zich aanmelden via de trainingsplanning pagina.</p>
+
+                <!-- Filter -->
+                <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1rem;">
+                    <button class="filter-btn active" data-team="all">Alle ploegen</button>
+                    <button class="filter-btn" data-team="veteranen">Veteranen</button>
+                    <button class="filter-btn" data-team="zaterdag">Zaterdag</button>
+                    <button class="filter-btn" data-team="zondag">Zondag</button>
+                </div>
+
+                <div id="trainingAdminList"><div class="loading">Laden…</div></div>
+            </div><!-- /trainingTab -->
+
+            <!-- ══ Werklijst tab ════════════════════════════════════════════════ -->
+            <div class="tab-content active" id="werklijstTab">
+
+                <!-- ── Overzicht werklijsten ── -->
+                <div id="werklijstenView">
+                    <div class="section-header">
+                        <h3>Werklijsten</h3>
+                        <button class="add-btn" id="addWerklijstBtn">+ Werklijst Toevoegen</button>
+                    </div>
+                    <p class="wl-admin-hint">
+                        Maak werklijsten aan voor verschillende evenementen.
+                        Maximaal <strong>één</strong> werklijst is actief tegelijk — dit is de lijst die leden zien op de werklijstpagina.
+                    </p>
+                    <div id="werklijstenList" class="werklijsten-list">
+                        <div class="loading">Laden…</div>
+                    </div>
+                </div>
+
+                <!-- ── Shift-editor voor een werklijst ── -->
+                <div id="shiftsEditorView" style="display:none;">
+                    <div class="section-header">
+                        <div class="shifts-editor-title-row">
+                            <button class="back-btn" id="backToWerklijstenBtn">← Terug</button>
+                            <div>
+                                <h3 id="shiftsEditorTitle">Werklijst</h3>
+                                <span class="wl-active-badge" id="shiftsEditorActive" style="display:none;">● ACTIEF</span>
+                            </div>
+                        </div>
+                        <button class="add-btn" id="addShiftBtn">+ Shift Toevoegen</button>
+                    </div>
+                    <div id="shiftsEditorGrid" class="shifts-editor-grid">
+                        <div class="loading">Laden…</div>
+                    </div>
+                </div>
+
+            </div><!-- /werklijstTab -->
+
+
+            <!-- ══ Sponsors tab ════════════════════════════════════════════════ -->
+            <div class="tab-content" id="sponsorsTab">
+                <div class="section-header">
+                    <h3>Sponsors Beheren</h3>
+                    <button class="add-btn" id="addSponsorBtn">+ Sponsor Toevoegen</button>
+                </div>
+                <p class="wl-admin-hint">
+                    Sponsors worden getoond in de volgorde die je hieronder instelt.
+                    Gebruik de pijltjes om de volgorde aan te passen.
+                </p>
+                <div id="sponsorsList">
+                    <div class="loading">Laden…</div>
+                </div>
+            </div>
+
+
+            <!-- ══ Galerij tab ════════════════════════════════════════════════ -->
+            <div class="tab-content" id="galerijTab">
+                <div class="section-header">
+                    <h3>Galerij Beheren</h3>
+                    <div class="galerij-toolbar">
+                        <button class="add-btn" id="addFotoBtn">+ Foto Toevoegen</button>
+                        <button class="galerij-tool-btn" id="randomizeOrderBtn" title="Willekeurige volgorde">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
+                            Volgorde
+                        </button>
+                        <button class="galerij-tool-btn" id="randomizeSizeBtn" title="Willekeurige groottes">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                            Groottes
+                        </button>
+                        <button class="galerij-tool-btn danger" id="saveGalerijBtn" style="display:none;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                            Opslaan
+                        </button>
+                    </div>
+                </div>
+                <p class="wl-admin-hint">
+                    Sleep foto's om de volgorde te wijzigen. Klik op een foto voor opties.
+                    Vergeet niet op te slaan!
+                </p>
+                <div id="galerijAdminGrid" class="galerij-admin-grid">
+                    <div class="loading">Laden…</div>
+                </div>
+            </div>
+
+
+            <!-- ══ Meldingen tab ════════════════════════════════════════════════ -->
+            <div class="tab-content" id="meldingenTab">
+                <div class="section-header">
+                    <h3>Meldingen Beheren</h3>
+                    <button class="add-btn" id="addMeldingBtn">+ Melding Toevoegen</button>
+                </div>
+                <p class="wl-admin-hint">
+                    Maak aangepaste meldingen aan die aan specifieke groepen getoond worden.
+                    Een melding aanpassen reset automatisch de weergave voor alle ontvangers.
+                </p>
+                <div id="meldingenList">
+                    <div class="loading">Laden…</div>
+                </div>
+            </div>
+
+            <!-- ══ Rock Werchter tab ══════════════════════════════════════════════ -->
+            <div class="tab-content" id="rockwerchterTab">
+
+                <!-- Items beheren -->
+                <div class="section-header">
+                    <h3>Drankkaart Items</h3>
+                    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+                        <button class="add-btn secondary upload" id="seedRwItemsBtn"><img src="assets/upload.png" style="filter: invert(1);"class="icon" alt=""> Standaard Items</button>
+                        <button class="add-btn" id="addRwItemBtn">+ Item Toevoegen</button>
+                    </div>
+                </div>
+                <p class="wl-admin-hint">Stel hier prijzen in, activeer items en configureer Cup Refund-vereisten. Wijzigingen zijn direct zichtbaar op de Rock Werchter pagina.</p>
+
+                <!-- Inklapbaar: Items -->
+                <button class="rw-section-toggle" id="toggleRwItems" aria-expanded="true" aria-controls="rwItemsList">
+                    <img src="assets/dropdown.png" class="icon-lg rw-toggle-icon" alt="">
+                    <span class="rw-toggle-label">Verberg items</span>
+                </button>
+                <div id="rwItemsList" class="rw-collapsible-body"><div class="loading">Laden…</div></div>
+
+                <div class="section-header" style="margin-top:2rem;">
+                    <h3>Bestellingen</h3>
+                    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">
+                        <div class="rw-filter-select-wrap">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                            <select id="rwFilterBetaalmethode" class="rw-filter-select">
+                                <option value="">Alle methoden</option>
+                                <option value="kaart">💳 Kaart</option>
+                                <option value="payconiq">📱 Payconiq</option>
+                                <option value="cash">💵 Cash</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Inklapbaar: Bestellingen -->
+                <button class="rw-section-toggle" id="toggleRwBestellingen" aria-expanded="true" aria-controls="rwBestellingenList">
+                    <img src="assets/dropdown.png" class="icon-lg rw-toggle-icon" alt="">
+                    <span class="rw-toggle-label">Verberg bestellingen</span>
+                </button>
+                <div id="rwBestellingenList" class="rw-collapsible-body"><div class="loading">Laden…</div></div>
+                <div id="rwTotaalSummary" style="margin-top:1rem;"></div>
+
+            </div><!-- /rockwerchterTab -->
+
+            <!-- ══ Data tab ════════════════════════════════════════════════ -->
+            <div class="tab-content" id="dataTab">
+                <div class="section-header">
+                    <h3>Data Resetten</h3>
+                </div>
+                <p class="wl-admin-hint" style="margin-bottom:1.5rem;">
+                    Alle acties hier zijn <strong>onomkeerbaar</strong>. Zorg dat je een back-up hebt voor je data verwijdert.
+                    Elke actie is atomisch — ofwel alles lukt, ofwel niets wordt verwijderd.
+                </p>
+
+                <!-- Spelersstatistieken -->
+                <div class="data-reset-card">
+                    <div class="data-reset-card-header">
+                        <div>
+                            <h4>Spelersstatistieken</h4>
+                            <p>Verwijdert goals, assists, matchen, minuten, kaarten van alle leden.</p>
+                        </div>
+                    </div>
+                    <div class="data-reset-team-row">
+                        <button class="data-reset-btn" data-action="stats" data-team="all">Alle ploegen</button>
+                        <button class="data-reset-btn" data-action="stats" data-team="veteranen">Veteranen</button>
+                        <button class="data-reset-btn" data-action="stats" data-team="zaterdag">Zaterdag</button>
+                        <button class="data-reset-btn" data-action="stats" data-team="zondag">Zondag</button>
+                    </div>
+                </div>
+
+                <!-- Wedstrijden + events -->
+                <div class="data-reset-card">
+                    <div class="data-reset-card-header">
+                        <div>
+                            <h4>Wedstrijden &amp; Events</h4>
+                            <p>Verwijdert alle wedstrijden inclusief hun tijdlijn-events, availability, playerMinutes en lineup-data.</p>
+                        </div>
+                    </div>
+                    <div class="data-reset-team-row">
+                        <button class="data-reset-btn" data-action="matches" data-team="all">Alle ploegen</button>
+                        <button class="data-reset-btn" data-action="matches" data-team="veteranen">Veteranen</button>
+                        <button class="data-reset-btn" data-action="matches" data-team="zaterdag">Zaterdag</button>
+                        <button class="data-reset-btn" data-action="matches" data-team="zondag">Zondag</button>
+                    </div>
+                </div>
+
+                <!-- Rangschikking -->
+                <div class="data-reset-card">
+                    <div class="data-reset-card-header">
+                        <div>
+                            <h4>Rangschikking</h4>
+                            <p>Verwijdert de opgeslagen rangschikkingsdata (klassement-tabel).</p>
+                        </div>
+                    </div>
+                    <div class="data-reset-team-row">
+                        <button class="data-reset-btn" data-action="ranking" data-team="all">Alle ploegen</button>
+                        <button class="data-reset-btn" data-action="ranking" data-team="veteranen">Veteranen</button>
+                        <button class="data-reset-btn" data-action="ranking" data-team="zaterdag">Zaterdag</button>
+                        <button class="data-reset-btn" data-action="ranking" data-team="zondag">Zondag</button>
+                    </div>
+                </div>
+
+                <!-- ── Export sectie ── -->
+                <div class="data-reset-card" style="border-left-color:#0047AB;">
+                    <div class="data-reset-card-header">
+                        <div>
+                            <h4><img src="assets/upload.png" class="icon upload" alt=""> Data Exporteren (PDF)</h4>
+                            <p>Exporteer wedstrijden, spelersstatistieken of bestellingen als overzichtelijke PDF.</p>
+                        </div>
+                    </div>
+                    <div class="data-reset-team-row" style="flex-wrap:wrap;gap:0.5rem;">
+                        <button class="add-btn" id="exportMatchesPdf" data-export="matches">Wedstrijden PDF</button>
+                        <button class="add-btn" id="exportStatsPdf"   data-export="stats">Spelersstatistieken PDF</button>
+                        <button class="add-btn" id="exportRwPdf"      data-export="rw">Rock Werchter Bestellingen PDF</button>
+                    </div>
+                    <div id="exportStatus" style="margin-top:0.5rem;font-size:0.85rem;color:var(--text-gray);"></div>
+                </div>
+
+                <div id="dataResetStatus"></div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="main-footer">
+        <p>&copy; Tiebe Beniers - Alle rechten voorbehouden. &nbsp;&middot;&nbsp;
+        <a href="privacy.html" style="color:inherit;opacity:0.7;text-decoration:underline;">Privacyverklaring</a></p>
+    </footer>
+
+    <!-- ═══════════════════════════════════════════
+         Modal: Werklijst aanmaken / hernoemen
+    ════════════════════════════════════════════ -->
+    <div class="modal" id="werklijstModal">
+        <div class="modal-content">
+            <h3 id="werklijstModalTitle">Werklijst Toevoegen</h3>
+            <form id="werklijstForm" class="admin-form">
+                <div class="form-group">
+                    <label for="werklijstNaam">Naam van de werklijst *</label>
+                    <input type="text" id="werklijstNaam" required placeholder="bv. Rock Werchter 2026">
+                </div>
+                <input type="hidden" id="werklijstId">
+                <div class="modal-actions">
+                    <button type="button" class="modal-btn cancel" id="werklijstModalCancel">Annuleren</button>
+                    <button type="submit" class="modal-btn confirm">Opslaan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         Modal: Shift toevoegen / bewerken
+    ════════════════════════════════════════════ -->
+    <div class="modal" id="shiftModal">
+        <div class="modal-content large">
+            <h3 id="shiftModalTitle">Shift Toevoegen</h3>
+            <form id="shiftForm" class="admin-form">
+                <div class="form-group">
+                    <label for="shiftLabel">Naam / Label *</label>
+                    <input type="text" id="shiftLabel" required placeholder="bv. Donderdag 2 juli – Ochtend">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="shiftDate">Datum *</label>
+                        <input type="date" id="shiftDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="shiftTime">Tijdstip *</label>
+                        <input type="text" id="shiftTime" required placeholder="bv. 08:00 – 14:00">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="shiftMax">Max. personen (leeg = onbeperkt)</label>
+                        <input type="number" id="shiftMax" min="1" placeholder="bv. 5">
+                    </div>
+                    <div class="form-group">
+                        <label for="shiftCategory">Categorie *</label>
+                        <input type="text" id="shiftCategory" required
+                               placeholder="bv. Festival, Opbouw, Mosseldag"
+                               list="categoryList">
+                        <datalist id="categoryList"></datalist>
+                        <small>Shiften met dezelfde categorie worden gegroepeerd.</small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="shiftNote">Opmerking (optioneel)</label>
+                    <input type="text" id="shiftNote" placeholder="bv. Einduur niet bepaald – kan uitlopen">
+                </div>
+
+                <!-- Shift opties -->
+                <div class="shift-options-group">
+                    <label class="toggle-setting-row">
+                        <div class="toggle-setting-label">
+                            <strong>Verantwoordelijke vereist</strong>
+                            <small>Gebruiker wordt gevraagd of hij/zij verantwoordelijke wil zijn bij aanmelden.</small>
+                        </div>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="shiftRequireResponsible" checked>
+                            <span class="toggle-slider"></span>
+                        </div>
+                    </label>
+                    <label class="toggle-setting-row">
+                        <div class="toggle-setting-label">
+                            <strong>Toon label op werklijstpagina</strong>
+                            <small>Het naam-label van de shift wordt zichtbaar getoond boven de tijdsaanduiding.</small>
+                        </div>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="shiftShowLabel">
+                            <span class="toggle-slider"></span>
+                        </div>
+                    </label>
+                </div>
+
+                <input type="hidden" id="shiftId">
+                <div class="modal-actions">
+                    <button type="button" class="modal-btn cancel" id="shiftModalCancel">Annuleren</button>
+                    <button type="submit" class="modal-btn confirm">Opslaan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         Modal: Bevestigen verwijderen
+    ════════════════════════════════════════════ -->
+    <div class="modal" id="confirmModal">
+        <div class="modal-content">
+            <h3>Bevestigen</h3>
+            <p id="confirmMessage">Weet je zeker dat je dit wilt verwijderen?</p>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" id="confirmCancel">Annuleren</button>
+                <button class="modal-btn confirm danger" id="confirmDelete">Verwijderen</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════════
+         Modal: Sponsor toevoegen / bewerken
+    ════════════════════════════════════════════ -->
+    <div class="modal" id="sponsorModal">
+        <div class="modal-content large">
+            <h3 id="sponsorModalTitle">Sponsor Toevoegen</h3>
+            <form id="sponsorForm" class="admin-form">
+                <div class="form-group">
+                    <label for="sponsorNaam">Naam *</label>
+                    <input type="text" id="sponsorNaam" required placeholder="bv. Arcade Engineering">
+                </div>
+                <div class="form-group">
+                    <label for="sponsorBeschrijving">Beschrijving</label>
+                    <textarea id="sponsorBeschrijving" rows="3" placeholder="Korte omschrijving van de sponsor…" style="resize:vertical;padding:0.75rem;border:2px solid var(--border-color);border-radius:8px;font-size:1rem;font-family:inherit;width:100%;"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="sponsorWebsite">Website URL</label>
+                        <input type="url" id="sponsorWebsite" placeholder="https://voorbeeld.be/">
+                    </div>
+                    <div class="form-group">
+                        <label for="sponsorWebsiteLabel">Link tekst</label>
+                        <input type="text" id="sponsorWebsiteLabel" placeholder="bv. Bezoek website →">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="sponsorAfbeelding">Afbeeldingsnaam (in assets/)</label>
+                    <input type="text" id="sponsorAfbeelding" placeholder="bv. sponsor1_logo.png">
+                    <small style="color:var(--text-gray);font-size:0.85rem;">Zorg dat het bestand in de assets-map staat.</small>
+                </div>
+                <input type="hidden" id="sponsorId">
+                <div class="modal-actions">
+                    <button type="button" class="modal-btn cancel" id="sponsorModalCancel">Annuleren</button>
+                    <button type="submit" class="modal-btn confirm">Opslaan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════════
+         Modal: Foto toevoegen / bewerken
+    ════════════════════════════════════════════ -->
+    <div class="modal" id="fotoModal">
+        <div class="modal-content">
+            <h3 id="fotoModalTitle">Foto Toevoegen</h3>
+            <form id="fotoForm" class="admin-form">
+                <div class="form-group">
+                    <label for="fotoBestandsnaam">Bestandsnaam *</label>
+                    <input type="text" id="fotoBestandsnaam" required placeholder="bv. photo1.jpg">
+                    <small style="color:var(--text-gray);font-size:0.82rem;">Bestand moet staan in <code>assets/galerij/</code></small>
+                </div>
+                <div class="form-group">
+                    <label>Weergavegrootte</label>
+                    <div class="size-picker">
+                        <label class="size-option">
+                            <input type="radio" name="fotoGrootte" value="normal" checked>
+                            <div class="size-preview size-normal">
+                                <div class="size-block"></div>
+                            </div>
+                            <span>Normaal</span>
+                        </label>
+                        <label class="size-option">
+                            <input type="radio" name="fotoGrootte" value="wide">
+                            <div class="size-preview size-wide">
+                                <div class="size-block"></div>
+                            </div>
+                            <span>Breed</span>
+                        </label>
+                        <label class="size-option">
+                            <input type="radio" name="fotoGrootte" value="tall">
+                            <div class="size-preview size-tall">
+                                <div class="size-block"></div>
+                            </div>
+                            <span>Hoog</span>
+                        </label>
+                        <label class="size-option">
+                            <input type="radio" name="fotoGrootte" value="large">
+                            <div class="size-preview size-large">
+                                <div class="size-block"></div>
+                            </div>
+                            <span>Groot</span>
+                        </label>
+                    </div>
+                </div>
+                <input type="hidden" id="fotoId">
+                <div class="modal-actions">
+                    <button type="button" class="modal-btn cancel" id="fotoModalCancel">Annuleren</button>
+                    <button type="submit" class="modal-btn confirm">Opslaan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════════
+         Modal: Melding toevoegen / bewerken
+    ════════════════════════════════════════════ -->
+    <div class="modal" id="meldingModal">
+        <div class="modal-content large">
+            <h3 id="meldingModalTitle">Melding Toevoegen</h3>
+            <form id="meldingForm" class="admin-form">
+
+                <div class="form-group">
+                    <label for="meldingTitel">Titel *</label>
+                    <input type="text" id="meldingTitel" required placeholder="bv. Trainingsvrij deze week">
+                </div>
+
+                <div class="form-group">
+                    <label for="meldingTekst">Tekst *</label>
+                    <textarea id="meldingTekst" required rows="3"
+                        placeholder="Volledige tekst van de melding…"
+                        style="resize:vertical;padding:0.75rem;border:2px solid var(--border-color);border-radius:8px;font-size:1rem;font-family:inherit;width:100%;"></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="meldingDoelgroep">Doelgroep *</label>
+                        <select id="meldingDoelgroep" required>
+                            <option value="iedereen">Iedereen (ook niet ingelogd)</option>
+                            <option value="ingelogd">Enkel ingelogde leden</option>
+                            <option value="zaterdag">Zaterdag</option>
+                            <option value="zondag">Zondag</option>
+                            <option value="veteranen">Veteranen</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="meldingType">Type</label>
+                        <select id="meldingType">
+                            <option value="info">ℹ️ Info</option>
+                            <option value="warning">⚠️ Waarschuwing</option>
+                            <option value="success">✅ Succes</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="meldingVanDatum">Tonen vanaf (optioneel)</label>
+                        <input type="date" id="meldingVanDatum">
+                    </div>
+                    <div class="form-group">
+                        <label for="meldingTotDatum">Tonen tot en met (optioneel)</label>
+                        <input type="date" id="meldingTotDatum">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="meldingKleur">Accentkleur</label>
+                        <div class="melding-kleur-row">
+                            <input type="color" id="meldingKleur" value="#0047AB" class="melding-kleur-input">
+                            <div class="melding-kleur-presets">
+                                <button type="button" class="kleur-preset" data-kleur="#0047AB" style="background:#0047AB" title="Blauw"></button>
+                                <button type="button" class="kleur-preset" data-kleur="#FFC107" style="background:#FFC107" title="Geel"></button>
+                                <button type="button" class="kleur-preset" data-kleur="#28A745" style="background:#28A745" title="Groen"></button>
+                                <button type="button" class="kleur-preset" data-kleur="#DC3545" style="background:#DC3545" title="Rood"></button>
+                                <button type="button" class="kleur-preset" data-kleur="#6f42c1" style="background:#6f42c1" title="Paars"></button>
+                                <button type="button" class="kleur-preset" data-kleur="#fd7e14" style="background:#fd7e14" title="Oranje"></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="meldingDuur">Weergaveduur: <strong id="meldingDuurLabel">5 sec</strong></label>
+                        <input type="range" id="meldingDuur" min="0" max="9" step="1" value="3"
+                               class="melding-duur-slider">
+                        <small style="color:var(--text-gray);font-size:0.8rem;">
+                            ← 2 sec &nbsp;·&nbsp; aanbevolen: 5 sec &nbsp;·&nbsp; ∞ →
+                        </small>
+                    </div>
+                </div>
+
+                <label class="toggle-setting-row" style="margin-bottom:1rem;">
+                    <div class="toggle-setting-label">
+                        <strong>Melding actief</strong>
+                        <small>Zet uit om de melding tijdelijk te verbergen zonder te verwijderen.</small>
+                    </div>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="meldingActief" checked>
+                        <span class="toggle-slider"></span>
+                    </div>
+                </label>
+
+                <input type="hidden" id="meldingId">
+                <input type="hidden" id="meldingVersie" value="1">
+                <div class="modal-actions">
+                    <button type="button" class="modal-btn cancel" id="meldingModalCancel">Annuleren</button>
+                    <button type="submit" class="modal-btn confirm">Opslaan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="scripts/firebase-config.js"></script>
+    <script type="module" src="scripts/admin2.js"></script>
+    <script type="module" src="scripts/header.js"></script>
+    <script type="module" src="scripts/theme.js"></script>
+    <script type="module" src="scripts/notifications.js"></script>
+    <script src="/scripts/pwa.js" defer></script>
+</body>
+</html>

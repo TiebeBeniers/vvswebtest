@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#4B6CB7">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="VVS Rotselaar">
+    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+    <title>V.V.S Rotselaar - Spelersprofiel</title>
+    <link rel="icon" type="image/png" href="assets/logo.png">
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/speler.css">
+    <script>if(localStorage.getItem('vvs_theme')==='dark')document.documentElement.classList.add('dark');</script>
+</head>
+<body class="player-page" style="display:flex;flex-direction:column;min-height:100vh;">
+
+    <!-- Header -->
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo-section">
+                <img src="assets/logo.png" alt="VVS Rotselaar Logo" class="team-logo">
+            </div>
+            <div class="title-section">
+                <h1><a href="index.html">V.V.S ROTSELAAR</a></h1>
+            </div>
+            <nav class="nav-section">
+                <button class="hamburger" id="hamburger" aria-label="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                                <ul class="nav-menu" id="navMenu">
+                    <li><a href="index.html">HOME</a></li>
+                    <li class="nav-dropdown">
+                        <button class="nav-dropdown-btn" id="teamsDropdownBtn" aria-expanded="false" aria-haspopup="true">
+                            TEAMS <svg class="dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="6 9 12 15 18 9"/></svg>
+                        </button>
+                        <ul class="nav-dropdown-menu" id="teamsDropdownMenu">
+                            <li><a href="veteranen.html">Veteranen</a></li>
+                            <li><a href="zaterdag.html">Zaterdag</a></li>
+                            <li><a href="zondag.html">Zondag</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-dropdown">
+                        <button class="nav-dropdown-btn" id="evenementenDropdownBtn"
+                                aria-expanded="false" aria-haspopup="true">
+                            EVENEMENTEN <svg class="dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="6 9 12 15 18 9"/></svg>
+                        </button>
+                        <ul class="nav-dropdown-menu" id="evenementenDropdownMenu">
+                            <li><a href="evenementen.html">Evenementen</a></li>
+                            <li><a href="kalender.html">Kalender</a></li>
+                            <li style="display:none;"><a href="werklijst.html">Werklijst</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="sponsors.html">SPONSORS</a></li>
+                    <li><a href="galerij.html">GALERIJ</a></li>
+                    <li><a href="contact.html">CONTACT</a></li>
+                    <li><a href="login.html" id="loginLink" class="active">LOGIN</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- STATE: Laden -->
+    <div id="stateLoading" class="state-card" style="flex:1;">
+        <div class="loader" style="margin:0 auto 16px;"></div>
+        <h2>Profiel laden...</h2>
+        <p>Even geduld, we halen de spelersdata op.</p>
+    </div>
+
+    <!-- STATE: Niet ingelogd -->
+    <div id="stateNotLoggedIn" class="state-card" style="display:none;flex:1;">
+        <div class="state-icon">&#128274;</div>
+        <h2>Niet ingelogd</h2>
+        <p>Je moet ingelogd zijn om je spelersprofiel te bekijken.</p>
+        <a href="login.html" class="state-action-btn">Inloggen</a>
+    </div>
+
+    <!-- STATE: Niet gevonden -->
+    <div id="stateNotFound" class="state-card" style="display:none;flex:1;">
+        <div class="state-icon">&#128269;</div>
+        <h2>Profiel niet gevonden</h2>
+        <p>Er werd geen profiel gevonden voor dit account.</p>
+    </div>
+
+    <!-- SPELERSPROFIEL -->
+    <div id="playerProfile" style="display:none;flex:1;">
+
+        <!-- Hero Banner -->
+        <div class="player-hero">
+            <div class="player-hero-inner">
+
+                <!-- Avatar met upload -->
+                <div class="player-avatar-wrap">
+                    <div class="player-avatar" id="avatarCircle">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Naam -->
+                <div class="player-hero-info">
+                    <div class="player-hero-name" id="heroNaam">—</div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Hoofdinhoud -->
+        <main class="player-content">
+
+            <!-- Banner: ingelogd maar bekijkt ander profiel -->
+            <div id="guestBanner" class="guest-banner" style="display:none;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+                <span id="guestBannerText">Je bekijkt het profiel van een ander lid.</span>
+                <a href="speler.html" class="guest-banner-btn" id="ownProfileBtn">Mijn Profiel</a>
+            </div>
+
+            <!-- Banner: niet ingelogd -->
+            <div id="publicBanner" class="guest-banner guest-banner--public" style="display:none;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+                <span id="publicBannerText">Je bekijkt het publiek profiel van een speler.</span>
+            </div>
+
+            <!-- Seizoensstatistieken -->
+            <div class="section-title">Seizoensstatistieken</div>
+            <div class="stats-grid">
+                <div class="stat-card goals">
+                    <div class="stat-value" id="statGoals">0</div>
+                    <div class="stat-label">Goals</div>
+                </div>
+                <div class="stat-card assists">
+                    <div class="stat-value" id="statAssists">0</div>
+                    <div class="stat-label">Assists</div>
+                </div>
+                <div class="stat-card matches">
+                    <div class="stat-value" id="statMatches">0</div>
+                    <div class="stat-label">Matchen</div>
+                </div>
+                <div class="stat-card minutes">
+                    <div class="stat-value" id="statMinutes">0</div>
+                    <div class="stat-label">Minuten</div>
+                </div>
+                <div class="stat-card yellow">
+                    <div class="stat-value" id="statYellow">0</div>
+                    <div class="stat-label">Geel</div>
+                </div>
+                <div class="stat-card red">
+                    <div class="stat-value" id="statRed">0</div>
+                    <div class="stat-label">Rood</div>
+                </div>
+            </div>
+
+            <!-- Profielinfo -->
+            <div class="section-title">Profielinfo</div>
+            <div class="info-card">
+                <div class="info-row">
+                    <span class="info-key">Naam</span>
+                    <span class="info-val" id="infoNaam">—</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-key">E-mail</span>
+                    <span class="info-val" id="infoEmail">—</span>
+                </div>
+                <div class="info-row" id="infoTelefoonRow">
+                    <span class="info-key">Telefoonnr.</span>
+                    <span class="info-val" id="infoTelefoon">—</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-key">Ploeg</span>
+                    <span class="info-val">
+                        <span class="badge-player badge-team-player" id="infoCategorie">—</span>
+                    </span>
+                </div>
+                <div class="info-row uid-info-row">
+                    <span class="info-key">UID</span>
+                    <span class="info-val uid-val" id="infoUid">—<span class="uid-help" id="uidHelp" tabindex="0">?<span class="uid-tooltip">Deel deze code met de beheerder als je problemen hebt met je account.</span></span></span>
+                </div>
+            </div>
+
+            <!-- Wachtwoord wijzigen -->
+            <div class="section-title" id="passwordSectionTitle" style="display:none;">Wachtwoord Wijzigen</div>
+            <div class="info-card password-card" id="passwordCard" style="display:none;">
+                <p class="password-intro">Voer je huidige wachtwoord in en kies een nieuw wachtwoord.</p>
+
+                <div class="password-form" id="passwordForm">
+                    <div class="form-group">
+                        <label for="currentPassword">Huidig wachtwoord</label>
+                        <div class="password-input-wrapper">
+                            <input type="password" id="currentPassword" placeholder="Huidig wachtwoord" autocomplete="current-password">
+                            <button type="button" class="password-toggle pw-toggle" data-target="currentPassword" aria-label="Toon/verberg"><svg class="eye-icon eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                                <svg class="eye-icon eye-closed" style="display: none;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                                    <line x1="1" y1="1" x2="23" y2="23"/>
+                                </svg></button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">Nieuw wachtwoord</label>
+                        <div class="password-input-wrapper">
+                            <input type="password" id="newPassword" placeholder="Minimaal 6 tekens" autocomplete="new-password">
+                            <button type="button" class="password-toggle pw-toggle" data-target="newPassword" aria-label="Toon/verberg"><svg class="eye-icon eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                                <svg class="eye-icon eye-closed" style="display: none;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                                    <line x1="1" y1="1" x2="23" y2="23"/>
+                                </svg></button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Bevestig nieuw wachtwoord</label>
+                        <div class="password-input-wrapper">
+                            <input type="password" id="confirmPassword" placeholder="Herhaal nieuw wachtwoord" autocomplete="new-password">
+                            <button type="button" class="password-toggle pw-toggle" data-target="confirmPassword" aria-label="Toon/verberg"><svg class="eye-icon eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                                <svg class="eye-icon eye-closed" style="display: none;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                                    <line x1="1" y1="1" x2="23" y2="23"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="password-actions">
+                        <button class="pw-save-btn" id="savePasswordBtn">Wachtwoord opslaan</button>
+                    </div>
+                    <div class="password-status" id="passwordStatus" style="display:none;"></div>
+                </div>
+            </div>
+
+            <!-- Wedstrijdgeschiedenis -->
+            <div class="section-title">Wedstrijdgeschiedenis</div>
+            <div id="matchHistoryContainer">
+                <div class="coming-soon">
+                    <div class="coming-icon">&#128194;</div>
+                    <p>Wedstrijdgeschiedenis wordt geladen...</p>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <p>&copy; Tiebe Beniers - Alle rechten voorbehouden. &nbsp;&middot;&nbsp;
+        <a href="privacy.html" style="color:inherit;opacity:0.7;text-decoration:underline;">Privacyverklaring</a></p>
+    </footer>
+
+    <script type="module" src="scripts/firebase-config.js"></script>
+    <script type="module" src="scripts/speler.js"></script>
+    <script type="module" src="scripts/header.js"></script>
+    <script type="module" src="scripts/theme.js"></script>
+    <script type="module" src="scripts/notifications.js"></script>
+    <script src="/scripts/pwa.js" defer></script>
+</body>
+</html>

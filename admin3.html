@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#4B6CB7">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="VVS Rotselaar">
+    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+    <title>V.V.S Rotselaar - Admin 3</title>
+    <link rel="icon" type="image/png" href="assets/logo.png">
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/admin.css">
+    <script>if(localStorage.getItem('vvs_theme')==='dark')document.documentElement.classList.add('dark');</script>
+    <style>
+        /* ═══════════════════════════════════════════════
+           ADMIN3 – Content editor styles
+           ═══════════════════════════════════════════════ */
+
+        .ce-intro {
+            color: var(--text-gray);
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* ── Section list ─────────────────────────────── */
+        .section-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-item {
+            background: var(--off-white);
+            border: 1.5px solid var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .section-item:focus-within { border-color: var(--primary-blue); }
+
+        /* Drag states */
+        .section-item.dragging   { opacity: 0.45; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+        .section-item.drag-above { box-shadow: 0 -3px 0 var(--primary-blue); border-top-color: var(--primary-blue); }
+        .section-item.drag-below { box-shadow: 0 3px 0 var(--primary-blue); border-bottom-color: var(--primary-blue); }
+
+        /* ── Section header ───────────────────────────── */
+        .section-item-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.55rem 0.75rem;
+            background: var(--white);
+            border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;       /* wraps on mobile */
+            row-gap: 0.4rem;
+        }
+
+        .section-handle {
+            color: var(--text-gray);
+            cursor: grab;
+            font-size: 1.25rem;
+            padding: 0 0.2rem;
+            user-select: none;
+            flex-shrink: 0;
+            touch-action: none;
+        }
+        .section-handle:active { cursor: grabbing; }
+
+        .section-title-input {
+            flex: 1 1 160px;       /* grows but can wrap */
+            min-width: 0;
+            border: none;
+            background: transparent;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            font-family: inherit;
+            outline: none;
+            padding: 0.2rem 0.4rem;
+            /* Allow title to wrap visually */
+            white-space: normal;
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+        .section-title-input::placeholder { color: var(--text-gray); font-weight: 400; }
+
+        .section-controls {
+            display: flex;
+            gap: 0.3rem;
+            flex-shrink: 0;
+            margin-left: auto;
+        }
+
+        .sec-ctrl-btn {
+            width: 30px; height: 30px;
+            display: flex; align-items: center; justify-content: center;
+            border: none; border-radius: 6px; cursor: pointer;
+            font-size: 0.9rem; font-family: inherit;
+            background: transparent; color: var(--text-gray);
+            transition: background 0.2s, color 0.2s;
+            flex-shrink: 0;
+        }
+        .sec-ctrl-btn:hover         { background: var(--border-color); color: var(--text-dark); }
+        .sec-ctrl-btn.delete:hover  { background: #fde8e8; color: var(--danger); }
+
+        /* ── Formatting toolbar ───────────────────────── */
+        .format-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.2rem;
+            padding: 0.5rem 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+            background: #f9fafc;
+        }
+
+        .fmt-group {
+            display: flex;
+            gap: 0.2rem;
+        }
+
+        .fmt-sep {
+            width: 1px;
+            height: 22px;
+            background: var(--border-color);
+            flex-shrink: 0;
+            margin: 0 0.15rem;
+        }
+
+        .fmt-btn {
+            padding: 0.25rem 0.55rem;
+            font-size: 0.78rem;
+            font-weight: 600;
+            border: 1.5px solid var(--border-color);
+            border-radius: 5px;
+            cursor: pointer;
+            background: var(--white);
+            color: var(--text-dark);
+            font-family: inherit;
+            transition: all 0.15s;
+            white-space: nowrap;
+            user-select: none;
+        }
+        .fmt-btn:hover {
+            background: var(--primary-blue);
+            border-color: var(--primary-blue);
+            color: #fff;
+        }
+        .fmt-btn b { font-weight: 800; }
+        .fmt-btn i { font-style: italic; }
+
+        /* Speciale knop (info-kader) valt op */
+        .fmt-btn-special {
+            background: #EEF4FF;
+            border-color: #B8D0FF;
+            color: #2563EB;
+        }
+        .fmt-btn-special:hover {
+            background: var(--primary-blue);
+            border-color: var(--primary-blue);
+            color: #fff;
+        }
+
+        /* ── WYSIWYG rich editor ──────────────────────── */
+        .rich-editor {
+            min-height: 130px;
+            padding: 0.85rem 1rem;
+            outline: none;
+            background: var(--white);
+            font-size: 0.93rem;
+            font-family: 'Barlow', 'Segoe UI', Arial, sans-serif;
+            line-height: 1.75;
+            color: var(--text-dark);
+            caret-color: var(--primary-blue);
+            /* Preview in-editor styles — exact gelijk aan de echte pagina */
+        }
+
+        /* Placeholder via data-attribute */
+        .rich-editor:empty::before {
+            content: attr(data-placeholder);
+            color: var(--text-gray);
+            pointer-events: none;
+        }
+
+        /* Opmaak in de editor — repliceer de echte pagina-stijlen */
+        .rich-editor h3           { color: var(--primary-blue); font-size: 1.05rem; font-weight: 700; margin: 0.7rem 0 0.3rem; }
+        .rich-editor h4           { color: var(--primary-blue); font-size: 0.95rem; font-weight: 700; margin: 0.55rem 0 0.25rem; }
+        .rich-editor p            { margin: 0 0 0.75rem; }
+        .rich-editor p:last-child { margin-bottom: 0; }
+        .rich-editor ul, .rich-editor ol { margin: 0.5rem 0 0.75rem 1.5rem; }
+        .rich-editor li           { margin-bottom: 0.25rem; }
+        .rich-editor a            { color: var(--primary-blue); text-decoration: underline; }
+        .rich-editor strong       { font-weight: 700; }
+        .rich-editor em           { font-style: italic; }
+        .rich-editor code         { font-family: monospace; background: #f0f0f0; padding: 1px 5px; border-radius: 3px; font-size: 0.85em; }
+        .rich-editor hr           { border: none; border-top: 1px solid #e0e0e0; margin: 1rem 0; }
+
+        /* Info-kader in de editor */
+        .rich-editor .info-card {
+            border: 1px solid #B8D0FF;
+            border-radius: 6px;
+            padding: 0.85rem 1rem;
+            background: #EEF4FF;
+            margin: 0.75rem 0;
+        }
+        .rich-editor .info-card-title {
+            font-weight: 700; font-size: 0.88rem;
+            margin-bottom: 0.3rem; display: block; color: #2563EB;
+        }
+
+        /* Witruimtes */
+        .rich-editor .spacer-sm { display: block; height: 0.4rem; }
+        .rich-editor .spacer-lg { display: block; height: 1.5rem; }
+
+        /* ── Add section button ───────────────────────── */
+        .add-section-btn {
+            width: 100%; padding: 0.75rem;
+            background: var(--white);
+            border: 2px dashed var(--border-color);
+            border-radius: 10px;
+            color: var(--text-gray); font-size: 0.95rem; font-weight: 600;
+            cursor: pointer; font-family: inherit;
+            transition: all 0.2s;
+        }
+        .add-section-btn:hover {
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+            background: #f0f4ff;
+        }
+
+        /* ── Preview / Bewerken toggle ────────────────── */
+        .editor-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .preview-toggle-btn {
+            padding: 0.45rem 1rem;
+            font-size: 0.88rem; font-weight: 700;
+            border: 1.5px solid var(--border-color);
+            border-radius: 7px;
+            background: var(--white);
+            color: var(--text-gray);
+            cursor: pointer; font-family: inherit;
+            transition: all 0.2s;
+        }
+        .preview-toggle-btn.active {
+            background: var(--primary-blue);
+            border-color: var(--primary-blue);
+            color: #fff;
+        }
+        .preview-toggle-btn:not(.active):hover {
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+        }
+
+        /* ── Volledige voorvertoning ──────────────────── */
+        #termsFullPreview, #privacyFullPreview {
+            margin-top: 1rem;
+            border-radius: 10px;
+            border: 1.5px solid var(--border-color);
+            overflow: hidden;
+            background: #f5f5f5;
+        }
+
+        /* ── Datum-veld ───────────────────────────────── */
+        .date-field-row {
+            display: flex; align-items: center; gap: 0.75rem;
+            margin-bottom: 1rem; flex-wrap: wrap;
+        }
+        .date-field-row label { font-size: 0.9rem; font-weight: 600; flex-shrink: 0; }
+        .date-field-row input {
+            padding: 0.5rem 0.75rem;
+            border: 1.5px solid var(--border-color);
+            border-radius: 7px; font-size: 0.9rem; font-family: inherit;
+            color: var(--text-dark); background: var(--white); outline: none;
+        }
+        .date-field-row input:focus { border-color: var(--primary-blue); }
+
+        /* ── Save bar ────────────────────────────────────── */
+        .save-bar {
+            display: flex; align-items: center; gap: 1rem;
+            margin-top: 1.5rem; padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color); flex-wrap: wrap;
+        }
+        .save-status { font-size: 0.9rem; font-weight: 600; color: var(--success); display: none; }
+
+        /* ── Mobile ──────────────────────────────────────── */
+        @media (max-width: 540px) {
+            .section-item-header   { padding: 0.5rem; }
+            .section-title-input   { font-size: 0.88rem; flex-basis: 100%; order: 2; }
+            .section-handle        { order: 1; }
+            .section-controls      { order: 1; margin-left: 0; }
+            .format-toolbar        { padding: 0.4rem 0.5rem; gap: 0.15rem; }
+            .fmt-btn               { font-size: 0.72rem; padding: 0.22rem 0.45rem; }
+            .fmt-sep               { display: none; } /* minder rommelig op mobiel */
+        }
+
+        /* ── Dark mode ───────────────────────────────────── */
+        html.dark .section-item         { background: #1e2130; border-color: var(--border-color); }
+        html.dark .section-item-header  { background: #2a2f45; border-color: var(--border-color); }
+        html.dark .section-title-input  { color: #e0e0e0; }
+        html.dark .format-toolbar       { background: #1e2130; border-color: var(--border-color); }
+        html.dark .fmt-btn              { background: #2a2f45; border-color: var(--border-color); color: #e0e0e0; }
+        html.dark .fmt-btn-special      { background: #1a2a50; border-color: #3a5090; color: #90B0FF; }
+        html.dark .rich-editor          { background: #252840; color: #e0e0e0; }
+        html.dark .rich-editor .info-card { background: #1a2a50; border-color: #3a5090; }
+        html.dark .add-section-btn      { background: #1e2130; border-color: var(--border-color); color: var(--text-gray); }
+        html.dark .preview-toggle-btn   { background: #2a2f45; border-color: var(--border-color); color: #e0e0e0; }
+        html.dark .date-field-row input { background: #2a2f45; border-color: var(--border-color); color: #e0e0e0; }
+        html.dark #termsFullPreview,
+        html.dark #privacyFullPreview   { background: #12152a; border-color: var(--border-color); }
+
+        /* ── Mail tab styles ── */
+        .mail-section-label {
+            font-size: 0.8rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.08em; color: var(--text-gray); margin-bottom: 0.5rem;
+        }
+        .mail-recipient-grid {
+            display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 0.5rem;
+        }
+        .mail-radio-label {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            padding: 0.4rem 0.9rem; border: 1.5px solid var(--border-color);
+            border-radius: 20px; cursor: pointer; font-size: 0.88rem; font-weight: 500;
+            transition: all 0.15s; user-select: none;
+        }
+        .mail-radio-label:has(input:checked) {
+            background: var(--primary-blue); border-color: var(--primary-blue); color: #fff;
+        }
+        .mail-radio-label input { display: none; }
+        .mail-input {
+            width: 100%; padding: 0.65rem 0.9rem; border: 1.5px solid var(--border-color);
+            border-radius: 8px; font-size: 0.95rem; font-family: inherit;
+            background: var(--white); color: var(--text-dark); outline: none; box-sizing: border-box;
+        }
+        .mail-input:focus { border-color: var(--primary-blue); }
+        .mail-body-editor {
+            border-top: none !important; border-radius: 0 0 8px 8px !important;
+            border: 1.5px solid var(--border-color); min-height: 180px;
+        }
+        .mail-user-list {
+            max-height: 220px; overflow-y: auto;
+            border: 1.5px solid var(--border-color); border-radius: 8px;
+            padding: 0.5rem 0.75rem; background: var(--white);
+            display: flex; flex-direction: column; gap: 0.35rem;
+            margin-bottom: 0.5rem;
+        }
+        .mail-user-label {
+            display: flex; align-items: center; gap: 0.5rem; cursor: pointer;
+            font-size: 0.88rem; padding: 0.2rem 0;
+        }
+        .mail-user-label input { width:15px; height:15px; accent-color:var(--primary-blue); cursor:pointer; }
+        .mail-user-cat {
+            margin-left: auto; font-size: 0.75rem; color: var(--text-gray);
+            background: var(--off-white); padding: 1px 6px; border-radius: 4px;
+        }
+        html.dark .mail-radio-label { border-color: var(--border-color); color: #e0e0e0; }
+        html.dark .mail-input,
+        html.dark .mail-user-list   { background: #252840; border-color: var(--border-color); color: #e0e0e0; }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo-section">
+                <img src="assets/logo.png" alt="VVS Rotselaar Logo" class="team-logo">
+            </div>
+            <div class="title-section">
+                <h1><a href="index.html">V.V.S ROTSELAAR</a></h1>
+            </div>
+            <nav class="nav-section">
+                <button class="hamburger" id="hamburger" aria-label="Menu">
+                    <span></span><span></span><span></span>
+                </button>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="index.html">HOME</a></li>
+                    <li class="nav-dropdown">
+                        <button class="nav-dropdown-btn" id="teamsDropdownBtn" aria-expanded="false" aria-haspopup="true">
+                            TEAMS <svg class="dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="6 9 12 15 18 9"/></svg>
+                        </button>
+                        <ul class="nav-dropdown-menu" id="teamsDropdownMenu">
+                            <li><a href="veteranen.html">Veteranen</a></li>
+                            <li><a href="zaterdag.html">Zaterdag</a></li>
+                            <li><a href="zondag.html">Zondag</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-dropdown">
+                        <button class="nav-dropdown-btn" id="evenementenDropdownBtn" aria-expanded="false" aria-haspopup="true">
+                            EVENEMENTEN <svg class="dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="6 9 12 15 18 9"/></svg>
+                        </button>
+                        <ul class="nav-dropdown-menu" id="evenementenDropdownMenu">
+                            <li><a href="evenementen.html">Evenementen</a></li>
+                            <li><a href="kalender.html">Kalender</a></li>
+                            <li style="display:none;"><a href="werklijst.html">Werklijst</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="sponsors.html">SPONSORS</a></li>
+                    <li><a href="galerij.html">GALERIJ</a></li>
+                    <li><a href="contact.html">CONTACT</a></li>
+                    <li><a href="login.html" id="loginLink">LOGIN</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="admin-page">
+        <div class="admin-container">
+            <div class="admin-header-row">
+                <h2>Administratie</h2>
+                <div class="admin-page-nav">
+                    <a class="page-nav-btn" href="admin.html"  title="Pagina 1">1</a>
+                    <a class="page-nav-btn" href="admin2.html" title="Pagina 2">2</a>
+                    <a class="page-nav-btn active" href="admin3.html" title="Pagina 3">3</a>
+                </div>
+            </div>
+
+            <div class="admin-tabs">
+                <button class="tab-btn active" data-tab="terms">Algemene Voorwaarden</button>
+                <button class="tab-btn" data-tab="privacy">Privacyverklaring</button>
+                <button class="tab-btn" data-tab="mail">&#9993; Mailen</button>
+            </div>
+
+            <!-- ══ Tab: Algemene Voorwaarden ═══════════════════════════════════ -->
+            <div class="tab-content active" id="termsTab">
+                <div class="section-header">
+                    <h3>Algemene Voorwaarden</h3>
+                </div>
+
+                <p class="ce-intro">
+                    Bewerk de tekst die getoond wordt in het <strong>Algemene Voorwaarden</strong>-venster op de
+                    loginpagina. Gebruik de opmaakknoppen voor titels, lijsten, links en info-kaders. 
+                    Je hoeft geen HTML te kennen. Klik op <strong>Voorvertoning</strong> om exact te zien
+                    hoe het er voor de gebruiker uitziet.
+                </p>
+
+                <div class="editor-toolbar">
+                    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+                        <button class="preview-toggle-btn active" id="termsPreviewOff">&#9998; Bewerken</button>
+                        <button class="preview-toggle-btn" id="termsPreviewOn">&#128065; Voorvertoning</button>
+                    </div>
+                    <span style="font-size:0.82rem;color:var(--text-gray);" id="termsLoadStatus">Laden&#8230;</span>
+                </div>
+
+                <div class="section-list" id="termsSectionList"></div>
+                <button class="add-section-btn" id="termsAddSection">+ Nieuwe sectie toevoegen</button>
+
+                <!-- Volledige voorvertoning (iframe) -->
+                <div id="termsFullPreview" style="display:none;"></div>
+
+                <div class="save-bar">
+                    <button class="add-btn" id="termsSaveBtn">&#128190; Opslaan</button>
+                    <span class="save-status" id="termsSaveStatus">&#10003; Opgeslagen</span>
+                </div>
+            </div>
+
+            <!-- ══ Tab: Privacyverklaring ═══════════════════════════════════════ -->
+            <div class="tab-content" id="privacyTab">
+                <div class="section-header">
+                    <h3>Privacyverklaring</h3>
+                </div>
+
+                <p class="ce-intro">
+                    Bewerk de inhoud van de <strong>privacyverklaring-pagina</strong> (<code>privacy.html</code>).
+                    Gebruik de opmaakknoppen — geen HTML-kennis vereist. De voorvertoning toont het
+                    resultaat exact zoals het op de pagina verschijnt.
+                </p>
+
+                <div class="editor-toolbar">
+                    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+                        <button class="preview-toggle-btn active" id="privacyPreviewOff">&#9998; Bewerken</button>
+                        <button class="preview-toggle-btn" id="privacyPreviewOn">&#128065; Voorvertoning</button>
+                    </div>
+                    <span style="font-size:0.82rem;color:var(--text-gray);" id="privacyLoadStatus">Laden&#8230;</span>
+                </div>
+
+                <div class="section-list" id="privacySectionList"></div>
+                <button class="add-section-btn" id="privacyAddSection">+ Nieuwe sectie toevoegen</button>
+
+                <!-- Volledige voorvertoning (iframe) -->
+                <div id="privacyFullPreview" style="display:none;"></div>
+
+                <div class="save-bar">
+                    <button class="add-btn" id="privacySaveBtn">&#128190; Opslaan</button>
+                    <span class="save-status" id="privacySaveStatus">&#10003; Opgeslagen</span>
+                </div>
+            </div>
+
+            <!-- ══ Tab: Mailen ══════════════════════════════════════════════ -->
+            <div class="tab-content" id="mailTab">
+                <div class="section-header">
+                    <h3>&#9993; Mailen naar leden</h3>
+                </div>
+
+                <p class="ce-intro">
+                    Stuur een e-mail naar een groep leden of specifieke accounts.
+                    De mail wordt verstuurd via de <strong>Trigger Email</strong>-extensie in Firebase.
+                    Zorg dat die extensie correct geconfigureerd is (neem contact op met de beheerder).
+                </p>
+
+                <!-- Ontvanger selectie -->
+                <div class="mail-section-label">Ontvangers</div>
+                <div class="mail-recipient-grid">
+                    <label class="mail-radio-label">
+                        <input type="radio" name="mailRecipientType" value="all" checked>
+                        <span>&#127760; Alle leden</span>
+                    </label>
+                    <label class="mail-radio-label">
+                        <input type="radio" name="mailRecipientType" value="veteranen">
+                        <span>Veteranen</span>
+                    </label>
+                    <label class="mail-radio-label">
+                        <input type="radio" name="mailRecipientType" value="zaterdag">
+                        <span>Zaterdag</span>
+                    </label>
+                    <label class="mail-radio-label">
+                        <input type="radio" name="mailRecipientType" value="zondag">
+                        <span>Zondag</span>
+                    </label>
+                    <label class="mail-radio-label">
+                        <input type="radio" name="mailRecipientType" value="specific">
+                        <span>&#128100; Specifieke spelers&#8230;</span>
+                    </label>
+                </div>
+
+                <!-- Lijst van individuele spelers (verborgen tenzij "Specifieke spelers" geselecteerd) -->
+                <div id="mailRecipientList" class="mail-user-list" style="display:none;"></div>
+
+                <!-- Onderwerp -->
+                <div class="mail-section-label" style="margin-top:1rem;">Onderwerp</div>
+                <input type="text" id="mailSubject" class="mail-input" placeholder="bv. Nieuw trainingsschema beschikbaar">
+
+                <!-- Bericht -->
+                <div class="mail-section-label" style="margin-top:1rem;">Bericht</div>
+                <div class="format-toolbar" style="margin-bottom:0;border-radius:8px 8px 0 0;">
+                    <div class="fmt-group">
+                        <button class="fmt-btn mail-fmt-btn" data-cmd="bold"   title="Vet"><b>B</b></button>
+                        <button class="fmt-btn mail-fmt-btn" data-cmd="italic" title="Cursief"><i>I</i></button>
+                        <button class="fmt-btn mail-fmt-btn" data-cmd="ul"     title="Lijst">&#8226; Lijst</button>
+                        <button class="fmt-btn mail-fmt-btn" data-cmd="link"   title="Link">&#128279; Link</button>
+                    </div>
+                </div>
+                <div id="mailBodyEditor" class="rich-editor mail-body-editor"
+                     contenteditable="true" spellcheck="true"
+                     data-placeholder="Schrijf hier je bericht..."></div>
+
+                <div class="save-bar">
+                    <button class="add-btn" id="mailSendBtn">📩 Versturen</button>
+                    <span class="save-status" id="mailSendStatus">&#10003; Verzonden</span>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="main-footer">
+        <p>&copy; Tiebe Beniers - Alle rechten voorbehouden. &nbsp;&middot;&nbsp;
+        <a href="privacy.html" style="color:inherit;opacity:0.7;text-decoration:underline;">Privacyverklaring</a></p>
+    </footer>
+
+    <script type="module" src="scripts/firebase-config.js"></script>
+    <script type="module" src="scripts/admin3.js"></script>
+    <script type="module" src="scripts/header.js"></script>
+    <script type="module" src="scripts/theme.js"></script>
+    <script type="module" src="scripts/notifications.js"></script>
+    <script src="/scripts/pwa.js" defer></script>
+</body>
+</html>

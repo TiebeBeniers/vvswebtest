@@ -1,0 +1,541 @@
+/* ===============================================
+   ROCKWERCHTER DRANKKAART
+   =============================================== */
+
+.rockwerchter-page {
+    min-height: calc(100vh - 300px);
+    padding: 2rem 1rem;
+    background: var(--off-white);
+}
+.rockwerchter-container { max-width: 800px; margin: 0 auto; }
+
+/* ── Login Banner ── */
+.login-banner {
+    display: flex; align-items: center; gap: 0.75rem;
+    background: #fff8e1; border: 1.5px solid #f0ad4e; color: #856404;
+    padding: 0.85rem 1.25rem; border-radius: 10px; margin-bottom: 1.5rem;
+    font-size: 0.95rem; font-weight: 500;
+}
+.login-banner svg { flex-shrink: 0; color: #f0ad4e; }
+.login-banner a   { color: var(--primary-blue); font-weight: 700; text-decoration: underline; }
+
+/* ── Drankjes ── */
+.drankjes-section { margin-bottom: 1.5rem; }
+.drankjes-section h2 {
+    color: var(--primary-blue); margin-bottom: 1.25rem;
+    text-align: center; font-size: 1.8rem;
+}
+.drank-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 0.85rem; padding: 1rem;
+    background: var(--white); border-radius: 12px;
+    box-shadow: 0 2px 8px var(--shadow);
+}
+.drank-card {
+    cursor: pointer; text-align: center;
+    display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+    padding: 0.85rem 0.5rem; border-radius: 10px;
+    transition: all 0.25s ease; background: var(--off-white);
+    position: relative; user-select: none;
+}
+.drank-card:hover {
+    background: var(--primary-blue); color: var(--white);
+    transform: translateY(-3px); box-shadow: 0 4px 14px rgba(0,71,171,0.25);
+}
+.drank-img-wrapper { position: relative; width: 80px; height: 80px; flex-shrink: 0; margin-bottom: 0.5rem; }
+.drank-img         { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; display: block; background: #fff; }
+.drank-img-fallback {
+    width: 80px; height: 80px; border-radius: 8px;
+    background: var(--border-color); display: flex; align-items: center;
+    justify-content: center; color: var(--text-gray);
+}
+.drank-count-badge {
+    position: absolute; top: -6px; right: -6px;
+    background: var(--danger); color: #fff; border-radius: 50%;
+    width: 22px; height: 22px; font-size: 0.75rem; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+.drank-naam  { margin: 0.2rem 0 0.15rem; font-size: 0.85rem; font-weight: 600; line-height: 1.2; word-break: break-word; }
+.drank-prijs { margin: 0; font-size: 0.82rem; opacity: 0.75; }
+.drank-card:hover .drank-naam,
+.drank-card:hover .drank-prijs        { color: var(--white); }
+.drank-card:hover .drank-count-badge  { border-color: var(--primary-blue); }
+
+@keyframes shake {
+    0%,100% { transform: translateX(0); } 20% { transform: translateX(-5px); }
+    40%     { transform: translateX(5px); }   60% { transform: translateX(-4px); }
+    80%     { transform: translateX(4px); }
+}
+.drank-card.shake { animation: shake 0.5s ease; }
+
+/* ── Order Summary ── */
+.order-summary {
+    background: var(--white); padding: 1.25rem 1.5rem;
+    border-radius: 12px; box-shadow: 0 2px 8px var(--shadow); margin-bottom: 1.25rem;
+}
+.totaal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-bottom: 1rem; border-bottom: 2px solid var(--border-color); margin-bottom: 1rem;
+}
+.totaal-prijs { font-size: 1.5rem; font-weight: 700; color: var(--primary-blue); }
+
+/* Groep van actieknoppen rechtsboven */
+.totaal-acties { display: flex; gap: 0.5rem; align-items: center; }
+
+.icon-action-btn {
+    width: 38px; height: 38px; border-radius: 8px; border: 2px solid var(--border-color);
+    background: var(--off-white); font-size: 1.2rem; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s ease; flex-shrink: 0;
+}
+.bestellingen-btn { color: var(--primary-blue); }
+.bestellingen-btn:hover { background: var(--primary-blue); border-color: var(--primary-blue); color: #fff; }
+.reset-icon-btn { color: var(--danger); }
+.reset-icon-btn:hover {
+    background: var(--danger); border-color: var(--danger); color: #fff;
+}
+
+.overzicht-container { display: flex; flex-direction: column; gap: 0.5rem; }
+.empty-message { text-align: center; color: var(--text-gray); font-style: italic; padding: 1rem; margin: 0; font-size: 0.9rem; }
+
+/* Overzicht item – altijd horizontaal */
+.overzicht-item {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--off-white); padding: 0.55rem 0.9rem;
+    border-radius: 7px; gap: 0.75rem;
+}
+.item-naam {
+    font-weight: 600; color: var(--text-dark); font-size: 0.9rem;
+    flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.item-knoppen { display: flex; gap: 0.35rem; flex-shrink: 0; }
+.item-btn {
+    width: 30px; height: 30px; border: none; border-radius: 6px;
+    color: var(--white); font-weight: 700; font-size: 0.9rem; cursor: pointer;
+    transition: all 0.18s ease; display: flex; align-items: center; justify-content: center;
+}
+.item-btn:hover   { transform: translateY(-2px); box-shadow: 0 2px 6px rgba(0,0,0,0.18); }
+.plus-btn         { background: #5cb85c; }
+.plus-btn:hover   { background: #4cae4c; }
+.min-btn          { background: #f0ad4e; }
+.min-btn:hover    { background: #ec971f; }
+.delete-btn       { background: var(--danger); font-size: 1rem; }
+.delete-btn:hover { background: #c9302c; }
+
+/* ── Payment Buttons ── */
+.payment-buttons { display: flex; flex-direction: column; gap: 0.85rem; margin-bottom: 2rem; }
+.payment-btn {
+    padding: 1.1rem; border: none; border-radius: 10px;
+    font-size: 1.05rem; font-weight: 600; cursor: pointer;
+    transition: all 0.3s ease; color: var(--white);
+}
+.payment-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.payment-btn:not(:disabled):hover { transform: translateY(-2px); box-shadow: 0 4px 14px var(--shadow); }
+.kaart-btn              { background: var(--primary-blue); }
+.kaart-btn:not(:disabled):hover { background: var(--dark-blue); }
+.qr-btn                 { background: #3d9e57; }
+.qr-btn:not(:disabled):hover { background: #2e7d3f; }
+.cash-btn               { background: #c07a1a; }
+.cash-btn:not(:disabled):hover { background: #9a5f0f; }
+
+/* ════════════════════════════════════════════
+   MODALS
+   ════════════════════════════════════════════ */
+.rw-modal-backdrop {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.55); z-index: 2000;
+    align-items: center; justify-content: center;
+    padding: 1rem; backdrop-filter: blur(2px);
+}
+/* Export modal moet boven de bestellingen modal uitkomen */
+#exportModal {
+    z-index: 3000;
+}
+.rw-modal-backdrop.active { display: flex; }
+
+.rw-modal {
+    background: var(--white); border-radius: 14px; width: 100%; max-width: 440px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    animation: modalIn 0.22s ease; max-height: 90vh; overflow-y: auto;
+}
+.rw-modal-breed { max-width: 600px; }
+
+@keyframes modalIn {
+    from { transform: scale(0.93) translateY(14px); opacity: 0; }
+    to   { transform: scale(1)    translateY(0);    opacity: 1; }
+}
+
+.rw-modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.1rem 1.5rem; border-bottom: 1px solid var(--border-color);
+    background: var(--off-white); position: sticky; top: 0; z-index: 1;
+}
+.rw-modal-header h3 { font-size: 1.15rem; color: var(--text-dark); margin: 0; }
+.rw-modal-close {
+    background: none; border: none; font-size: 1rem; color: var(--text-gray);
+    cursor: pointer; padding: 0.3rem 0.5rem; border-radius: 4px; transition: background 0.15s;
+}
+.rw-modal-close:hover { background: var(--border-color); color: var(--text-dark); }
+
+.rw-modal-body   { padding: 1.4rem 1.5rem; }
+.modal-subtitle  { color: var(--text-gray); margin-bottom: 1.1rem; font-size: 0.93rem; }
+
+.modal-totaal {
+    background: var(--primary-blue); color: #fff; border-radius: 8px;
+    padding: 0.8rem 1.2rem; font-size: 1.2rem; font-weight: 700;
+    text-align: center; margin: 0.5rem 0 1rem;
+}
+
+.modal-status {
+    border-radius: 8px; padding: 0.8rem 1rem;
+    font-size: 0.88rem; line-height: 1.4; margin-top: 0.75rem;
+}
+.modal-status.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+.modal-status.error   { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+.rw-modal-footer {
+    display: flex; gap: 0.75rem;
+    padding: 1rem 1.5rem; border-top: 1px solid var(--border-color);
+    background: var(--off-white); position: sticky; bottom: 0;
+}
+.rw-modal-btn {
+    flex: 1; padding: 0.8rem; border: none; border-radius: 8px;
+    font-size: 0.93rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease;
+}
+.rw-modal-btn.cancel { background: var(--off-white); border: 2px solid var(--border-color); color: var(--text-dark); }
+.rw-modal-btn.cancel:hover { background: var(--border-color); }
+.rw-modal-btn.confirm { background: var(--primary-blue); color: #fff; }
+.rw-modal-btn.confirm:hover:not(:disabled) { background: var(--dark-blue); }
+.rw-modal-btn.confirm:disabled { opacity: 0.45; cursor: not-allowed; }
+.rw-modal-btn.danger-btn { background: var(--danger); color: #fff; }
+.rw-modal-btn.danger-btn:hover { background: #c9302c; }
+
+/* ── Terminal (stap 1) ── */
+.terminal-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem; margin-bottom: 0.5rem;
+}
+.terminal-btn {
+    padding: 1rem; border: 2px solid var(--border-color);
+    background: var(--off-white); border-radius: 8px;
+    font-size: 1rem; font-weight: 600; cursor: pointer;
+    transition: all 0.2s ease; color: var(--text-dark);
+}
+.terminal-btn:hover    { border-color: var(--primary-blue); background: rgba(0,71,171,0.05); }
+.terminal-btn.selected { border-color: var(--primary-blue); background: var(--primary-blue); color: #fff; }
+
+/* ── Kaart stap 2 ── */
+.terminal-wacht-info {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 0.5rem; margin-bottom: 0.5rem; text-align: center;
+}
+.terminal-wacht-info p { color: var(--text-gray); font-size: 0.9rem; margin: 0; }
+.terminal-badge {
+    background: var(--primary-blue); color: #fff;
+    padding: 0.35rem 0.9rem; border-radius: 20px;
+    font-size: 0.9rem; font-weight: 700; display: inline-block;
+}
+.bevestig-vraag {
+    text-align: center; font-weight: 600; color: var(--text-dark);
+    margin: 0.75rem 0 0; font-size: 1rem;
+}
+.kaart-stap2-footer { gap: 0.75rem; }
+
+/* ── Payconiq ── */
+.qr-container { display: flex; justify-content: center; margin: 0.5rem 0 0.75rem; }
+#qrCanvas { border-radius: 10px; box-shadow: 0 2px 12px rgba(0,0,0,0.12); display: block; }
+.payconiq-logo {
+    width: 60px; height: 60px; border-radius: 6px;
+    display: block; margin: 0.5rem auto 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+/* ── Cash Modal ── */
+.cash-input-section { margin-bottom: 1rem; }
+.cash-input-section label {
+    display: block; font-weight: 600; margin-bottom: 0.6rem;
+    font-size: 0.95rem; color: var(--text-dark);
+}
+
+/* Snelknoppen: 3 aparte rijen, elke rij gecentreerd */
+.cash-snelknoppen {
+    display: flex; flex-direction: column;
+    gap: 0.45rem; margin-bottom: 0.85rem;
+}
+.cash-snel-rij {
+    display: flex; justify-content: center;
+    gap: 0.45rem; flex-wrap: nowrap;
+}
+/* Actierij (vinkje + kruisje) altijd full-width onder de knoppen */
+.cash-actie-rij {
+    margin-top: 0.15rem;
+}
+.cash-actie-rij .cash-snel-btn {
+    flex: 1; max-width: 160px;
+}
+
+.cash-snel-btn {
+    padding: 0.55rem 0.8rem;
+    border: 2px solid var(--border-color);
+    background: var(--off-white); border-radius: 7px;
+    font-size: 0.88rem; font-weight: 700; cursor: pointer;
+    transition: all 0.18s ease; color: var(--text-dark); line-height: 1;
+}
+.cash-snel-btn:hover {
+    border-color: var(--primary-blue);
+    background: rgba(0,71,171,0.07);
+    color: var(--primary-blue); transform: translateY(-1px);
+}
+.cash-snel-btn[data-bedrag]:active { transform: scale(0.94); }
+
+.exact-btn       { border-color: #5cb85c; color: #5cb85c; }
+.exact-btn:hover { background: #5cb85c; border-color: #5cb85c; color: #fff; }
+.reset-cash-btn       { border-color: var(--danger); color: var(--danger); }
+.reset-cash-btn:hover { background: var(--danger); border-color: var(--danger); color: #fff; }
+
+.cash-input-wrapper {
+    display: flex; align-items: center; border: 2px solid var(--border-color);
+    border-radius: 8px; overflow: hidden; transition: border-color 0.2s;
+}
+.cash-input-wrapper:focus-within { border-color: var(--primary-blue); }
+.euro-sign {
+    padding: 0 0.85rem; font-size: 1.1rem; font-weight: 600;
+    color: var(--text-gray); background: var(--off-white);
+    border-right: 2px solid var(--border-color); height: 48px;
+    display: flex; align-items: center;
+}
+.cash-input-wrapper input {
+    flex: 1; padding: 0.75rem 1rem; border: none;
+    font-size: 1.1rem; font-weight: 600; outline: none;
+    color: var(--text-dark); min-width: 0;
+}
+
+.wisselgeld-display {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--off-white); border-radius: 8px;
+    padding: 0.85rem 1.1rem; border: 1.5px solid var(--border-color);
+}
+.wisselgeld-label  { font-weight: 600; color: var(--text-dark); }
+.wisselgeld-bedrag { font-size: 1.2rem; font-weight: 700; color: #2e7d3f; }
+.wisselgeld-bedrag.te-weinig { color: var(--danger); font-size: 0.9rem; }
+
+/* ── Bestellingen overzicht ── */
+.best-stats { margin-bottom: 1.25rem; }
+.best-stat-rij {
+    display: flex; flex-wrap: wrap; gap: 0.75rem;
+}
+.best-stat {
+    flex: 1; min-width: 90px;
+    background: var(--off-white); border-radius: 10px;
+    padding: 0.75rem 0.6rem; text-align: center;
+    border: 1.5px solid var(--border-color);
+    container-type: inline-size; /* nodig voor cqw fluid font */
+    overflow: hidden;            /* kinderen mogen niet buiten het vak */
+}
+.best-stat-getal {
+    display: block;
+    font-size: clamp(0.75rem, 4cqw, 1.4rem); /* schaalt kleiner bij lange tekst, nooit linebreak */
+    font-weight: 700;
+    color: var(--primary-blue);
+    white-space: nowrap;       /* geen regelbreuk */
+    overflow: hidden;
+    text-overflow: ellipsis;   /* veiligheidsnet als het toch te lang is */
+    line-height: 1.3;
+}
+.best-stat-label {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--text-gray);
+    text-transform: uppercase;
+    letter-spacing: 0;          /* geen extra spatiëring die tekst te breed maakt */
+    text-align: center;
+    margin-top: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.loading-tekst { text-align: center; color: var(--text-gray); padding: 2rem; }
+
+#bestLijst { display: flex; flex-direction: column; gap: 0.6rem; }
+
+.best-kaart {
+    background: var(--off-white); border-radius: 8px;
+    padding: 0.75rem 1rem; border: 1.5px solid var(--border-color);
+}
+.best-kaart-header {
+    display: flex; align-items: center; gap: 0.75rem;
+    margin-bottom: 0.35rem; flex-wrap: wrap;
+}
+.best-kaart-tijd { display: flex; flex-direction: column; align-items: flex-start; flex-shrink: 0; }
+.best-datum { font-size: 0.72rem; color: var(--text-gray); }
+.best-tijd  { font-size: 0.88rem; font-weight: 700; color: var(--text-dark); }
+.best-kaart-meta { display: flex; flex-direction: column; flex: 1; }
+.best-methode { font-size: 0.82rem; color: var(--text-gray); }
+.best-naam    { font-size: 0.82rem; font-weight: 600; color: var(--text-dark); }
+.best-prijs   { font-size: 1.1rem; font-weight: 700; color: var(--primary-blue); flex-shrink: 0; }
+.best-items   { font-size: 0.8rem; color: var(--text-gray); line-height: 1.4; }
+
+/* ════════════════════════════════════════════
+   RESPONSIVE
+   ════════════════════════════════════════════ */
+@media (max-width: 768px) {
+    .rockwerchter-page  { padding: 1rem 0.5rem; }
+    .drank-grid {
+        grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+        gap: 0.65rem; padding: 0.75rem;
+    }
+    .drank-img-wrapper, .drank-img, .drank-img-fallback { width: 68px; height: 68px; }
+    .drank-naam  { font-size: 0.8rem; }
+    .drank-prijs { font-size: 0.78rem; }
+    .totaal-prijs { font-size: 1.3rem; }
+    .cash-snel-btn { padding: 0.5rem 0.6rem; font-size: 0.83rem; }
+    .best-stat-rij { gap: 0.4rem; }
+    .best-stat { padding: 0.5rem 0.4rem; }
+}
+@media (max-width: 400px) {
+    .drankjes-section h2 { font-size: 1.5rem; }
+    .drank-grid { grid-template-columns: repeat(3, 1fr); }
+    .drank-img-wrapper, .drank-img, .drank-img-fallback { width: 62px; height: 62px; }
+    .totaal-prijs { font-size: 1.2rem; }
+    .item-btn { width: 28px; height: 28px; font-size: 0.85rem; }
+    .cash-snel-rij { gap: 0.3rem; }
+    .cash-snel-btn { padding: 0.45rem 0.5rem; font-size: 0.8rem; }
+}
+
+/* ── Delete knop op bestelling (admin) ── */
+.best-kaart-header {
+    position: relative;
+}
+.best-delete-btn {
+    background: none;
+    border: none;
+    color: var(--text-gray);
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    line-height: 1;
+    flex-shrink: 0;
+    transition: all 0.18s ease;
+    opacity: 0.5;
+}
+.best-delete-btn:hover {
+    background: var(--danger);
+    color: #fff;
+    opacity: 1;
+    transform: scale(1.1);
+}
+.best-kaart:hover .best-delete-btn {
+    opacity: 0.75;
+}
+
+/* Cash input – verhinder browser spin/step artefacten */
+.cash-input-wrapper input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+.cash-input-wrapper input[type="number"]::-webkit-inner-spin-button,
+.cash-input-wrapper input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* ── Meer laden knop ── */
+.meer-laden-btn {
+    display: block;
+    width: 100%;
+    margin-top: 0.75rem;
+    padding: 0.7rem;
+    background: var(--off-white);
+    border: 2px dashed var(--border-color);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-gray);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+.meer-laden-btn:hover {
+    border-color: var(--primary-blue);
+    color: var(--primary-blue);
+    background: rgba(0,71,171,0.04);
+}
+
+/* ── Export knop (admin) ── */
+.export-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    margin-top: 1rem;
+    padding: 0.8rem 1.2rem;
+    background: #1d6b2e;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.export-btn:hover:not(:disabled) {
+    background: #155224;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.18);
+}
+.export-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ── Export bevestigingsmodal ── */
+.export-info-rij {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.9rem;
+}
+.export-info-rij:last-child { border-bottom: none; }
+.export-info-label  { color: var(--text-gray); font-weight: 500; }
+.export-info-waarde { font-weight: 700; color: var(--text-dark); text-align: right; word-break: break-all; }
+
+.export-bevestig-info {
+    background: var(--off-white);
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    margin-bottom: 1rem;
+    border: 1.5px solid var(--border-color);
+}
+
+.export-waarschuwing {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    background: #fff8e1;
+    border: 1.5px solid #f0ad4e;
+    border-radius: 8px;
+    padding: 0.85rem 1rem;
+    color: #856404;
+    font-size: 0.9rem;
+    line-height: 1.45;
+}
+.export-waarschuwing svg { flex-shrink: 0; color: #f0ad4e; margin-top: 0.1rem; }
+.export-waarschuwing strong { color: #6d4c00; }
+
+/* ── Geen-toegang melding (hergebruikt .login-banner stijl) ─────────────────── */
+/* .login-banner bestaat al — enkel dark-mode aanvulling nodig */
+html.dark .login-banner {
+    background: #2a2210;
+    border-color: #b07d00;
+    color: #f0c040;
+}
+html.dark .login-banner a { color: #7eb3ff; }
+html.dark .login-banner svg { color: #f0c040; }

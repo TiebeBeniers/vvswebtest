@@ -1,0 +1,634 @@
+/* ===============================================
+   WERKLIJST-STYLE.CSS
+   Rock Werchter Shiften – paginaspecifieke stijlen
+   Bouwt verder op styles.css (site-brede basis)
+   =============================================== */
+
+/* ── Page wrapper ── */
+.werklijst-page {
+    min-height: calc(100vh - 200px);
+    padding: 0 0 3rem;
+    background: var(--off-white);
+}
+
+/* ── Hero ── */
+.werklijst-hero {
+    background: linear-gradient(135deg, var(--dark-blue) 0%, var(--primary-blue) 100%);
+    color: var(--white);
+    padding: 2.5rem 1.5rem 2rem;
+    text-align: center;
+}
+.werklijst-hero h2 {
+    font-size: 1.9rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+}
+.werklijst-hero p {
+    font-size: 0.95rem;
+    opacity: 0.85;
+    max-width: 520px;
+    margin: 0 auto;
+}
+.werklijst-hero .event-tag {
+    display: inline-block;
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.35);
+    color: var(--white);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    padding: 3px 12px;
+    border-radius: 20px;
+    margin-bottom: 0.85rem;
+    text-transform: uppercase;
+}
+
+/* ── Container ── */
+.werklijst-container {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 1.75rem 1.25rem;
+}
+
+/* ── Auth Guard ── */
+.auth-guard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.85rem;
+    padding: 4rem 2rem;
+    text-align: center;
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px var(--shadow);
+    margin: 2rem auto;
+    max-width: 400px;
+}
+.auth-guard svg { color: var(--text-gray); }
+.auth-guard h3  { font-size: 1.2rem; color: var(--text-dark); }
+.auth-guard p   { font-size: 0.9rem; color: var(--text-gray); margin: 0; }
+.auth-guard a {
+    display: inline-block;
+    background: var(--primary-blue);
+    color: var(--white);
+    padding: 0.65rem 1.75rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: background 0.2s;
+    margin-top: 0.25rem;
+}
+.auth-guard a:hover { background: var(--dark-blue); }
+
+/* ── Loading ── */
+.werklijst-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 0.85rem;
+    padding: 4rem 2rem;
+    color: var(--text-gray);
+    font-size: 0.9rem;
+}
+.werklijst-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--border-color);
+    border-top-color: var(--primary-blue);
+    border-radius: 50%;
+    animation: wl-spin 0.7s linear infinite;
+}
+@keyframes wl-spin { to { transform: rotate(360deg); } }
+
+/* ── Section label ── */
+.wl-section-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 2rem 0 1rem;
+}
+.wl-section-label h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    white-space: nowrap;
+}
+.wl-section-label .wl-divider {
+    flex: 1;
+    height: 1px;
+    background: var(--border-color);
+}
+.wl-section-label .wl-tag {
+    background: var(--primary-blue);
+    color: var(--white);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+.wl-section-label .wl-tag.tag-secondary {
+    background: var(--text-gray);
+}
+
+/* ── Legend ── */
+.wl-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.85rem 1.2rem;
+    background: var(--white);
+    border-radius: 10px;
+    box-shadow: 0 2px 8px var(--shadow);
+    font-size: 0.83rem;
+    margin-bottom: 0.5rem;
+}
+.wl-legend-title {
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-right: 0.25rem;
+}
+.wl-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--text-gray);
+}
+.wl-legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.wl-legend-dot.available   { background: hsl(55, 70%, 52%); }
+.wl-legend-dot.full        { background: hsl(130, 70%, 34%); }
+.wl-legend-dot.signed      { background: var(--accent-blue); }
+.wl-legend-dot.responsible { background: var(--danger); }
+
+/* ── Festival schedule grid (4 columns) ── */
+.festival-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+}
+
+/* ── Special shifts grid (3 columns) ── */
+.special-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+/* ── Day column card ── */
+.wl-day-column {
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px var(--shadow);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+.wl-day-header {
+    background: linear-gradient(135deg, var(--primary-blue), var(--dark-blue));
+    color: var(--white);
+    padding: 0.8rem 1rem;
+    text-align: center;
+}
+.wl-day-header .day-name {
+    font-weight: 700;
+    font-size: 1rem;
+}
+.wl-day-header .day-date {
+    font-size: 0.78rem;
+    opacity: 0.8;
+    margin-top: 2px;
+}
+.wl-day-shifts {
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    flex: 1;
+}
+
+/* ── Shift card ── */
+.wl-shift-card {
+    border: 1.5px solid var(--border-color);
+    background: var(--white);
+    border-radius: 10px;
+    padding: 0.8rem 0.9rem;
+    background: var(--off-white);
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+}
+.wl-shift-card:hover {
+    border-color: var(--light-blue);
+    box-shadow: 0 3px 10px rgba(0,71,171,0.12);
+    transform: translateY(-1px);
+}
+.wl-shift-card.is-signed {
+    border-color: var(--accent-blue);
+    background: #EFF6FF;
+}
+.wl-shift-card.is-full {
+    opacity: 0.45;
+}
+.wl-shift-card.is-full:hover {
+    opacity: 0.8;
+}
+
+/* ── Werklijst — shift cards ── */
+html.dark .wl-shift-card            { background: var(--white); border-color: var(--border-color); }
+html.dark .wl-shift-card.is-signed  { background: #1a2a4a; border-color: var(--primary-blue); }
+
+/* Shift time label */
+.wl-shift-time {
+    font-size: 0.97rem;
+    font-weight: 700;
+    color: var(--primary-blue);
+    margin-bottom: 0.35rem;
+}
+
+/* Capacity row */
+.wl-shift-capacity {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-gray);
+    margin-bottom: 0.5rem;
+}
+.wl-cap-bar {
+    flex: 1;
+    height: 4px;
+    background: var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
+}
+.wl-cap-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.35s ease, background 0.35s ease;
+}
+
+/* Name list (vertical, one person per row) */
+.wl-shift-people {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    min-height: 18px;
+    margin-bottom: 0.55rem;
+}
+.wl-person {
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 2px 0;
+    color: var(--text-dark);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.wl-person.chip-me {
+    color: var(--accent-blue);
+}
+.wl-person.chip-responsible {
+    color: var(--danger);
+    font-weight: 700;
+}
+
+/* Special shift note */
+.wl-shift-note {
+    font-size: 0.73rem;
+    color: var(--text-gray);
+    font-style: italic;
+    margin-bottom: 0.45rem;
+    line-height: 1.3;
+}
+
+/* Action button */
+.wl-btn {
+    width: 100%;
+    padding: 0.48rem 0.5rem;
+    border: none;
+    border-radius: 7px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    font-family: inherit;
+}
+.wl-btn.btn-sign-in {
+    background: var(--primary-blue);
+    color: var(--white);
+}
+.wl-btn.btn-sign-in:hover { background: var(--dark-blue); }
+.wl-btn.btn-sign-out {
+    background: #FEE2E2;
+    color: var(--danger);
+}
+.wl-btn.btn-sign-out:hover { background: #FECACA; }
+.wl-btn.btn-calendar {
+    background: var(--off-white);
+    color: var(--primary-blue);
+    border: 1.5px solid var(--border-color);
+    margin-top: 0.4rem;
+}
+.wl-btn.btn-calendar:hover {
+    background: #EFF6FF;
+    border-color: var(--light-blue);
+}
+
+/* ── Modal ── */
+.wl-modal-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    backdrop-filter: blur(2px);
+}
+.wl-modal-backdrop.active { display: flex; }
+
+.wl-modal {
+    background: var(--white);
+    border-radius: 14px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    animation: wl-modal-in 0.22s ease;
+}
+@keyframes wl-modal-in {
+    from { transform: scale(0.93) translateY(14px); opacity: 0; }
+    to   { transform: scale(1)    translateY(0);    opacity: 1; }
+}
+
+.wl-modal-header {
+    padding: 1.1rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--off-white);
+    border-radius: 14px 14px 0 0;
+}
+.wl-modal-header h4 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin: 0;
+}
+.wl-modal-header p {
+    font-size: 0.85rem;
+    color: var(--text-gray);
+    margin: 0.3rem 0 0;
+}
+
+.wl-modal-body {
+    padding: 1.3rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+.wl-modal-choice-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 0.85rem 1rem;
+    border-radius: 9px;
+    border: 2px solid var(--border-color);
+    background: var(--off-white);
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-family: inherit;
+    transition: border-color 0.2s, background 0.2s;
+    text-align: left;
+    width: 100%;
+}
+.wl-modal-choice-btn:hover {
+    border-color: var(--primary-blue);
+    background: rgba(0,71,171,0.04);
+}
+.wl-modal-choice-btn .choice-icon  { font-size: 1.3rem; flex-shrink: 0; }
+.wl-modal-choice-btn .choice-label { font-weight: 700; color: var(--text-dark); display: block; }
+.wl-modal-choice-btn .choice-sub   { font-size: 0.78rem; color: var(--text-gray); display: block; margin-top: 1px; }
+
+.wl-modal-footer {
+    display: flex;
+    padding: 0.9rem 1.5rem;
+    border-top: 1px solid var(--border-color);
+    background: var(--off-white);
+    border-radius: 0 0 14px 14px;
+}
+.wl-modal-cancel {
+    flex: 1;
+    padding: 0.7rem;
+    border: 2px solid var(--border-color);
+    background: var(--off-white);
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    color: var(--text-dark);
+    transition: background 0.18s;
+}
+.wl-modal-cancel:hover { background: var(--border-color); }
+
+/* ── Toast ── */
+.wl-toast {
+    position: fixed;
+    bottom: 1.75rem;
+    right: 1.75rem;
+    background: var(--text-dark);
+    color: var(--white);
+    padding: 0.75rem 1.3rem;
+    border-radius: 9px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    z-index: 9999;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+    pointer-events: none;
+}
+.wl-toast.show          { transform: translateY(0); opacity: 1; }
+.wl-toast.toast-success { background: var(--success); }
+.wl-toast.toast-error   { background: var(--danger); }
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+    .festival-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 680px) {
+    .festival-grid { grid-template-columns: 1fr; }
+    .special-grid  { grid-template-columns: 1fr; }
+    .werklijst-hero h2 { font-size: 1.5rem; }
+
+    /* Collapsible day headers – mobile only */
+    .wl-day-header.wl-collapsible {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+    .wl-day-header.wl-collapsible:active {
+        opacity: 0.85;
+    }
+    .wl-collapse-icon {
+        font-size: 0.65rem;
+        opacity: 0.75;
+        transition: transform 0.25s ease;
+        flex-shrink: 0;
+        margin-left: 0.5rem;
+    }
+    .wl-header-collapsed .wl-collapse-icon {
+        transform: rotate(180deg);
+    }
+
+    /* Animate collapse */
+    .wl-day-shifts {
+        overflow: hidden;
+        transition: max-height 0.3s ease, padding 0.3s ease;
+        max-height: 2000px; /* large enough for any open state */
+    }
+    .wl-day-shifts.wl-collapsed {
+        max-height: 0 !important;
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+}
+
+/* On desktop: hide collapse icon, disable pointer cursor on header */
+@media (min-width: 681px) {
+    .wl-collapse-icon { display: none; }
+    .wl-day-header.wl-collapsible { cursor: default; }
+}
+@media (max-width: 480px) {
+    .werklijst-container { padding: 1.25rem 0.85rem; }
+    .wl-legend { gap: 0.65rem; font-size: 0.8rem; }
+}
+
+/* ── Aanvullingen voor dynamische werklijst ── */
+
+/* Festival en special grids: auto kolommen */
+.festival-grid,
+.special-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--day-cols, 4), 1fr);
+    gap: 1rem;
+}
+
+@media (max-width: 1024px) {
+    .festival-grid,
+    .special-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 680px) {
+    .festival-grid,
+    .special-grid { grid-template-columns: 1fr; }
+}
+
+/* Geen actieve werklijst / lege werklijst notice */
+.werklijst-empty-notice {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: var(--text-gray);
+    font-style: italic;
+    background: var(--white);
+    border-radius: 10px;
+    box-shadow: 0 2px 8px var(--shadow);
+    margin: 1rem 0;
+}
+
+/* ── Dynamische categorie-grid ── */
+.wl-category-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--day-cols, 4), 1fr);
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+@media (max-width: 1024px) {
+    .wl-category-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 680px) {
+    .wl-category-grid { grid-template-columns: 1fr; }
+}
+
+/* ── Shift label (zichtbaar als showLabel aan staat) ── */
+.wl-shift-label {
+    font-weight: 750;
+    color: var(--text-gray);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-bottom: 0.2rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ── Rockwerchter: geen-toegang banner ── */
+.rw-geen-toegang-banner {
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+    background: rgba(0, 0, 0, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+}
+
+.rw-geen-toegang-card {
+    background: var(--white, #fff);
+    border-radius: 14px;
+    padding: 2.5rem 2rem;
+    max-width: 380px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+}
+
+.rw-geen-toegang-icon {
+    font-size: 3rem;
+    line-height: 1;
+    margin-bottom: 1rem;
+}
+
+.rw-geen-toegang-card h3 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-dark, #1a1a1a);
+    margin: 0 0 0.6rem;
+}
+
+.rw-geen-toegang-card p {
+    font-size: 0.92rem;
+    color: var(--text-gray, #4a4a4a);
+    line-height: 1.6;
+    margin: 0 0 1.25rem;
+}
+
+.rw-geen-toegang-card a {
+    display: inline-block;
+    background: var(--primary-blue, #0047AB);
+    color: #fff;
+    padding: 0.65rem 1.75rem;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+.rw-geen-toegang-card a:hover {
+    background: var(--dark-blue, #003585);
+}

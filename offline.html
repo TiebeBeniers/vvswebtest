@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>V.V.S Rotselaar — Offline</title>
+    <link rel="icon" type="image/png" href="assets/logo.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#4B6CB7">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f0f4ff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            color: #333;
+        }
+        .offline-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 2.5rem 2rem;
+            max-width: 380px;
+            width: 100%;
+            box-shadow: 0 4px 24px rgba(75,108,183,0.12);
+        }
+        .offline-logo {
+            width: 90px; height: 90px;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            display: block;
+        }
+        .offline-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        h1 { font-size: 1.5rem; color: #4B6CB7; margin-bottom: 0.75rem; }
+        p  { font-size: 0.95rem; color: #666; line-height: 1.6; margin-bottom: 1.5rem; }
+        .retry-btn {
+            display: inline-block;
+            background: #4B6CB7;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 0.75rem 1.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+        .retry-btn:hover { background: #3a5a9e; }
+        .cached-links {
+            margin-top: 1.5rem;
+            padding-top: 1.25rem;
+            border-top: 1px solid #eee;
+        }
+        .cached-links p { font-size: 0.82rem; margin-bottom: 0.6rem; color: #999; }
+        .cached-links a {
+            display: inline-block;
+            margin: 0.2rem;
+            padding: 0.3rem 0.75rem;
+            background: #f0f4ff;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            color: #4B6CB7;
+            text-decoration: none;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-card">
+        <img src="assets/logo.png" alt="VVS Rotselaar" class="offline-logo">
+        <span class="offline-icon">📡</span>
+        <h1>Je bent offline</h1>
+        <p>Er is momenteel geen internetverbinding. Sommige pagina's zijn nog beschikbaar vanuit de cache.</p>
+        <button class="retry-btn" onclick="window.location.reload()">↻ Opnieuw proberen</button>
+        <div class="cached-links">
+            <p>Mogelijk beschikbaar offline:</p>
+            <a href="/index.html">Home</a>
+            <a href="/veteranen.html">Veteranen</a>
+            <a href="/zaterdag.html">Zaterdag</a>
+            <a href="/zondag.html">Zondag</a>
+            <a href="/kalender.html">Kalender</a>
+            <a href="/contact.html">Contact</a>
+        </div>
+    </div>
+    <script>
+        window.addEventListener('online', () => window.location.reload());
+    </script>
+</body>
+</html>

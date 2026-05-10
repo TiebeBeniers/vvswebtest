@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#4B6CB7">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="VVS Rotselaar">
+    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+    <title>V.V.S Rotselaar - Rockwerchter Drankkaart</title>
+    <link rel="icon" type="image/png" href="assets/logo.png">
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/rockwerchter-styles.css">
+    <script>if(localStorage.getItem('vvs_theme')==='dark')document.documentElement.classList.add('dark');</script>
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo-section">
+                <img src="assets/logo.png" alt="VVS Rotselaar Logo" class="team-logo">
+            </div>
+            <div class="title-section">
+                <h1><a href="index.html">V.V.S ROTSELAAR</a></h1>
+            </div>
+            <nav class="nav-section">
+                <button class="hamburger" id="hamburger" aria-label="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                                <ul class="nav-menu" id="navMenu">
+                    <li><a href="index.html">HOME</a></li>
+                    <li class="nav-dropdown">
+                        <button class="nav-dropdown-btn" id="teamsDropdownBtn" aria-expanded="false" aria-haspopup="true">
+                            TEAMS <svg class="dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="6 9 12 15 18 9"/></svg>
+                        </button>
+                        <ul class="nav-dropdown-menu" id="teamsDropdownMenu">
+                            <li><a href="veteranen.html">Veteranen</a></li>
+                            <li><a href="zaterdag.html">Zaterdag</a></li>
+                            <li><a href="zondag.html">Zondag</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-dropdown">
+                        <button class="nav-dropdown-btn" id="evenementenDropdownBtn"
+                                aria-expanded="false" aria-haspopup="true">
+                            EVENEMENTEN <svg class="dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="6 9 12 15 18 9"/></svg>
+                        </button>
+                        <ul class="nav-dropdown-menu" id="evenementenDropdownMenu">
+                            <li><a href="evenementen.html">Evenementen</a></li>
+                            <li><a href="kalender.html">Kalender</a></li>
+                            <li style="display:none;"><a href="werklijst.html">Werklijst</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="sponsors.html">SPONSORS</a></li>
+                    <li><a href="galerij.html">GALERIJ</a></li>
+                    <li><a href="contact.html">CONTACT</a></li>
+                    <li><a href="login.html" id="loginLink">LOGIN</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="rockwerchter-page" id="mainContent">
+        <div class="rockwerchter-container">
+
+            <div class="login-banner" id="loginBanner" style="display:none;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+                <span>Je bekijkt de drankkaart als gast. <a href="login.html">Log in</a> om te gebruiken.</span>
+            </div>
+
+            <section class="drankjes-section">
+                <h2>Drankkaart</h2>
+                <div id="drankContainer" class="drank-grid"></div>
+            </section>
+
+            <!-- Totaal + knoppen -->
+            <section class="order-summary" id="orderSummary">
+                <div class="totaal-header">
+                    <div class="totaal-prijs" id="totaalPrijs">Totaal: &euro;0,00</div>
+                    <div class="totaal-acties">
+                        <button id="bestellingenBtn" class="icon-action-btn bestellingen-btn" title="Bestellingen bekijken" style="display:none;">
+                            &#128203;
+                        </button>
+                        <button id="resetBtn" class="icon-action-btn reset-icon-btn" title="Reset bestelling">
+                            &#8635;
+                        </button>
+                    </div>
+                </div>
+                <div class="overzicht-container" id="overzichtContainer">
+                    <p class="empty-message">Nog niets geselecteerd.</p>
+                </div>
+            </section>
+
+            <section class="payment-buttons" id="paymentButtons">
+                <button class="payment-btn kaart-btn" id="kaartBtn" disabled>
+                    &#128179; Betalen met kaart
+                </button>
+                <button class="payment-btn qr-btn" id="qrBtn" disabled>
+                    &#128241; Betalen met Payconiq
+                </button>
+                <button class="payment-btn cash-btn" id="cashBtn" disabled>
+                    &#128181; Cash betalen
+                </button>
+            </section>
+        </div>
+    </main>
+
+    <!-- ════════════════════════════════════════
+         KAART: stap 1 – terminal kiezen
+         ════════════════════════════════════════ -->
+    <div class="rw-modal-backdrop" id="kaartModal">
+        <div class="rw-modal">
+            <div class="rw-modal-header">
+                <h3>&#128179; Betalen met kaart</h3>
+                <button class="rw-modal-close" id="kaartModalClose">&#10005;</button>
+            </div>
+            <div class="rw-modal-body">
+                <p class="modal-subtitle">Selecteer een terminal</p>
+                <div class="terminal-grid">
+                    <button class="terminal-btn" data-terminal="1">Terminal 1</button>
+                    <button class="terminal-btn" data-terminal="2">Terminal 2</button>
+                    <button class="terminal-btn" data-terminal="3">Terminal 3</button>
+                    <button class="terminal-btn" data-terminal="4">Terminal 4</button>
+                </div>
+                <div class="modal-totaal" id="kaartTotaal"></div>
+            </div>
+            <div class="rw-modal-footer">
+                <button class="rw-modal-btn cancel" id="kaartModalCancel">Annuleren</button>
+                <button class="rw-modal-btn confirm" id="kaartVerzend" disabled>Verzenden &#10132;</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ════════════════════════════════════════
+         KAART: stap 2 – betaling gelukt/mislukt?
+         ════════════════════════════════════════ -->
+    <div class="rw-modal-backdrop" id="kaartBevestigModal">
+        <div class="rw-modal">
+            <div class="rw-modal-header">
+                <h3>&#128179; Betaling op terminal</h3>
+            </div>
+            <div class="rw-modal-body">
+                <div class="terminal-wacht-info" id="terminalWachtInfo"></div>
+                <div class="modal-totaal" id="kaartBevestigTotaal"></div>
+                <p class="bevestig-vraag">Is de betaling geslaagd op de terminal?</p>
+                <div class="modal-status" id="kaartBevestigStatus" style="display:none;"></div>
+            </div>
+            <div class="rw-modal-footer kaart-stap2-footer">
+                <button class="rw-modal-btn danger-btn" id="kaartMislukt">&#10005; Geannuleerd</button>
+                <button class="rw-modal-btn confirm" id="kaartGelukt">&#10003; Betaling gelukt</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ════════════════════════════════════════
+         PAYCONIQ MODAL
+         ════════════════════════════════════════ -->
+    <div class="rw-modal-backdrop" id="qrModal">
+        <div class="rw-modal">
+            <div class="rw-modal-header">
+                <h3>&#128241; Betalen met Payconiq</h3>
+                <button class="rw-modal-close" id="qrModalClose">&#10005;</button>
+            </div>
+            <div class="rw-modal-body">
+                <div class="modal-totaal" id="qrTotaal"></div>
+                <p class="modal-subtitle" style="text-align:center; margin-top:1rem;">Scan de QR-code met de Payconiq app</p>
+                <div class="qr-container">
+                    <canvas id="qrCanvas"></canvas>
+                </div>
+                <img src="assets/rockwerchter/bancontactpay.png" alt="Payconiq Logo" class="payconiq-logo" onerror="this.style.display='none'">
+                <div class="modal-status" id="qrStatus" style="display:none;"></div>
+            </div>
+            <div class="rw-modal-footer">
+                <button class="rw-modal-btn cancel" id="qrModalCancel">Annuleren</button>
+                <button class="rw-modal-btn confirm" id="qrBevestig">&#10003; Betaling bevestigen</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ════════════════════════════════════════
+         CASH MODAL
+         ════════════════════════════════════════ -->
+    <div class="rw-modal-backdrop" id="cashModal">
+        <div class="rw-modal">
+            <div class="rw-modal-header">
+                <h3>&#128181; Cash betalen</h3>
+                <button class="rw-modal-close" id="cashModalClose">&#10005;</button>
+            </div>
+            <div class="rw-modal-body">
+                <div class="modal-totaal" id="cashTotaal"></div>
+                <div class="cash-input-section">
+                    <label>Ontvangen bedrag</label>
+
+                    <div class="cash-snelknoppen">
+                        <!-- Rij 1: biljetten -->
+                        <div class="cash-snel-rij">
+                            <button class="cash-snel-btn" data-bedrag="50">&#8364;50</button>
+                            <button class="cash-snel-btn" data-bedrag="20">&#8364;20</button>
+                            <button class="cash-snel-btn" data-bedrag="10">&#8364;10</button>
+                            <button class="cash-snel-btn" data-bedrag="5">&#8364;5</button>
+                        </div>
+                        <!-- Rij 2: munten -->
+                        <div class="cash-snel-rij">
+                            <button class="cash-snel-btn" data-bedrag="2">&#8364;2</button>
+                            <button class="cash-snel-btn" data-bedrag="1">&#8364;1</button>
+                            <button class="cash-snel-btn" data-bedrag="0.50">&#8364;0.50</button>
+                            <button class="cash-snel-btn" data-bedrag="0.20">&#8364;0.20</button>
+                            <button class="cash-snel-btn" data-bedrag="0.10">&#8364;0.10</button>
+                        </div>
+                        <!-- Rij 3: acties – altijd onder de knoppen -->
+                        <div class="cash-snel-rij cash-actie-rij">
+                            <button class="cash-snel-btn exact-btn" id="cashExact">&#10003; Exact</button>
+                            <button class="cash-snel-btn reset-cash-btn" id="cashReset">&#10005; Reset</button>
+                        </div>
+                    </div>
+
+                    <div class="cash-input-wrapper">
+                        <span class="euro-sign">&#8364;</span>
+                        <input type="number" id="cashOntvangen" min="0" step="0.10" placeholder="0,00">
+                    </div>
+                </div>
+
+                <div class="wisselgeld-display" id="wisselgeldDisplay" style="display:none;">
+                    <span class="wisselgeld-label">Wisselgeld:</span>
+                    <span class="wisselgeld-bedrag" id="wisselgeldBedrag">&#8364;0,00</span>
+                </div>
+                <div class="modal-status" id="cashStatus" style="display:none;"></div>
+            </div>
+            <div class="rw-modal-footer">
+                <button class="rw-modal-btn cancel" id="cashModalCancel">Annuleren</button>
+                <button class="rw-modal-btn confirm" id="cashBevestig" disabled>&#10003; Bevestigen</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ════════════════════════════════════════
+         EXPORT BEVESTIGING MODAL (admin)
+         ════════════════════════════════════════ -->
+    <div class="rw-modal-backdrop" id="exportModal">
+        <div class="rw-modal">
+            <div class="rw-modal-header">
+                <h3>&#128229; Excel gedownload</h3>
+            </div>
+            <div class="rw-modal-body">
+                <div class="export-bevestig-info" id="exportBevestigInfo"></div>
+                <div class="export-waarschuwing">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                    <p>Het Excel-bestand is gedownload. Wil je nu de database leegmaken?<br>
+                    <strong>Dit kan niet ongedaan gemaakt worden.</strong></p>
+                </div>
+                <div class="modal-status" id="exportModalStatus" style="display:none;"></div>
+            </div>
+            <div class="rw-modal-footer">
+                <button class="rw-modal-btn cancel" id="exportAnnuleer">&#8592; Annuleren</button>
+                <button class="rw-modal-btn danger-btn" id="exportLeegBtn">&#128465; Database leegmaken</button>
+            </div>
+        </div>
+    </div>
+
+        <!-- ════════════════════════════════════════
+         BESTELLINGEN OVERZICHT MODAL
+         ════════════════════════════════════════ -->
+
+    <div class="rw-modal-backdrop" id="bestellingenModal">
+        <div class="rw-modal rw-modal-breed">
+            <div class="rw-modal-header">
+                <h3>&#128203; Bestellingen</h3>
+                <button class="rw-modal-close" id="bestellingenModalClose">&#10005;</button>
+            </div>
+            <div class="rw-modal-body">
+                <div class="best-stats" id="bestStats"></div>
+                <div id="bestLijst">
+                    <p class="loading-tekst"><div class="loader"></div></p>
+                </div>
+            </div>
+            <div class="rw-modal-footer">
+                <button class="rw-modal-btn cancel" id="bestellingenSluiten">Sluiten</button>
+            </div>
+        </div>
+    </div>
+
+    <section id="contact" class="contact-section" style="display: none;">
+        <div class="contact-container">
+            <div class="contact-item">
+                <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+                <div class="contact-text">
+                    <h3>Email</h3>
+                    <p><a href="mailto:info@vvsrotselaar.be">info@vvsrotselaar.be</a></p>
+                </div>
+            </div>
+            <div class="contact-item">
+                <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                    <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                <div class="contact-text">
+                    <h3>Locatie</h3>
+                    <p><a href="https://www.google.com/maps/search/?api=1&query=Hellichtstraat+83,+3110+Rotselaar,+Belgium" target="_blank" rel="noopener noreferrer">Naast Hellichtstraat 83, 3110 Rotselaar</a></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="main-footer">
+        <p>&copy; Tiebe Beniers - Alle rechten voorbehouden. &nbsp;&middot;&nbsp;
+        <a href="privacy.html" style="color:inherit;opacity:0.7;text-decoration:underline;">Privacyverklaring</a></p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    <script type="module" src="scripts/firebase-config.js"></script>
+    <script type="module" src="scripts/rockwerchter.js"></script>
+    <script type="module" src="scripts/header.js"></script>
+    <script type="module" src="scripts/theme.js"></script>
+    <script type="module" src="scripts/notifications.js"></script>
+    <script src="/scripts/pwa.js" defer></script>
+</body>
+</html>

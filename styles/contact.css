@@ -1,0 +1,187 @@
+/* ===============================================
+   VVS ROTSELAAR - CONTACT PAGE STYLES
+   =============================================== */
+
+.contact-page {
+    min-height: calc(100vh - 150px);
+    padding: 3rem 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.contact-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.contact-header h1 {
+    color: var(--primary-blue);
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+}
+
+/* ── FAQ ── */
+.faq-section {
+    background: var(--white);
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px var(--shadow);
+    margin-bottom: 3rem;
+}
+
+.faq-item {
+    margin-bottom: 2rem;
+}
+
+.faq-item:last-child {
+    margin-bottom: 0;
+}
+
+.faq-question {
+    color: var(--primary-blue);
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.faq-answer {
+    color: var(--text-gray);
+    font-size: 1.05rem;
+    line-height: 1.6;
+}
+
+/* ── Contact Form ── */
+.contact-form-section {
+    background: var(--off-white);
+    padding: 3rem;
+    border-radius: 12px;
+    margin-bottom: 3rem;
+}
+
+.contact-form-section h2 {
+    color: var(--text-dark);
+    font-size: 2rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 1rem;
+    font-style: italic;
+}
+
+.contact-form-section .subtitle {
+    text-align: center;
+    color: var(--text-gray);
+    font-size: 1rem;
+    margin-bottom: 2.5rem;
+    line-height: 1.6;
+}
+
+.contact-form {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.submit-btn {
+    display: block;
+    margin: 0 auto;
+    padding: 1rem 3rem;
+    background: var(--white);
+    color: var(--text-dark);
+    font-size: 1rem;
+    font-weight: 700;
+    border: 2px solid var(--text-dark);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.submit-btn:hover {
+    background: var(--text-dark);
+    color: var(--white);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--shadow);
+}
+
+/* ── Club Info & Bestuur ── */
+.contact-info-section {
+    background: var(--white);
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px var(--shadow);
+    margin-bottom: 2rem;
+}
+
+.club-info {
+    margin-bottom: 2rem;
+}
+
+.club-info h3 {
+    color: var(--primary-blue);
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.club-info p {
+    color: var(--text-gray);
+    font-size: 1rem;
+    line-height: 1.8;
+    margin-bottom: 0.3rem;
+}
+
+.bestuur-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.bestuur-item {
+    text-align: center;
+}
+
+.bestuur-title {
+    color: var(--primary-blue);
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.5px;
+}
+
+.bestuur-name {
+    color: var(--text-dark);
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+    .contact-page { padding: 2rem 1rem; }
+    .contact-header h1 { font-size: 2rem; }
+    .faq-section,
+    .contact-form-section,
+    .contact-info-section { padding: 1.5rem; }
+    .bestuur-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+    .contact-form-section h2 { font-size: 1.6rem; }
+}
+
+/* ── Contact section ── */
+html.dark .contact-section          { background: var(--white); }
+html.dark .club-info h3             { color: var(--text-dark); }
+html.dark .club-info p              { color: var(--text-dark); }
+html.dark .bestuur-title            { color: var(--primary-blue); }
+html.dark .bestuur-name             { color: var(--text-dark); }
+html.dark .faq-section              { background: var(--white); }
+html.dark .faq-answer               { color: var(--text-dark); }
+html.dark .contact-info-section     { background: var(--white); }
+html.dark .contact-form-section     { background: var(--off-white); }
+/* ── Cooldown knopstijl ── */
+.submit-btn.cooldown-active {
+    background: var(--text-gray, #4A4A4A);
+    color: var(--white);
+    border-color: var(--text-gray, #4A4A4A);
+    cursor: not-allowed;
+    opacity: 0.75;
+    transform: none;
+    box-shadow: none;
+}

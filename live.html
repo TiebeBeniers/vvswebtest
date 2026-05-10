@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#4B6CB7">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="VVS Rotselaar">
+    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+    <title>V.V.S Rotselaar - Live Wedstrijd</title>
+    <link rel="icon" type="image/png" href="assets/logo.png">
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/live.css">
+    <link rel="stylesheet" href="styles/lineup.css">
+    <script>if(localStorage.getItem('vvs_theme')==='dark')document.documentElement.classList.add('dark');</script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo-section">
+                <img src="assets/logo.png" alt="VVS Rotselaar Logo" class="team-logo">
+            </div>
+            <div class="title-section">
+                <h1><a href="index.html">V.V.S ROTSELAAR</a></h1>
+            </div>
+            <nav class="nav-section">
+                <button class="hamburger" id="hamburger" aria-label="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                                <ul class="nav-menu" id="navMenu">
+                    <li><a href="index.html">HOME</a></li>
+                    <li class="nav-dropdown">
+                        <button class="nav-dropdown-btn" id="teamsDropdownBtn" aria-expanded="false" aria-haspopup="true">
+                            TEAMS <svg class="dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="6 9 12 15 18 9"/></svg>
+                        </button>
+                        <ul class="nav-dropdown-menu" id="teamsDropdownMenu">
+                            <li><a href="veteranen.html">Veteranen</a></li>
+                            <li><a href="zaterdag.html">Zaterdag</a></li>
+                            <li><a href="zondag.html">Zondag</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-dropdown">
+                        <button class="nav-dropdown-btn" id="evenementenDropdownBtn"
+                                aria-expanded="false" aria-haspopup="true">
+                            EVENEMENTEN <svg class="dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="6 9 12 15 18 9"/></svg>
+                        </button>
+                        <ul class="nav-dropdown-menu" id="evenementenDropdownMenu">
+                            <li><a href="evenementen.html">Evenementen</a></li>
+                            <li><a href="kalender.html">Kalender</a></li>
+                            <li style="display:none;"><a href="werklijst.html">Werklijst</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="sponsors.html">SPONSORS</a></li>
+                    <li><a href="galerij.html">GALERIJ</a></li>
+                    <li><a href="contact.html">CONTACT</a></li>
+                    <li><a href="login.html" id="loginLink">LOGIN</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ── Sticky score bar (verschijnt als match-header uit beeld scrolt) ── -->
+    <div class="sticky-match-bar" id="stickyMatchBar" aria-hidden="true">
+        <div class="smb-team smb-home">
+            <span class="smb-name" id="smbHomeName">Thuis</span>
+            <span class="smb-score" id="smbHomeScore">0</span>
+        </div>
+        <div class="smb-center">
+            <div class="smb-minute" id="smbMinute">00:00</div>
+            <div class="smb-status" id="smbStatus">Live</div>
+        </div>
+        <div class="smb-team smb-away">
+            <span class="smb-score" id="smbAwayScore">0</span>
+            <span class="smb-name" id="smbAwayName">Uit</span>
+        </div>
+    </div>
+
+    <main class="live-page">
+        <!-- Match Header -->
+        <section class="match-header">
+            <!-- Match Description -->
+            <div class="match-description-display" id="matchDescription" style="display: none;"></div>
+            
+            <div class="match-teams">
+                <div class="team-display home">
+                    <h2 id="homeTeamName">Thuisploeg</h2>
+                    <div class="team-score" id="homeScore">0</div>
+                </div>
+                <div class="match-time">
+                    <div class="current-minute" id="currentMinute">00:00</div>
+                    <div class="match-status" id="matchStatus" style="border-radius: 6px;">Live</div>
+                </div>
+                <div class="team-display away">
+                    <h2 id="awayTeamName">Uitploeg</h2>
+                    <div class="team-score" id="awayScore">0</div>
+                </div>
+            </div>
+            
+        </section>
+
+        <!-- Timeline -->
+        <section class="timeline-section">
+            <h3>Tijdslijn</h3>
+            <div class="timeline" id="timeline">
+                <div class="timeline-empty">De wedstrijd is gestart. Events verschijnen hier...</div>
+            </div>
+        </section>
+
+        <!-- Control Panel (only for designated person) -->
+        <section class="control-panel" id="controlPanel" style="display: none;">
+            <h3>Wedstrijd Beheer</h3>
+            
+            <div class="control-grid">
+                <!-- Home Team Controls -->
+                <div class="team-controls">
+                    <h4 id="homeTeamControlTitle">Thuisploeg</h4>
+                    <button class="control-btn goal" data-team="home" data-action="goal">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <circle cx="12" cy="12" r="10"/>
+                        </svg>
+                        GOAL
+                    </button>
+                    <button class="control-btn penalty" data-team="home" data-action="penalty">PENALTY</button>
+                    <button class="control-btn own-goal" data-team="home" data-action="own-goal">EIGEN DOELPUNT</button>
+                    <button class="control-btn yellow" data-team="home" data-action="yellow">GELE KAART</button>
+                    <button class="control-btn red" data-team="home" data-action="red">RODE KAART</button>
+                    <button class="control-btn sub" data-team="home" data-action="substitution">WISSEL</button>
+                </div>
+
+                <!-- Away Team Controls -->
+                <div class="team-controls">
+                    <h4 id="awayTeamControlTitle">Uitploeg</h4>
+                    <button class="control-btn goal" data-team="away" data-action="goal">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <circle cx="12" cy="12" r="10"/>
+                        </svg>
+                        GOAL
+                    </button>
+                    <button class="control-btn penalty" data-team="away" data-action="penalty">PENALTY</button>
+                    <button class="control-btn own-goal" data-team="away" data-action="own-goal">EIGEN DOELPUNT</button>
+                    <button class="control-btn yellow" data-team="away" data-action="yellow">GELE KAART</button>
+                    <button class="control-btn red" data-team="away" data-action="red">RODE KAART</button>
+                    <button class="control-btn sub" data-team="away" data-action="substitution">WISSEL</button>
+                </div>
+            </div>
+
+            <!-- Match Control Buttons -->
+            <div class="match-controls">
+                <button class="match-control-btn pause" id="pauseBtn">RUST</button>
+                <button class="match-control-btn resume" id="resumeBtn" style="display: none;">START 2E HELFT</button>
+                <button class="match-control-btn extra-time" id="extraTimeBtn" style="display: none;">VERLENGINGEN</button>
+                <button class="match-control-btn end" id="endMatchBtn">BEËINDIG WEDSTRIJD</button>
+            </div>
+            
+            <!-- Score Correction Button -->
+            <div class="score-correction-container">
+                <button class="control-btn score-correction" id="scoreCorrectBtn">SCORE AANPASSEN</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <p>&copy; Tiebe Beniers - Alle rechten voorbehouden. &nbsp;&middot;&nbsp;
+        <a href="privacy.html" style="color:inherit;opacity:0.7;text-decoration:underline;">Privacyverklaring</a></p>
+    </footer>
+
+    <!-- ================================================ -->
+    <!-- Modal for player/event input (redesigned)        -->
+    <!-- ================================================ -->
+    <div class="modal" id="playerModal">
+        <div class="modal-content">
+            <h3 id="modalTitle">Event Invoeren</h3>
+            <div class="modal-body">
+
+                <!-- GOAL / PENALTY / OWN-GOAL / YELLOW / RED: player picker -->
+                <div id="singlePlayerSection" style="display:none;">
+                    <label class="modal-label" id="playerPickerLabel">Speler</label>
+                    <!-- Dropdown from availability list -->
+                    <select id="playerSelect" class="modal-select">
+                        <option value="">— Selecteer speler —</option>
+                    </select>
+                    <!-- Fallback manual input -->
+                    <input type="text" id="playerManualInput" class="modal-input-manual" placeholder="Of typ naam handmatig...">
+                </div>
+
+                <!-- GOAL: optional assist picker -->
+                <div id="assistSection" style="display:none;">
+                    <label class="modal-label">Assist (optioneel)</label>
+                    <select id="assistSelect" class="modal-select">
+                        <option value="">— Geen assist —</option>
+                    </select>
+                    <input type="text" id="assistManualInput" class="modal-input-manual" placeholder="Of typ naam handmatig...">
+                </div>
+
+                <!-- SUBSTITUTION: dynamic multi-pair container -->
+                <div id="substitutionSection" style="display:none;">
+                    <div id="subPairsContainer"></div>
+                    <button type="button" id="addSubPairBtn" class="sub-add-pair-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        Nog een wissel toevoegen
+                    </button>
+                </div>
+
+            </div>
+            <div class="modal-actions">
+                <!-- Penalty missed row (only shown for penalty action) -->
+                <div id="penaltyMissedRow" style="display:none; width:100%; margin-bottom:0.5rem;">
+                    <button class="modal-btn" id="penaltyMissedBtn" style="background:#FF6B35; color:#fff; width:100%;">
+                        <img src="assets/penalty_missed.png" alt="" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">
+                        PENALTY GEMIST (geen doelpunt)
+                    </button>
+                </div>
+                <button class="modal-btn cancel" id="modalCancel">Annuleren</button>
+                <button class="modal-btn confirm" id="modalConfirm">Bevestigen</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for score correction -->
+    <div class="modal" id="scoreModal">
+        <div class="modal-content">
+            <h3>Score Aanpassen</h3>
+            <div class="modal-body">
+                <div class="score-inputs">
+                    <div class="score-input-group">
+                        <label id="homeTeamLabel">Thuisploeg</label>
+                        <input type="number" id="homeScoreInput" min="0" value="0">
+                    </div>
+                    <div class="score-separator">-</div>
+                    <div class="score-input-group">
+                        <label id="awayTeamLabel">Uitploeg</label>
+                        <input type="number" id="awayScoreInput" min="0" value="0">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" id="scoreModalCancel">Annuleren</button>
+                <button class="modal-btn confirm" id="scoreModalConfirm">Bevestigen</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="scripts/firebase-config.js"></script>
+    <script type="module" src="scripts/live.js"></script>
+    <script type="module" src="scripts/header.js"></script>
+    <script type="module" src="scripts/theme.js"></script>
+    <script type="module" src="scripts/notifications.js"></script>
+
+    <!-- ── Sticky bar sync (geen aanpassingen aan live.js nodig) ── -->
+    <script>
+    (function () {
+        const bar = document.getElementById('stickyMatchBar');
+        if (!bar) return;
+
+        // Zet CSS custom property zodat sticky top exact aansluit op header
+        function setTopOffset() {
+            const h = document.querySelector('.main-header');
+            const height = h ? h.getBoundingClientRect().height : 64;
+            document.documentElement.style.setProperty('--header-height', height + 'px');
+        }
+        setTopOffset();
+        window.addEventListener('resize', setTopOffset);
+        // Herbereken na fonts/images laden (hoogte kan nog veranderen)
+        window.addEventListener('load', setTopOffset);
+
+        // Sync tekst van de bron-elementen naar de sticky balk
+        const pairs = [
+            ['homeTeamName', 'smbHomeName'],
+            ['awayTeamName', 'smbAwayName'],
+            ['homeScore',    'smbHomeScore'],
+            ['awayScore',    'smbAwayScore'],
+            ['currentMinute','smbMinute'],
+            ['matchStatus',  'smbStatus'],
+        ];
+
+        function syncAll() {
+            pairs.forEach(([srcId, dstId]) => {
+                const src = document.getElementById(srcId);
+                const dst = document.getElementById(dstId);
+                if (src && dst && dst.textContent !== src.textContent) {
+                    dst.textContent = src.textContent;
+                }
+            });
+        }
+
+        // MutationObserver: reageert instant op elke update door live.js
+        const mo = new MutationObserver(syncAll);
+        pairs.forEach(([srcId]) => {
+            const el = document.getElementById(srcId);
+            if (el) mo.observe(el, { childList: true, characterData: true, subtree: true });
+        });
+        syncAll(); // initiële sync
+
+        // IntersectionObserver: toon de balk zodra match-header uit beeld scrolt
+        const matchHeader = document.querySelector('.match-header');
+        if (matchHeader) {
+            const io = new IntersectionObserver(
+                ([entry]) => {
+                    const visible = !entry.isIntersecting;
+                    bar.classList.toggle('smb-visible', visible);
+                    bar.setAttribute('aria-hidden', String(!visible));
+                },
+                { threshold: 0.15 }
+            );
+            io.observe(matchHeader);
+        }
+    })();
+    </script>
+    <script src="/scripts/pwa.js" defer></script>
+</body>
+</html>

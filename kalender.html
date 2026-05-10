@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#4B6CB7">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="VVS Rotselaar">
+    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+    <title>V.V.S Rotselaar - Kalender</title>
+    <link rel="icon" type="image/png" href="assets/logo.png">
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/kalender.css">
+    <script>if(localStorage.getItem('vvs_theme')==='dark')document.documentElement.classList.add('dark');</script>
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo-section"><img src="assets/logo.png" alt="VVS Rotselaar Logo" class="team-logo"></div>
+            <div class="title-section"><h1><a href="index.html">V.V.S ROTSELAAR</a></h1></div>
+            <nav class="nav-section">
+                <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="index.html">HOME</a></li>
+                    <li class="nav-dropdown">
+                        <button class="nav-dropdown-btn" id="teamsDropdownBtn" aria-expanded="false" aria-haspopup="true">
+                            TEAMS <svg class="dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="6 9 12 15 18 9"/></svg>
+                        </button>
+                        <ul class="nav-dropdown-menu" id="teamsDropdownMenu">
+                            <li><a href="veteranen.html">Veteranen</a></li>
+                            <li><a href="zaterdag.html">Zaterdag</a></li>
+                            <li><a href="zondag.html">Zondag</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-dropdown">
+                        <button class="nav-dropdown-btn" id="evenementenDropdownBtn"
+                                aria-expanded="false" aria-haspopup="true">
+                            EVENEMENTEN <svg class="dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="6 9 12 15 18 9"/></svg>
+                        </button>
+                        <ul class="nav-dropdown-menu" id="evenementenDropdownMenu">
+                            <li><a href="evenementen.html">Evenementen</a></li>
+                            <li><a href="kalender.html">Kalender</a></li>
+                            <li style="display:none;"><a href="werklijst.html">Werklijst</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="sponsors.html">SPONSORS</a></li>
+                    <li><a href="galerij.html">GALERIJ</a></li>
+                    <li><a href="contact.html">CONTACT</a></li>
+                    <li><a href="login.html" id="loginLink">LOGIN</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="cal-hero">
+        <div class="cal-hero-inner">
+            <div>
+                <h1>📅 Kalender</h1>
+                <p>Trainingen, wedstrijden, evenementen,...</p>
+            </div>
+            <div id="adminAddBtn" style="display:none;">
+                <button class="cal-add-btn" id="openAddItemBtn">+ Item Toevoegen</button>
+            </div>
+        </div>
+    </div>
+
+    <main class="cal-page">
+        <div class="cal-container">
+
+            <div class="cal-legend">
+                <span class="cal-legend-item"><span class="cal-dot training"></span> Training</span>
+                <span class="cal-legend-item"><span class="cal-dot match"></span> Wedstrijd</span>
+                <span class="cal-legend-item"><span class="cal-dot event"></span> Evenement</span>
+                <span class="cal-legend-item cal-legend-auth" style="display:none;"><span class="cal-dot shift"></span> Jouw shift</span>
+            </div>
+
+            <div class="cal-week-nav">
+                <button id="calPrevWeek" class="cal-nav-btn">&#8249;</button>
+                <div class="cal-week-info">
+                    <button id="calToday" class="cal-today-btn">Vandaag</button>
+                    <span id="calWeekLabel" class="cal-week-label"></span>
+                </div>
+                <button id="calNextWeek" class="cal-nav-btn">&#8250;</button>
+            </div>
+
+            <div id="calLoading" class="cal-loading">
+                <div class="training-spinner"></div><span>Laden…</span>
+            </div>
+
+            <div class="cal-grid" id="calGrid" style="display:none;"></div>
+
+        </div>
+    </main>
+
+    <!-- Item detail popup -->
+    <div class="cal-popup-overlay" id="calPopup">
+        <div class="cal-popup-card" id="calPopupCard"></div>
+    </div>
+
+    <!-- Admin: item toevoegen/bewerken modal -->
+    <div class="modal" id="calItemModal">
+        <div class="modal-content large">
+            <h3 id="calItemModalTitle">Kalenderitem Toevoegen</h3>
+            <form id="calItemForm" class="admin-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Type *</label>
+                        <select id="calItemType">
+                            <option value="training">Training</option>
+                            <option value="other">Ander item</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Ploeg</label>
+                        <select id="calItemTeam">
+                            <option value="">Alle ploegen</option>
+                            <option value="veteranen">Veteranen</option>
+                            <option value="zaterdag">Zaterdag</option>
+                            <option value="zondag">Zondag</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Titel *</label>
+                    <input type="text" id="calItemTitel" required placeholder="bv. Training Veteranen">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Datum *</label>
+                        <input type="date" id="calItemDatum" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Starttijd</label>
+                        <input type="time" id="calItemStart">
+                    </div>
+                    <div class="form-group">
+                        <label>Eindtijd</label>
+                        <input type="time" id="calItemEinde">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Locatie</label>
+                    <input type="text" id="calItemLocatie" placeholder="bv. Sportcomplex Rotselaar">
+                </div>
+                <div class="form-group">
+                    <label>Nota</label>
+                    <textarea id="calItemNota" rows="2" style="resize:vertical;font-family:inherit;width:100%;padding:0.5rem;border:1px solid var(--border-color);border-radius:6px;"></textarea>
+                </div>
+
+                <!-- Herhaling (enkel bij nieuw item, enkel admin) -->
+                <div id="calRecurSection" class="cal-recur-section" style="display:none;">
+                    <label style="display:flex;align-items:center;gap:0.6rem;cursor:pointer;margin-bottom:0.4rem;">
+                        <input type="checkbox" id="calItemHerhalen" style="width:16px;height:16px;accent-color:var(--primary-blue);">
+                        <strong>Wekelijks herhalen</strong>
+                    </label>
+                    <div id="calItemHerhalingPanel" style="display:none;margin-top:0.5rem;">
+                        <div class="form-group">
+                            <label>Aantal weken (inclusief startdatum)</label>
+                            <input type="number" id="calItemAantal" min="2" max="52" value="8" style="width:120px;padding:0.4rem 0.6rem;border:1px solid var(--border-color);border-radius:6px;font-family:inherit;">
+                        </div>
+                        <p style="font-size:0.8rem;color:var(--text-gray);margin-top:0.3rem;">
+                            Maakt <strong id="calItemAantalPreview">10</strong> items aan op dezelfde weekdag, elke week.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="modal-btn cancel" id="calItemCancel">Annuleren</button>
+                    <button type="submit" class="modal-btn confirm" id="calItemSave">Opslaan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="tr-toast" id="trToast"></div>
+
+    <!-- Contact Section -->
+        <section class="contact-section">
+            <div class="contact-container">
+                <div class="contact-item">
+                    <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
+                    <div class="contact-text">
+                        <h3>Email</h3>
+                        <p><a href="mailto:info@vvsrotselaar.be">info@vvsrotselaar.be</a></p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                        <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                    <div class="contact-text">
+                        <h3>Locatie</h3>
+                        <p><a href="https://www.google.com/maps/search/?api=1&query=Hellichtstraat+83,+3110+Rotselaar,+Belgium" target="_blank" rel="noopener noreferrer">Naast Hellichtstraat 83, 3110 Rotselaar</a></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <p>&copy; Tiebe Beniers - Alle rechten voorbehouden. &nbsp;&middot;&nbsp;
+        <a href="privacy.html" style="color:inherit;opacity:0.7;text-decoration:underline;">Privacyverklaring</a></p>
+    </footer>
+
+    <script type="module" src="scripts/header.js"></script>
+    <script type="module" src="scripts/kalender.js"></script>
+    <script type="module" src="scripts/theme.js"></script>
+    <script type="module" src="scripts/notifications.js"></script>
+    <script src="/scripts/pwa.js" defer></script>
+</body>
+</html>

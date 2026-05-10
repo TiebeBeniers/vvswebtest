@@ -1,0 +1,133 @@
+/* ===============================================
+   VVS ROTSELAAR - PRIVACY PAGE STYLES
+   Exact gelijk aan de admin3 voorvertoning
+   =============================================== */
+
+.privacy-main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 4rem;
+}
+
+.privacy-main h2 {
+    margin-bottom: 0.25rem;
+    font-size: 1.8rem;
+    color: var(--text-dark);
+}
+
+.privacy-subtitle {
+    color: #888;
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+}
+
+/* ── Sectie container ─────────────────────────── */
+.privacy-section {
+    margin-bottom: 2rem;
+}
+
+/* H3 sectietitel — exact gelijk aan preview */
+.privacy-section-title,
+.privacy-main h3 {
+    color: var(--primary-blue, #0047AB);
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: 0 0 0.75rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 2px solid #e8eef8;
+}
+
+/* ── Body inhoud — exact gelijk aan preview ───── */
+.privacy-body,
+#privacyFallback {
+    font-size: 0.95rem;
+    line-height: 1.75;
+    color: var(--text-dark, #1A1A1A);
+}
+
+.privacy-body p,
+#privacyFallback p            { margin: 0 0 0.75rem; }
+.privacy-body p:last-child    { margin-bottom: 0; }
+
+.privacy-body ul,
+.privacy-body ol,
+#privacyFallback ul           { margin: 0.5rem 0 0.75rem 1.5rem; line-height: 1.9; }
+
+.privacy-body li,
+#privacyFallback li           { margin-bottom: 0.3rem; }
+
+.privacy-body h3,
+.privacy-body h4              { color: var(--primary-blue, #0047AB); font-weight: 700; margin: 0.75rem 0 0.35rem; }
+.privacy-body h3              { font-size: 1.05rem; }
+.privacy-body h4              { font-size: 0.95rem; }
+
+.privacy-body a,
+#privacyFallback a            { color: #1a73e8; text-decoration: underline; }
+.privacy-body a:hover,
+#privacyFallback a:hover      { color: #0c57c0; }
+
+.privacy-body strong          { font-weight: 700; }
+.privacy-body em              { font-style: italic; }
+.privacy-body code            { font-family: monospace; background: #f0f0f0; padding: 1px 5px; border-radius: 3px; font-size: 0.85em; }
+.privacy-body hr              { border: none; border-top: 1px solid #e0e0e0; margin: 1.25rem 0; }
+
+/* ── Witruimtes (aangemaakt via admin3-editor) ── */
+.privacy-body .spacer-sm { display: block; height: 0.4rem; }
+.privacy-body .spacer-lg { display: block; height: 1.5rem; }
+
+/* ── Info kader (aangemaakt via admin3-editor) ── */
+.privacy-body .info-card,
+.info-card {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 0.9rem 1rem;
+    background: #fafafa;
+    margin: 0.75rem 0;
+}
+
+.privacy-body .info-card-title,
+.info-card-title {
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-bottom: 0.35rem;
+    font-family: monospace;
+    display: block;
+    color: #333;
+}
+
+.info-card-title.normal { font-family: inherit; }
+
+.info-card-meta {
+    font-size: 0.83rem;
+    color: #666;
+    margin-top: 0.25rem;
+}
+.info-card-meta span {
+    display: inline-block;
+    background: #eee;
+    border-radius: 3px;
+    padding: 0.1rem 0.4rem;
+    margin-right: 0.3rem;
+    font-size: 0.8rem;
+}
+
+/* Oudere info-cards wrapper (fallback HTML) */
+.info-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+}
+
+/* ── Dark mode ────────────────────────────────── */
+html.dark .privacy-main             { color: var(--text-dark); }
+html.dark .privacy-section-title,
+html.dark .privacy-main h3          { color: #60a5fa; border-bottom-color: #2a3a5c; }
+html.dark .privacy-body             { color: #e0e0e0; }
+html.dark .privacy-body h3,
+html.dark .privacy-body h4          { color: #60a5fa; }
+html.dark .info-card                { background: #1e2130; border-color: var(--border-color); }
+html.dark .info-card-title          { color: #e0e0e0; }
+html.dark .info-card-meta           { color: var(--text-gray); }
+html.dark .info-card-meta span      { background: #2d3148; color: var(--text-gray); }
+html.dark .privacy-body code        { background: #2a2f45; color: #e0e0e0; }

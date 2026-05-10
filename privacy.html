@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#4B6CB7">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="VVS Rotselaar">
+    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+    <title>V.V.S Rotselaar - Privacyverklaring</title>
+    <link rel="icon" type="image/png" href="assets/logo.png">
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/privacy.css">
+    <script>if(localStorage.getItem('vvs_theme')==='dark')document.documentElement.classList.add('dark');</script>
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo-section">
+                <img src="assets/logo.png" alt="VVS Rotselaar Logo" class="team-logo">
+            </div>
+            <div class="title-section">
+                <h1><a href="index.html">V.V.S ROTSELAAR</a></h1>
+            </div>
+            <nav class="nav-section">
+                <button class="hamburger" id="hamburger" aria-label="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                                <ul class="nav-menu" id="navMenu">
+                    <li><a href="index.html">HOME</a></li>
+                    <li class="nav-dropdown">
+                        <button class="nav-dropdown-btn" id="teamsDropdownBtn" aria-expanded="false" aria-haspopup="true">
+                            TEAMS <svg class="dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="6 9 12 15 18 9"/></svg>
+                        </button>
+                        <ul class="nav-dropdown-menu" id="teamsDropdownMenu">
+                            <li><a href="veteranen.html">Veteranen</a></li>
+                            <li><a href="zaterdag.html">Zaterdag</a></li>
+                            <li><a href="zondag.html">Zondag</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-dropdown">
+                        <button class="nav-dropdown-btn" id="evenementenDropdownBtn"
+                                aria-expanded="false" aria-haspopup="true">
+                            EVENEMENTEN <svg class="dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="6 9 12 15 18 9"/></svg>
+                        </button>
+                        <ul class="nav-dropdown-menu" id="evenementenDropdownMenu">
+                            <li><a href="evenementen.html">Evenementen</a></li>
+                            <li><a href="kalender.html">Kalender</a></li>
+                            <li style="display:none;"><a href="werklijst.html">Werklijst</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="sponsors.html">SPONSORS</a></li>
+                    <li><a href="galerij.html">GALERIJ</a></li>
+                    <li><a href="contact.html">CONTACT</a></li>
+                    <li><a href="login.html" id="loginLink">LOGIN</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="privacy-main">
+
+        <h2>Privacyverklaring</h2>
+        <p class="privacy-subtitle" id="privacyLastUpdated">Laden&hellip;</p>
+
+        <!-- Dynamisch geladen vanuit Firestore (settings/privacy). Valt terug op hard-coded inhoud. -->
+        <div id="privacyDynamic"></div>
+
+        <div id="privacyFallback" style="display:none;">
+        <div class="privacy-section">
+            <h3>1. Wie zijn wij?</h3>
+            <p>V.V.S Rotselaar is een voetbalclub gevestigd te Rotselaar, België.
+            Deze website (<strong>vvsrotselaar.be</strong>) is bestemd voor leden en
+            supporters van de club en bevat functionaliteit gericht tot leden en bestuursleden.</p>
+            <p style="margin-top:0.75rem;">Verantwoordelijke voor de verwerking:<br>
+            V.V.S Rotselaar &middot; Rotselaar, België<br>
+            <a href="mailto:info@vvsrotselaar.be">info@vvsrotselaar.be</a></p>
+        </div>
+        <div class="privacy-section">
+            <h3>2. Welke persoonsgegevens verzamelen wij?</h3>
+            <p>Wij verzamelen uitsluitend gegevens die noodzakelijk zijn voor de werking van de ledenzone:</p>
+            <ul>
+                <li>Naam en e-mailadres (bij accountaanvraag)</li>
+                <li>Telefoonnummer (bij accountaanvraag)</li>
+                <li>Wedstrijdstatistieken</li>
+            </ul>
+            <p style="margin-top:0.75rem;">Wij verzamelen <strong>geen</strong> locatiegegevens, betalingsgegevens of
+            gezondheidsgegevens. Er worden <strong>geen advertenties</strong> getoond en er
+            vindt <strong>geen profilering of tracking</strong> van gebruikers plaats.</p>
+        </div>
+        <div class="privacy-section">
+            <h3>3. Waarom en op welke basis verwerken wij deze gegevens?</h3>
+            <p>Wij verwerken persoonsgegevens op basis van <strong>gerechtvaardigde belangen</strong>
+            (art.&nbsp;6.1(f) GDPR) en <strong>toestemming</strong> (art.&nbsp;6.1(a) GDPR)
+            bij accountaanvraag. De doeleinden zijn:</p>
+            <ul>
+                <li>Beheer van ledenaccounts en toegangsbeveiliging</li>
+                <li>Weergave van spelersprofielen en statistieken</li>
+                <li>Organisatie van wedstrijden en beschikbaarheidsopvolging</li>
+                <li>Communicatie over clubactiviteiten (incl. telefonisch contact via het opgegeven nummer)</li>
+            </ul>
+            <p style="margin-top:0.75rem;">Gegevens worden <strong>nooit verkocht</strong> aan of gedeeld met derden voor commerciële doeleinden.</p>
+        </div>
+        <div class="privacy-section">
+            <h3>4. Lokale opslag (localStorage)</h3>
+            <p>Deze website gebruikt <strong>localStorage</strong> &mdash; een technologie in je browser vergelijkbaar met cookies &mdash; uitsluitend voor twee strikt noodzakelijke doeleinden:</p>
+            <div class="info-cards">
+                <div class="info-card">
+                    <div class="info-card-title">firebase:authUser:*</div>
+                    <p style="font-size:0.9rem;margin:0;">Bewaart het inlogtoken zodat je ingelogd blijft in de ledenzone. Strikt noodzakelijk voor de werking van de site.</p>
+                    <div class="info-card-meta"><span>Eigen</span><span>Tot uitloggen</span></div>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-title">vvs_*</div>
+                    <p style="font-size:0.9rem;margin:0;">Tijdelijke cache van wedstrijdresultaten, statistieken en profielgegevens om het aantal serververzoeken te beperken.</p>
+                    <div class="info-card-meta"><span>Eigen</span><span>10 min &ndash; 1 week (automatisch gewist)</span></div>
+                </div>
+            </div>
+            <p style="margin-top:0.75rem;">Er worden <strong>geen tracking-, analytics- of marketingcookies</strong> gebruikt.</p>
+        </div>
+        <div class="privacy-section">
+            <h3>5. Externe diensten (verwerkers)</h3>
+            <p>Wij maken gebruik van de volgende externe diensten. Gegevensoverdracht naar de VS vindt plaats op basis van de <strong>standaard contractuele clausules</strong> (SCC&rsquo;s).</p>
+            <div class="info-cards">
+                <div class="info-card">
+                    <div class="info-card-title normal">Firebase Authentication &amp; Firestore &mdash; Google LLC (VS)</div>
+                    <p style="font-size:0.9rem;margin:0;">Inlogbeheer en opslag van ledengegevens en wedstrijddata.</p>
+                    <div class="info-card-meta"><a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener noreferrer">Privacybeleid Firebase</a></div>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-title normal">Cloudflare &mdash; Cloudflare Inc. (VS)</div>
+                    <p style="font-size:0.9rem;margin:0;">Beveiliging en optimalisatie van de website.</p>
+                    <div class="info-card-meta"><a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer">Privacybeleid Cloudflare</a></div>
+                </div>
+            </div>
+        </div>
+        <div class="privacy-section">
+            <h3>6. Hoe lang bewaren wij gegevens?</h3>
+            <p>Accountgegevens en statistieken worden bewaard zolang je actief lid bent van de club. Na uitschrijving worden jouw persoonsgegevens op verzoek verwijderd binnen <strong>30 dagen</strong>. Wedstrijdresultaten kunnen als geanonimiseerde clubhistoriek worden bijgehouden.</p>
+        </div>
+        <div class="privacy-section">
+            <h3>7. Beveiliging</h3>
+            <p>Wij nemen redelijke technische maatregelen om jouw gegevens te beschermen: versleutelde verbindingen (HTTPS), beveiligde authenticatie via Firebase en beperkte toegang tot de beheersomgeving. Wachtwoorden worden nooit in leesbare vorm opgeslagen.</p>
+        </div>
+        <div class="privacy-section">
+            <h3>8. Jouw rechten (GDPR)</h3>
+            <p>Op basis van de AVG/GDPR heb je de volgende rechten:</p>
+            <ul>
+                <li><strong>Recht op inzage</strong> &mdash; opvragen welke gegevens wij over jou bewaren</li>
+                <li><strong>Recht op correctie</strong> &mdash; onjuiste gegevens laten aanpassen</li>
+                <li><strong>Recht op verwijdering</strong> &mdash; jouw gegevens laten wissen</li>
+                <li><strong>Recht op beperking</strong> &mdash; de verwerking tijdelijk laten stopzetten</li>
+                <li><strong>Recht op overdraagbaarheid</strong> &mdash; jouw gegevens opvragen in een leesbaar formaat</li>
+                <li><strong>Recht van bezwaar</strong> &mdash; bezwaar maken tegen de verwerking</li>
+            </ul>
+            <p style="margin-top:0.75rem;">Stuur je verzoek naar <a href="mailto:info@vvsrotselaar.be">info@vvsrotselaar.be</a> of neem contact op via onze <a href="/contact.html">contactpagina</a>. Wij reageren binnen <strong>30 dagen</strong>.</p>
+            <p style="margin-top:0.75rem;">Je kan ook een klacht indienen bij de toezichthoudende autoriteit:<br>
+            <strong>Gegevensbeschermingsautoriteit (GBA)</strong><br>
+            Drukpersstraat 35, 1000 Brussel<br>
+            <a href="https://www.gegevensbeschermingsautoriteit.be" target="_blank" rel="noopener noreferrer">www.gegevensbeschermingsautoriteit.be</a>
+            &middot; <a href="mailto:contact@apd-gba.be">contact@apd-gba.be</a></p>
+        </div>
+        <div class="privacy-section">
+            <h3>9. Wijzigingen</h3>
+            <p>Wij kunnen deze verklaring aanpassen bij wijzigingen in de website of nieuwe wettelijke vereisten. De datum bovenaan geeft aan wanneer ze voor het laatst werd bijgewerkt.</p>
+        </div>
+        </div><!-- /#privacyFallback -->
+
+    </main>
+
+    <footer class="main-footer">
+        <p>&copy; Tiebe Beniers - Alle rechten voorbehouden. &nbsp;&middot;&nbsp;
+        <a href="privacy.html" style="color:inherit;opacity:0.7;text-decoration:underline;">Privacyverklaring</a></p>
+    </footer>
+
+    <script type="module" src="scripts/firebase-config.js"></script>
+    <script type="module" src="scripts/privacy.js"></script>
+    <script type="module" src="scripts/header.js"></script>
+    <script type="module" src="scripts/theme.js"></script>
+    <script type="module" src="scripts/notifications.js"></script>
+    <script src="/scripts/pwa.js" defer></script>
+</body>
+</html>

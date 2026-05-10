@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#4B6CB7">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="VVS Rotselaar">
+    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+    <title>V.V.S Rotselaar - Admin</title>
+    <link rel="icon" type="image/png" href="assets/logo.png">
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/admin.css">
+    <script>if(localStorage.getItem('vvs_theme')==='dark')document.documentElement.classList.add('dark');</script>
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo-section">
+                <img src="assets/logo.png" alt="VVS Rotselaar Logo" class="team-logo">
+            </div>
+            <div class="title-section">
+                <h1><a href="index.html">V.V.S ROTSELAAR</a></h1>
+            </div>
+            <nav class="nav-section">
+                <button class="hamburger" id="hamburger" aria-label="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                                <ul class="nav-menu" id="navMenu">
+                    <li><a href="index.html">HOME</a></li>
+                    <li class="nav-dropdown">
+                        <button class="nav-dropdown-btn" id="teamsDropdownBtn" aria-expanded="false" aria-haspopup="true">
+                            TEAMS <svg class="dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="6 9 12 15 18 9"/></svg>
+                        </button>
+                        <ul class="nav-dropdown-menu" id="teamsDropdownMenu">
+                            <li><a href="veteranen.html">Veteranen</a></li>
+                            <li><a href="zaterdag.html">Zaterdag</a></li>
+                            <li><a href="zondag.html">Zondag</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-dropdown">
+                        <button class="nav-dropdown-btn" id="evenementenDropdownBtn"
+                                aria-expanded="false" aria-haspopup="true">
+                            EVENEMENTEN <svg class="dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="6 9 12 15 18 9"/></svg>
+                        </button>
+                        <ul class="nav-dropdown-menu" id="evenementenDropdownMenu">
+                            <li><a href="evenementen.html">Evenementen</a></li>
+                            <li><a href="kalender.html">Kalender</a></li>
+                            <li style="display:none;"><a href="werklijst.html">Werklijst</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="sponsors.html">SPONSORS</a></li>
+                    <li><a href="galerij.html">GALERIJ</a></li>
+                    <li><a href="contact.html">CONTACT</a></li>
+                    <li><a href="login.html" id="loginLink">LOGIN</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="admin-page">
+        <div class="admin-container">
+            <div class="admin-header-row">
+                <h2>Administratie</h2>
+                <div class="admin-page-nav">
+                    <a class="page-nav-btn active" href="admin.html" title="Pagina 1">1</a>
+                    <a class="page-nav-btn" href="admin2.html" title="Pagina 2">2</a>
+                    <a class="page-nav-btn" href="admin3.html" title="Pagina 3">3</a>
+                </div>
+            </div>
+
+            <div class="admin-tabs">
+                <button class="tab-btn active" data-tab="members">Leden<span class="tab-dot" id="requestsBadge" style="display:none;"></span></button>
+                <button class="tab-btn" data-tab="matches">Wedstrijden</button>
+                <button class="tab-btn" data-tab="ranking">Rangschikking</button>
+                <button class="tab-btn" data-tab="evenementen">Evenementen</button>
+                <button class="tab-btn" data-tab="contactberichten">Contactberichten<span class="tab-dot" id="contactberichtenBadge" style="display:none;"></span></button>
+                <button class="tab-btn" data-tab="announcements">Aankondigingen</button>
+            </div>
+
+            <!-- ── Leden Tab ── -->
+            <div class="tab-content active" id="membersTab">
+                <div class="section-header">
+                    <h3>Clubleden</h3>
+                    <div class="header-buttons">
+                        <button class="add-btn secondary" id="manageRequestsBtn">
+                            Aanvragen Behandelen
+                            <span class="requests-count-badge" id="requestsCountBadge" style="display:none;"></span>
+                        </button>
+                        <button class="add-btn" id="addMemberBtn">+ Nieuw Lid</button>
+                        <button class="add-btn temp-account-btn" id="addTempAccountBtn">&#9201; Tijdelijk Account</button>
+                    </div>
+                </div>
+                <!-- Tijdelijke accounts sectie -->
+                <div id="tempAccountsSection" style="margin-bottom:1.5rem;display:none;">
+                    <div class="temp-accounts-header">
+                        <span class="temp-accounts-title">&#9201; Tijdelijke accounts</span>
+                    </div>
+                    <div class="temp-accounts-list" id="tempAccountsList"></div>
+                </div>
+
+                <!-- Zoekbalk leden -->
+                <div class="member-search-wrap">
+                    <svg class="member-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="16" height="16">
+                        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    <input type="text" id="memberSearchInput" class="member-search-input"
+                           placeholder="Zoek op naam, e-mail of ploeg&#8230;" autocomplete="off">
+                    <button type="button" id="memberSearchClear" class="member-search-clear" style="display:none;" title="Wis zoekopdracht">&times;</button>
+                </div>
+
+                <div class="members-list" id="membersList">
+                    <div class="loading"><div class="loader"></div></div>
+                </div>
+            </div>
+
+            <!-- ── Wedstrijden Tab ── -->
+            <div class="tab-content" id="matchesTab">
+                <div class="section-header">
+                    <h3>Wedstrijden</h3>
+                    <button class="add-btn" id="addMatchBtn">+ Nieuwe Wedstrijd</button>
+                </div>
+
+                <!-- Filter bar -->
+                <div class="match-filter-bar">
+                    <button class="filter-btn active" data-match-filter="all">Alle</button>
+                    <button class="filter-btn" data-match-filter="planned">Gepland</button>
+                    <button class="filter-btn" data-match-filter="finished">Afgelopen</button>
+                </div>
+
+                <div class="matches-list" id="matchesList">
+                    <div class="loading">Laden...</div>
+                </div>
+            </div>
+
+            <!-- ── Rangschikking Tab ── -->
+            <div class="tab-content" id="rankingTab">
+                <div class="section-header">
+                    <h3>Rangschikking Beheren</h3>
+                </div>
+
+                <!-- Sub-tabs -->
+                <div class="ranking-subtabs">
+                    <button class="ranking-subtab active" data-subtab="pasteTab">Volledig Plakken</button>
+                    <button class="ranking-subtab" data-subtab="matchTab">Matchresultaat</button>
+                    <button class="ranking-subtab" data-subtab="currentTab">Huidig Klassement</button>
+                </div>
+
+                <!-- ── SUBTAB 1: Volledig plakken van RBFA ── -->
+                <div class="ranking-subtab-content active" id="pasteTab">
+                    <div class="ranking-manager">
+                        <div class="ranking-instructions">
+                            <h4>📋 Instructies</h4>
+                            <ol>
+                                <li>Selecteer voor welk team de data is</li>
+                                <li>Ga naar <strong><a href="https://www.rbfa.be/nl/club/7532/ploegen" target="_blank">RBFA</a></strong>, kopieer de volledige rangschikking tabel en plak ze hieronder</li>
+                                <li>Klik "Verwerken &amp; Opslaan"</li>
+                            </ol>
+                            <p class="footer-text" style="margin-top:0.75rem;font-size:0.85rem;color:#666;">Kolommen (TAB-separated): Positie · Logo+Naam · Gespeeld · Gewonnen · Verloren · Gelijk · Voor · Tegen · Saldo · Punten</p>
+                        </div>
+                        <div class="ranking-form">
+                            <div class="form-group">
+                                <label for="rankingTeam">Team *</label>
+                                <select id="rankingTeam" class="ranking-select">
+                                    <option value="">Kies een team...</option>
+                                    <option value="veteranen">Veteranen</option>
+                                    <option value="zaterdag">Zaterdag</option>
+                                    <option value="zondag">Zondag</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="rankingInput">Rangschikking Data (geplakt van RBFA) *</label>
+                                <textarea id="rankingInput" class="ranking-textarea" rows="15"
+                                    placeholder="Plak hier de rangschikking data van rbfa.be..."></textarea>
+                            </div>
+                            <div class="ranking-actions">
+                                <button class="add-btn" id="processRankingBtn">Verwerken &amp; Opslaan</button>
+                                <button class="btn-secondary" id="clearRankingBtn">Wissen</button>
+                            </div>
+                            <div class="ranking-preview" id="rankingPreview" style="display:none;">
+                                <h4>✅ Opgeslagen voor "<span id="previewTeamName"></span>"</h4>
+                                <pre id="rankingPreviewContent"></pre>
+                            </div>
+                            <div class="ranking-status" id="rankingStatus"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── SUBTAB 2: Matchresultaat invoeren ── -->
+                <div class="ranking-subtab-content" id="matchTab">
+                    <div class="ranking-manager">
+                        <div class="ranking-instructions">
+                            <h4>⚽ Matchresultaat Invoeren</h4>
+                            <p>Voer het resultaat in van één match. Het klassement van de twee betrokken ploegen wordt automatisch herberekend.</p>
+                            <p style="margin-top:0.5rem;font-size:0.85rem;color:#666;">Dit werkt voor elke wedstrijd in de reeks, niet enkel wedstrijden van V.V.S Rotselaar.</p>
+                        </div>
+                        <div class="ranking-form">
+                            <div class="form-group">
+                                <label for="matchResultTeam">Reeks *</label>
+                                <select id="matchResultTeam">
+                                    <option value="">Kies een reeks...</option>
+                                    <option value="veteranen">Veteranen</option>
+                                    <option value="zaterdag">Zaterdag</option>
+                                    <option value="zondag">Zondag</option>
+                                </select>
+                            </div>
+                            <div class="form-row" id="matchTeamSelects" style="display:none;">
+                                <div class="form-group">
+                                    <label for="rankingHomeTeam">Thuisploeg *</label>
+                                    <select id="rankingHomeTeam">
+                                        <option value="">Kies thuisploeg...</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="rankingAwayTeam">Uitploeg *</label>
+                                    <select id="rankingAwayTeam">
+                                        <option value="">Kies uitploeg...</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row" id="matchScoreRow" style="display:none;">
+                                <div class="form-group">
+                                    <label for="rankingHomeScore">Goals Thuis *</label>
+                                    <input type="number" id="rankingHomeScore" min="0" placeholder="0">
+                                </div>
+                                <div class="form-group">
+                                    <label for="rankingAwayScore">Goals Uit *</label>
+                                    <input type="number" id="rankingAwayScore" min="0" placeholder="0">
+                                </div>
+                            </div>
+                            <div class="ranking-actions" id="matchResultActions" style="display:none;">
+                                <button class="add-btn" id="applyMatchResultBtn">Verwerken &amp; Opslaan</button>
+                            </div>
+                            <div class="ranking-preview" id="matchResultPreview" style="display:none;">
+                                <h4>✅ Klassement bijgewerkt</h4>
+                                <pre id="matchResultPreviewContent"></pre>
+                            </div>
+                            <div class="ranking-status" id="matchResultStatus"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── SUBTAB 3: Huidig klassement bekijken ── -->
+                <div class="ranking-subtab-content" id="currentTab">
+                    <div class="ranking-form" style="max-width:100%;">
+                        <div class="form-group" style="max-width:300px;">
+                            <label for="viewRankingTeam">Team</label>
+                            <select id="viewRankingTeam">
+                                <option value="veteranen">Veteranen</option>
+                                <option value="zaterdag">Zaterdag</option>
+                                <option value="zondag">Zondag</option>
+                            </select>
+                        </div>
+                        <div id="currentRankingTable">
+                            <div class="loading"><div class="loader"></div></div>
+                        </div>
+                        <div class="ranking-status" id="currentRankingStatus"></div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ── Evenementen Tab ── -->
+            <div class="tab-content" id="evenementenTab">
+                <div class="section-header">
+                    <h3>Evenementen</h3>
+                    <button class="add-btn" id="addEvenementBtn">+ Nieuw Evenement</button>
+                </div>
+                <div class="evenementen-list" id="evenementenList">
+                    <div class="loading"><div class="loader"></div></div>
+                </div>
+            </div>
+
+            <!-- ── Contactberichten Tab ── -->
+            <div class="tab-content" id="contactberichtenTab">
+                <div class="section-header">
+                    <h3>Contactberichten</h3>
+                    <div class="message-stats" id="messageStats">
+                        <span class="stat-badge">Totaal: <strong id="totalMessages">0</strong></span>
+                        <span class="stat-badge unread">Ongelezen: <strong id="unreadMessages">0</strong></span>
+                    </div>
+                </div>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="all">Alle</button>
+                    <button class="filter-btn" data-filter="unread">Ongelezen</button>
+                    <button class="filter-btn" data-filter="read">Gelezen</button>
+                </div>
+                <div class="contactberichten-list" id="contactberichtenList">
+                    <div class="loading"><div class="loader"></div></div>
+                </div>
+            </div>
+
+            <!-- ── Announcements Tab ── -->
+            <div class="tab-content" id="announcementsTab">
+                <div class="section-header">
+                    <h3>Aankondigingsbanner</h3>
+                </div>
+                <p style="color:var(--text-gray);margin-bottom:1.5rem;font-size:0.95rem;">
+                    Kies een icoon en typ de bannertekst. De preview toont hoe de banner er op de homepagina uitziet.
+                </p>
+ 
+                <!-- Editor-rij: [emoji-knop] [tekstveld] [Opslaan] [✓ status] -->
+                <div class="announcement-editor-row">
+ 
+                    <!-- Emoji / icoon picker -->
+                    <div class="ann-icon-picker" id="annIconPicker">
+                        <button class="ann-icon-selected" id="annIconSelectedBtn" type="button" aria-haspopup="true" aria-expanded="false">
+                            <span id="annIconPreview">🍺</span>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                        </button>
+ 
+                        <!-- Dropdown -->
+                        <div class="ann-icon-dropdown" id="annIconDropdown" role="listbox">
+                            <!-- Emoji grid -->
+                            <div class="ann-icon-grid" id="annEmojiGrid">
+                                <!-- gevuld door JS -->
+                            </div>
+ 
+                            <!-- Eigen bestandspad -->
+                            <div class="ann-icon-custom">
+                                <span class="ann-custom-label">Eigen afbeelding (bv. assets/bier.png)</span>
+                                <div class="ann-custom-row">
+                                    <input type="text" class="ann-custom-input" id="annCustomPath" placeholder="assets/bier.png">
+                                    <button class="ann-custom-apply" id="annCustomApplyBtn" type="button">Gebruik</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+ 
+                    <!-- Tekstveld -->
+                    <input type="text" class="ann-text-input" id="announcementText" placeholder="bv. Bier van de maand: Primus">
+ 
+                    <!-- Opslaan -->
+                    <button class="add-btn ann-save-btn" id="saveAnnouncementBtn" type="button">Opslaan</button>
+ 
+                    <!-- Status -->
+                    <span id="announcementStatus" style="font-size:0.9rem;color:var(--success);display:none;white-space:nowrap;">✓ Opgeslagen</span>
+                </div>
+ 
+                <!-- Live preview -->
+                <p class="ann-preview-label">Voorvertoning</p>
+                <div class="ann-preview-bar" id="annPreviewBar">
+                    <span class="ann-preview-icon" id="annPreviewIcon">🍺</span>
+                    <span id="annPreviewText">Bier van de maand: Primus</span>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <footer class="main-footer">
+        <p>&copy; Tiebe Beniers - Alle rechten voorbehouden. &nbsp;&middot;&nbsp;
+        <a href="privacy.html" style="color:inherit;opacity:0.7;text-decoration:underline;">Privacyverklaring</a></p>
+    </footer>
+
+    <!-- ── Member Modal ── -->
+    <div class="modal" id="memberModal">
+        <div class="modal-content large">
+            <h3 id="memberModalTitle">Nieuw Lid Toevoegen</h3>
+            <form id="memberForm" class="admin-form">
+                <div class="form-group">
+                    <label for="memberName">Naam *</label>
+                    <input type="text" id="memberName" placeholder="Jan Modaal" required>
+                </div>
+                <div class="form-group">
+                    <label for="memberEmail">E-mail *</label>
+                    <input type="email" id="memberEmail" placeholder="je.email@voorbeeld.be" required>
+                </div>
+                <div class="form-group">
+                    <label for="memberTelefoon">Telefoonnummer *</label>
+                    <input type="tel" id="memberTelefoon" placeholder="+32 470 00 00 00" required>
+                </div>
+                <div class="form-group">
+                    <label for="memberPassword">Wachtwoord *</label>
+                    <input type="password" id="memberPassword" placeholder="wachtwoord123!" required minlength="6">
+                    <small>Minimaal 6 karakters</small>
+                </div>
+                <div class="form-group">
+                    <label>Ploeg(en) <span style="font-weight:400;font-size:0.82rem;color:var(--text-gray);">(min. 1)</span></label>
+                    <div class="admin-team-checkboxes" id="memberPloegBoxes">
+                        <label class="admin-team-cb-label">
+                            <input type="checkbox" name="memberPloeg" value="veteranen"> Veteranen
+                        </label>
+                        <label class="admin-team-cb-label">
+                            <input type="checkbox" name="memberPloeg" value="zaterdag"> Zaterdag
+                        </label>
+                        <label class="admin-team-cb-label">
+                            <input type="checkbox" name="memberPloeg" value="zondag"> Zondag
+                        </label>
+                        <label class="admin-team-cb-label">
+                            <input type="checkbox" name="memberPloeg" value="bestuurslid"> Bestuurslid
+                        </label>
+                    </div>
+                    <!-- Verborgen veld voor backwards compat (primaire ploeg) -->
+                    <input type="hidden" id="memberCategorie" value="veteranen">
+                </div>
+                <div class="form-group" id="memberRollenGroup">
+                    <label>Rol(len) <small style="font-weight:400;color:var(--text-gray);">Meerdere rollen mogelijk</small></label>
+                    <div class="member-rechten-grid">
+                        <label class="member-recht-label">
+                            <input type="checkbox" name="memberRol" value="speler" id="rolSpeler" checked>
+                            <div class="member-recht-content">
+                                <span class="member-recht-icon">👤</span>
+                                <div>
+                                    <strong>Speler</strong>
+                                    <span>Heeft spelersprofiel en beschikbaarheidslijst</span>
+                                </div>
+                            </div>
+                        </label>
+                        <label class="member-recht-label">
+                            <input type="checkbox" name="memberRol" value="admin" id="rolAdmin">
+                            <div class="member-recht-content">
+                                <span class="member-recht-icon">🔑</span>
+                                <div>
+                                    <strong>Admin</strong>
+                                    <span>Volledige toegang tot beheerportaal</span>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                <input type="hidden" id="memberRole" value="speler">
+                <div class="form-group" id="memberRechtenGroup">
+                    <label>Toegangsrechten <small style="font-weight:400;color:var(--text-gray);">(alleen voor spelers)</small></label>
+                    <div class="member-rechten-grid">
+                        <label class="member-recht-label">
+                            <input type="checkbox" name="memberRecht" value="score_invullen" id="rechtScoreInvullen">
+                            <div class="member-recht-content">
+                                <span class="member-recht-icon">⚽</span>
+                                <div>
+                                    <strong>Score invullen</strong>
+                                    <span>Kan ALTIJD wedstrijden live invullen</span>
+                                </div>
+                            </div>
+                        </label>
+                        <label class="member-recht-label">
+                            <input type="checkbox" name="memberRecht" value="afgevaardigde" id="rechtAfgevaardigde">
+                            <div class="member-recht-content">
+                                <span class="member-recht-icon">📋</span>
+                                <div>
+                                    <strong>Afgevaardigde</strong>
+                                    <span>Kan aanwezigheidslijst van een ploeg beheren</span>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                    <!-- Team selector — alleen zichtbaar als Afgevaardigde aangevinkt -->
+                    <div id="afgevaardigdeTeamGroup" style="display:none;margin-top:0.6rem;">
+                        <label for="afgevaardigdeTeam" style="font-size:0.88rem;font-weight:600;margin-bottom:0.3rem;display:block;">Afgevaardigde voor ploeg *</label>
+                        <select id="afgevaardigdeTeam" style="width:100%;max-width:280px;">
+                            <option value="">Kies ploeg…</option>
+                            <option value="veteranen">Veteranen</option>
+                            <option value="zaterdag">Zaterdag</option>
+                            <option value="zondag">Zondag</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Statistieken (alleen bij bewerken) -->
+                <div id="statsEditGroup" style="display:none;">
+                    <div class="form-section-label">Seizoensstatistieken</div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="memberGoals">Goals</label>
+                            <input type="number" id="memberGoals" min="0" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="memberAssists">Assists</label>
+                            <input type="number" id="memberAssists" min="0" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="memberMatchen">Matchen</label>
+                            <input type="number" id="memberMatchen" min="0" value="0">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="memberMinuten">Minuten</label>
+                            <input type="number" id="memberMinuten" min="0" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="memberGeel">Gele kaarten</label>
+                            <input type="number" id="memberGeel" min="0" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="memberRood">Rode kaarten</label>
+                            <input type="number" id="memberRood" min="0" value="0">
+                        </div>
+                    </div>
+                </div>
+
+                <input type="hidden" id="memberUid">
+                <div class="modal-actions">
+                    <button type="button" class="modal-btn cancel" id="memberModalCancel">Annuleren</button>
+                    <button type="submit" class="modal-btn confirm">Opslaan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ── Member Detail Overlay ── -->
+    <div class="modal" id="memberDetailModal">
+        <div class="modal-content large member-detail-content">
+            <button class="modal-close-x" id="memberDetailClose">&times;</button>
+            <h3 id="detailNaam" class="detail-naam">—</h3>
+            <div class="detail-badges" id="detailBadges"></div>
+
+            <div class="detail-section">
+                <div class="detail-section-title">Account</div>
+                <div class="detail-grid">
+                    <div class="detail-item detail-uid-item">
+                        <span class="detail-key">UID</span>
+                        <span class="detail-val uid-mono" id="detailUid">—</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-key">E-mail</span>
+                        <span class="detail-val" id="detailEmail">—</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-key">Telefoon</span>
+                        <span class="detail-val" id="detailTelefoon">—</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-key">Ploeg</span>
+                        <span class="detail-val" id="detailCategorie">—</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-key">Rol</span>
+                        <span class="detail-val" id="detailRol">—</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-key">Rechten</span>
+                        <span class="detail-val" id="detailRechten">—</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-section-title">Seizoensstatistieken</div>
+                <div class="detail-stats-grid">
+                    <div class="detail-stat-card">
+                        <div class="detail-stat-val" id="detailGoals">0</div>
+                        <div class="detail-stat-lbl">Goals</div>
+                    </div>
+                    <div class="detail-stat-card">
+                        <div class="detail-stat-val" id="detailAssists">0</div>
+                        <div class="detail-stat-lbl">Assists</div>
+                    </div>
+                    <div class="detail-stat-card">
+                        <div class="detail-stat-val" id="detailMatchen">0</div>
+                        <div class="detail-stat-lbl">Matchen</div>
+                    </div>
+                    <div class="detail-stat-card">
+                        <div class="detail-stat-val" id="detailMinuten">0</div>
+                        <div class="detail-stat-lbl">Minuten</div>
+                    </div>
+                    <div class="detail-stat-card detail-yellow">
+                        <div class="detail-stat-val" id="detailGeel">0</div>
+                        <div class="detail-stat-lbl">Geel</div>
+                    </div>
+                    <div class="detail-stat-card detail-red">
+                        <div class="detail-stat-val" id="detailRood">0</div>
+                        <div class="detail-stat-lbl">Rood</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-actions" style="margin-top:1.5rem;">
+                <button class="modal-btn cancel" id="memberDetailCloseBtn">Sluiten</button>
+                <button class="modal-btn confirm" id="memberDetailEditBtn">Bewerken</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Match Modal ── -->
+    <div class="modal" id="matchModal">
+        <div class="modal-content large">
+            <h3 id="matchModalTitle">Nieuwe Wedstrijd Aanmaken</h3>
+            <form id="matchForm" class="admin-form">
+                <div class="form-group">
+                    <label>Type Wedstrijd *</label>
+                    <div class="match-type-selector">
+                        <button type="button" class="match-type-btn active" data-type="upcoming" id="btnUpcoming">📆 Geplande Wedstrijd</button>
+                        <button type="button" class="match-type-btn" data-type="finished" id="btnFinished">✅ Afgelopen Wedstrijd</button>
+                    </div>
+                    <!-- Vlaggen: Forfait en/of Bekermatch -->
+                    <div class="match-flags-row">
+                        <span class="mfr-label">Forfait:</span>
+                        <label class="mfr-option" for="matchForfaitGeen">
+                            <input type="radio" name="matchForfait" id="matchForfaitGeen" value="geen" checked>
+                            <span>Geen</span>
+                        </label>
+                        <label class="mfr-option" for="matchForfaitThuis">
+                            <input type="radio" name="matchForfait" id="matchForfaitThuis" value="thuis">
+                            <span>Thuis <small>(0–5)</small></span>
+                        </label>
+                        <label class="mfr-option" for="matchForfaitUit">
+                            <input type="radio" name="matchForfait" id="matchForfaitUit" value="uit">
+                            <span>Uit <small>(5–0)</small></span>
+                        </label>
+                        <span class="mfr-sep"></span>
+                        <label class="mfr-option mfr-beker" for="matchBekermatch">
+                            <input type="checkbox" id="matchBekermatch">
+                            <span>🏆 Beker</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="matchDate">Datum *</label>
+                        <input type="date" id="matchDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="matchTime">Tijd *</label>
+                        <input type="time" id="matchTime" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="matchLocation">Locatie *</label>
+                    <input type="text" id="matchLocation" required placeholder="bv. Sportpark Rotselaar">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="matchHomeTeam">Thuisploeg *</label>
+                        <input type="text" id="matchHomeTeam" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="matchAwayTeam">Uitploeg *</label>
+                        <input type="text" id="matchAwayTeam" required>
+                    </div>
+                </div>
+                <div class="form-row" id="scoreFields" style="display:none;">
+                    <div class="form-group">
+                        <label for="matchHomeScore">Score Thuisploeg *</label>
+                        <input type="number" id="matchHomeScore" min="0" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="matchAwayScore">Score Uitploeg *</label>
+                        <input type="number" id="matchAwayScore" min="0" value="0">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="matchTeam">Team *</label>
+                    <select id="matchTeam">
+                        <option value="veteranen">Veteranen (2x35 min)</option>
+                        <option value="zaterdag">Zaterdag (2x45 min)</option>
+                        <option value="zondag">Zondag (2x45 min)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="matchDescription">Beschrijving (optioneel)</label>
+                    <textarea id="matchDescription" rows="3" placeholder="Extra informatie over de wedstrijd"></textarea>
+                </div>
+                <!-- ══ Retroactieve tijdslijn (enkel zichtbaar bij afgelopen wedstrijd) ══ -->
+                <div id="retroTimelineSection" style="display:none;">
+                    <div class="retro-section-header">
+                        <div class="retro-section-title">&#128336; Tijdslijn Invoegen</div>
+                        <span class="retro-section-hint">Stap 1: laad aanwezigen &rarr; Stap 2: stel opstelling in &rarr; Stap 3: voeg events toe.</span>
+                    </div>
+
+                    <!-- STAP 1: Aanwezigen -->
+                    <div class="retro-step-card">
+                        <div class="retro-step-label">
+                            <span class="retro-step-num">1</span> Aanwezigen
+                            <span class="retro-step-hint-inline">— iedereen die aanwezig stond op de availability lijst</span>
+                        </div>
+                        <div id="retroAanwezigenGrid" class="retro-players-grid">
+                            <span class="retro-grid-placeholder">Aanwezigen worden geladen&hellip;</span>
+                        </div>
+                    </div>
+
+                    <!-- STAP 2: Opstelling -->
+                    <div class="retro-step-card">
+                        <div class="retro-step-label">
+                            <span class="retro-step-num">2</span> Opstelling
+                            <span class="retro-step-hint-inline">— selecteer basiself en bank</span>
+                        </div>
+                        <div class="retro-lineup-wrap">
+                            <div class="retro-lineup-col">
+                                <div class="retro-lineup-colhead">
+                                    Basiself
+                                    <span class="retro-count" id="retroBasisCount">0/11</span>
+                                </div>
+                                <div id="retroBasisList" class="retro-slot-list"></div>
+                            </div>
+                            <div class="retro-lineup-col">
+                                <div class="retro-lineup-colhead">
+                                    Bank
+                                    <span class="retro-count" id="retroBankCount">0/5</span>
+                                </div>
+                                <div id="retroBankList" class="retro-slot-list"></div>
+                            </div>
+                        </div>
+                        <div class="retro-pool-label">Aanwezigen (niet in opstelling)</div>
+                        <div id="retroPoolList" class="retro-pool-list"></div>
+                    </div>
+
+                    <!-- STAP 3: Events -->
+                    <div class="retro-step-card">
+                        <div class="retro-step-label">
+                            <span class="retro-step-num">3</span> Events toevoegen
+                        </div>
+                        <div class="retro-add-row">
+                            <div class="retro-field retro-field-min">
+                                <label>Min.</label>
+                                <input type="number" id="retroMinute" min="1" max="120" placeholder="45" class="retro-input">
+                            </div>
+                            <div class="retro-field retro-field-type">
+                                <label>Type</label>
+                                <select id="retroEventType" class="retro-select">
+                                    <option value="goal">&#9917; Goal</option>
+                                    <option value="penalty">&#127933; Penalty (gescoord)</option>
+                                    <option value="own-goal">Eigen doelpunt</option>
+                                    <option value="yellow">&#128993; Gele kaart</option>
+                                    <option value="yellow2red">2e geel / Rood</option>
+                                    <option value="red">&#128308; Rode kaart</option>
+                                    <option value="substitution">&#128260; Wissel</option>
+                                    <option value="penalty-missed">Penalty gemist</option>
+                                </select>
+                            </div>
+                            <div class="retro-field retro-field-team">
+                                <label>Ploeg</label>
+                                <select id="retroEventPloeg" class="retro-select">
+                                    <option value="home">Thuis (VVS)</option>
+                                    <option value="away">Uit</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="retro-add-row" id="retroPlayerRow">
+                            <div class="retro-field" id="retroPlayerField">
+                                <label id="retroPlayerLabel">Speler</label>
+                                <select id="retroPlayer" class="retro-select">
+                                    <option value="">&#8212; Selecteer speler &#8212;</option>
+                                </select>
+                                <input type="text" id="retroPlayerManual" class="retro-input"
+                                       placeholder="Typ naam (tegenstander)&hellip;" style="display:none;">
+                            </div>
+                            <div class="retro-field" id="retroAssistField" style="display:none;">
+                                <label>Assist <span class="retro-optional">(optioneel)</span></label>
+                                <select id="retroAssist" class="retro-select">
+                                    <option value="">&#8212; Geen assist &#8212;</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="retro-add-row" id="retroSubFields" style="display:none;">
+                            <div class="retro-field">
+                                <label>Speler eraf</label>
+                                <select id="retroSubOut" class="retro-select"><option value="">&#8212; Selecteer &#8212;</option></select>
+                            </div>
+                            <div class="retro-field">
+                                <label>Speler erin</label>
+                                <select id="retroSubIn" class="retro-select"><option value="">&#8212; Selecteer &#8212;</option></select>
+                            </div>
+                        </div>
+                        <button type="button" class="retro-add-btn" id="retroAddEventBtn">+ Voeg event toe</button>
+                    </div>
+
+                    <!-- Preview -->
+                    <div class="retro-preview-section">
+                        <div class="retro-preview-title">Tijdslijn preview</div>
+                        <div id="retroTimelinePreview" class="retro-timeline-preview">
+                            <div class="retro-preview-empty">Nog geen events ingevoerd.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group" id="designatedPersonsGroup">
+                    <label>Toegang voor *</label>
+                    <small>Selecteer personen die de wedstrijd kunnen starten en beheren</small>
+                    <div class="designated-persons-container" id="designatedPersonsContainer"></div>
+                </div>
+                <input type="hidden" id="matchId">
+                <input type="hidden" id="matchType" value="upcoming">
+                <div class="modal-actions">
+                    <button type="button" class="modal-btn cancel" id="matchModalCancel">Annuleren</button>
+                    <button type="submit" class="modal-btn confirm">Opslaan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ── Evenement Modal ── -->
+    <div class="modal" id="evenementModal">
+        <div class="modal-content large">
+            <h3 id="evenementModalTitle">Nieuw Evenement Aanmaken</h3>
+            <form id="evenementForm" class="admin-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="evenementDatum">Datum *</label>
+                        <input type="date" id="evenementDatum" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="evenementTijd">Tijd *</label>
+                        <input type="time" id="evenementTijd" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="evenementTitel">Titel *</label>
+                    <input type="text" id="evenementTitel" required>
+                </div>
+                <div class="form-group">
+                    <label for="evenementLocatie">Locatie *</label>
+                    <input type="text" id="evenementLocatie" required>
+                </div>
+                <div class="form-group">
+                    <label for="evenementBeschrijving">Beschrijving *</label>
+                    <textarea id="evenementBeschrijving" rows="4" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="evenementAfbeelding">Afbeelding Naam</label>
+                    <input type="text" id="evenementAfbeelding" placeholder="bv. event1.jpg">
+                    <small>Plaats de afbeelding in de /assets map</small>
+                </div>
+                <div class="form-group">
+                    <label for="evenementLink">Link (optioneel)</label>
+                    <input type="url" id="evenementLink" placeholder="https://...">
+                </div>
+                <div class="toggle-setting-row">
+                    <div class="toggle-setting-label">
+                        <strong>Inschrijvingen inschakelen</strong>
+                        <small>Ingelogde leden kunnen zich inschrijven voor dit evenement</small>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="evenementInschrijvingen">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div id="inschrijfOpties" style="display:none;">
+                    <div class="form-group" id="maxDeelnemersGroup">
+                        <label for="evenementMaxDeelnemers">Maximum leden (optioneel)</label>
+                        <input type="number" id="evenementMaxDeelnemers" min="1" placeholder="Leeglaten = onbeperkt">
+                    </div>
+                    <div class="form-group">
+                        <label for="evenementInschrijfBeschrijving">Beschrijving voor inschrijvers</label>
+                        <textarea id="evenementInschrijfBeschrijving" rows="3" placeholder="bv. Gratis frietjes voor leden. Familie welkom voor &euro;20 p.p., kinderen t.e.m. 12 jaar gratis."></textarea>
+                        <small>Wordt getoond in het inschrijfvenster van de leden</small>
+                    </div>
+                    <div class="form-section-label" style="margin-bottom:0.5rem;">Extra velden inschrijfformulier <small style="font-weight:400;color:#888;">(optioneel)</small></div>
+                    <div id="extraVeldenList"></div>
+                    <button type="button" class="action-btn" id="addExtraVeldBtn" style="margin-top:0.5rem;width:100%;">+ Veld toevoegen</button>
+
+                </div>
+                <input type="hidden" id="evenementId">
+                <div class="modal-actions">
+                    <button type="button" class="modal-btn cancel" id="evenementModalCancel">Annuleren</button>
+                    <button type="submit" class="modal-btn confirm">Opslaan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ── Confirm Delete Modal ── -->
+    <div class="modal" id="confirmModal">
+        <div class="modal-content">
+            <h3>Bevestigen</h3>
+            <p id="confirmMessage">Weet je zeker dat je dit wilt verwijderen?</p>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" id="confirmCancel">Annuleren</button>
+                <button class="modal-btn confirm danger" id="confirmDelete">Verwijderen</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Account Requests Modal ── -->
+    <div class="modal" id="requestsModal">
+        <div class="modal-content large">
+            <h3>Accountaanvragen Behandelen</h3>
+            <div id="requestsList" class="requests-list">
+                <div class="loading"><div class="loader"></div></div>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" id="requestsModalClose">Sluiten</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inschrijvingen Modal -->
+    <div class="modal" id="inschrijvingenModal">
+        <div class="modal-content large">
+            <h3 id="inschrijvingenModalTitle">Inschrijvingen</h3>
+            <div id="inschrijvingenSamenvatting" style="margin-bottom:1rem;"></div>
+            <div id="inschrijvingenList" style="margin:1rem 0;max-height:400px;overflow-y:auto;"></div>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" id="inschrijvingenModalClose">Sluiten</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Tijdelijk Account Modal ── -->
+    <div class="modal" id="tempAccountModal">
+        <div class="modal-content large">
+            <h3 id="tempAccountModalTitle">Tijdelijk Account Aanmaken</h3>
+            <form id="tempAccountForm" class="admin-form">
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="tempName">Naam *</label>
+                        <input type="text" id="tempName" placeholder="bv. Kassa Vrijwilliger" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tempEmail">E-mail *</label>
+                        <input type="email" id="tempEmail" placeholder="tijdelijk@vvsrotselaar.be" required>
+                    </div>
+                </div>
+
+                <!-- Nieuw account: wachtwoord instellen -->
+                <div class="form-group" id="tempPasswordGroup">
+                    <label for="tempPassword">Wachtwoord *</label>
+                    <input type="text" id="tempPassword" placeholder="Minimum 6 tekens" minlength="6"
+                           autocomplete="off" spellcheck="false">
+                    <small>Minimaal 6 karakters. Het wachtwoord wordt zichtbaar opgeslagen zodat je het later kan opzoeken.</small>
+                </div>
+
+                <!-- Bestaand account: huidig wachtwoord tonen (readonly) -->
+                <div class="form-group" id="tempPasswordDisplayGroup" style="display:none;">
+                    <label>Huidig wachtwoord</label>
+                    <div class="temp-pw-display-row">
+                        <input type="text" id="tempPasswordDisplay" class="temp-pw-display" readonly
+                               autocomplete="off" spellcheck="false" placeholder="—">
+                        <button type="button" class="temp-pw-copy-btn" id="tempPasswordCopyBtn"
+                                title="Kopieer wachtwoord">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                 width="15" height="15">
+                                <rect x="9" y="9" width="13" height="13" rx="2"/>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <small style="color:var(--text-gray);">Wachtwoord kan niet gewijzigd worden vanuit de admin. Maak indien nodig een nieuw account aan.</small>
+                </div>
+
+                <div class="form-section-label">Geldigheidsperiode</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="tempValidFrom">Geldig vanaf *</label>
+                        <input type="datetime-local" id="tempValidFrom" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tempValidUntil">Geldig tot *</label>
+                        <input type="datetime-local" id="tempValidUntil" required>
+                    </div>
+                </div>
+
+                <div class="form-section-label">Toegangsrechten</div>
+                <div class="temp-permissions-grid">
+                    <label class="temp-perm-label">
+                        <input type="checkbox" name="tempPerm" value="werken">
+                        <span class="temp-perm-icon">🛠️</span>
+                        <span>Werken</span>
+                        <span class="temp-perm-sub">Werklijst + Rock Werchter</span>
+                    </label>
+                    <label class="temp-perm-label">
+                        <input type="checkbox" name="tempPerm" value="score_invullen">
+                        <span class="temp-perm-icon">⚽</span>
+                        <span>Score invullen</span>
+                        <span class="temp-perm-sub">Wedstrijd starten + events</span>
+                    </label>
+                </div>
+
+                <div class="form-group" style="margin-top:1rem;">
+                    <label for="tempNote">Opmerking (optioneel)</label>
+                    <input type="text" id="tempNote" placeholder="bv. Kassa Rock Werchter 2026">
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="modal-btn cancel" id="tempAccountModalCancel">Annuleren</button>
+                    <button type="submit" class="modal-btn confirm">Account Aanmaken</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="scripts/firebase-config.js"></script>
+    <script type="module" src="scripts/admin.js"></script>
+    <script type="module" src="scripts/header.js"></script>
+    <script type="module" src="scripts/theme.js"></script>
+    <script type="module" src="scripts/notifications.js"></script>
+    <script src="/scripts/pwa.js" defer></script>
+</body>
+</html>

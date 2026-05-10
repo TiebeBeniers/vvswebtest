@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#4B6CB7">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="VVS Rotselaar">
+    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+    <title>V.V.S Rotselaar - Werkplanning</title>
+    <link rel="icon" type="image/png" href="assets/logo.png">
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/werklijst-style.css">
+    <script>if(localStorage.getItem('vvs_theme')==='dark')document.documentElement.classList.add('dark');</script>
+</head>
+<body>
+
+    <!-- ── Header ── -->
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo-section">
+                <img src="assets/logo.png" alt="VVS Rotselaar Logo" class="team-logo">
+            </div>
+            <div class="title-section">
+                <h1><a href="index.html">V.V.S ROTSELAAR</a></h1>
+            </div>
+            <nav class="nav-section">
+                <button class="hamburger" id="hamburger" aria-label="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                                <ul class="nav-menu" id="navMenu">
+                    <li><a href="index.html">HOME</a></li>
+                    <li class="nav-dropdown">
+                        <button class="nav-dropdown-btn" id="teamsDropdownBtn" aria-expanded="false" aria-haspopup="true">
+                            TEAMS <svg class="dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="6 9 12 15 18 9"/></svg>
+                        </button>
+                        <ul class="nav-dropdown-menu" id="teamsDropdownMenu">
+                            <li><a href="veteranen.html">Veteranen</a></li>
+                            <li><a href="zaterdag.html">Zaterdag</a></li>
+                            <li><a href="zondag.html">Zondag</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-dropdown">
+                        <button class="nav-dropdown-btn" id="evenementenDropdownBtn"
+                                aria-expanded="false" aria-haspopup="true">
+                            EVENEMENTEN <svg class="dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="6 9 12 15 18 9"/></svg>
+                        </button>
+                        <ul class="nav-dropdown-menu" id="evenementenDropdownMenu">
+                            <li><a href="evenementen.html">Evenementen</a></li>
+                            <li><a href="kalender.html">Kalender</a></li>
+                            <li style="display:none;"><a href="werklijst.html">Werklijst</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="sponsors.html">SPONSORS</a></li>
+                    <li><a href="galerij.html">GALERIJ</a></li>
+                    <li><a href="contact.html">CONTACT</a></li>
+                    <li><a href="login.html" id="loginLink">LOGIN</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ── Hero ── -->
+    <div class="werklijst-hero">
+        <span class="event-tag" id="heroEventTag">📋 Werkplanning</span>
+        <h2>Werkplanning</h2>
+        <p>Duid hieronder jouw shiften aan.</p>
+    </div>
+
+    <main class="werklijst-page">
+        <div class="werklijst-container">
+
+            <!-- Auth Guard -->
+            <div class="auth-guard" id="authGuard" style="display:none;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="40" height="40">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+                <h3>Aanmelden vereist</h3>
+                <p>Je moet ingelogd zijn om de werkplanning te bekijken en je in te schrijven.</p>
+                <a href="login.html">Aanmelden →</a>
+            </div>
+
+            <!-- Loading -->
+            <div class="werklijst-loading" id="loadingSpinner">
+                <div class="werklijst-spinner"></div>
+                <span>Laden…</span>
+            </div>
+
+            <!-- Main Content -->
+            <div id="mainContent" style="display:none;">
+
+                <!-- Geen actieve werklijst -->
+                <div class="auth-guard" id="noActiveWerklijst" style="display:none;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="40" height="40">
+                        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                    <h3>Geen actieve werkplanning</h3>
+                    <p>Er is momenteel geen werkplanning actief. Neem contact op met de beheerder.</p>
+                </div>
+
+                <!-- Geen shiften in actieve werklijst -->
+                <div class="werklijst-empty-notice" id="emptyShiftsNotice" style="display:none;">
+                    <p>Er zijn nog geen shiften aangemaakt voor deze werkplanning.</p>
+                </div>
+
+                <!-- Legende -->
+                <div class="wl-legend">
+                    <span class="wl-legend-title">Legende:</span>
+                    <span class="wl-legend-item"><span class="wl-legend-dot available"></span> Beschikbaar</span>
+                    <span class="wl-legend-item"><span class="wl-legend-dot full"></span> Vol</span>
+                    <span class="wl-legend-item"><span class="wl-legend-dot signed"></span> Jij bent ingeschreven</span>
+                    <span class="wl-legend-item"><span class="wl-legend-dot responsible"></span> Verantwoordelijke</span>
+                </div>
+
+                <!-- Dynamisch gegenereerde secties per categorie -->
+                <div id="dynamicSections"></div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- ── Footer ── -->
+    <footer class="main-footer">
+        <p>&copy; Tiebe Beniers - Alle rechten voorbehouden. &nbsp;&middot;&nbsp;
+        <a href="privacy.html" style="color:inherit;opacity:0.7;text-decoration:underline;">Privacyverklaring</a></p>
+    </footer>
+
+    <!-- ── Modal: verantwoordelijke kiezen ── -->
+    <div class="wl-modal-backdrop" id="modalBackdrop">
+        <div class="wl-modal">
+            <div class="wl-modal-header">
+                <h4>Shift bevestigen</h4>
+                <p>Er is nog geen verantwoordelijke voor deze shift.</p>
+            </div>
+            <div class="wl-modal-body">
+                <button class="wl-modal-choice-btn" id="btnNoResponsible">
+                    <span class="choice-icon">👤</span>
+                    <span>
+                        <span class="choice-label">Gewoon aanmelden</span>
+                    </span>
+                </button>
+                <button class="wl-modal-choice-btn" id="btnYesResponsible">
+                    <span class="choice-icon">★</span>
+                    <span>
+                        <span class="choice-label">Ja, ik wil verantwoordelijke zijn.</span>
+                        <span class="choice-sub">Jij bent het aanspreekpunt.</span>
+                    </span>
+                </button>
+            </div>
+            <div class="wl-modal-footer">
+                <button class="wl-modal-cancel" id="btnModalCancel">Annuleren</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Toast ── -->
+    <div class="wl-toast" id="wlToast"></div>
+
+    <script type="module" src="scripts/header.js"></script>
+    <script type="module" src="scripts/werklijst.js"></script>
+    <script type="module" src="scripts/theme.js"></script>
+    <script type="module" src="scripts/notifications.js"></script>
+    <script src="/scripts/pwa.js" defer></script>
+</body>
+</html>
