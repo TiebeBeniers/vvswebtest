@@ -6,8 +6,8 @@
   "scope": "/vvswebtest/",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "background_color": "#4B6CB7",
-  "theme_color": "#4B6CB7",
+  "background_color": "#0047ab",
+  "theme_color": "#0047ab",
   "lang": "nl",
   "categories": ["sports"],
   "icons": [
