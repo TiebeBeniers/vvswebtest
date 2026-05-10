@@ -4,13 +4,16 @@
 
 .evenementen-page {
     min-height: calc(100vh - 200px);
-    padding: 40px 20px;
+    padding: 40px 16px;
     background: var(--off-white);
+    box-sizing: border-box;
 }
 
 .evenementen-container {
     max-width: 1200px;
     margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .evenementen-container > h1 {
@@ -35,7 +38,7 @@
 /* Meerdere uitgelichte evenementen — responsive grid */
 .uitgelicht-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(340px, 100%), 1fr));
     gap: 24px;
     margin-bottom: 40px;
 }
@@ -146,7 +149,7 @@
 /* ── Upcoming Evenementen Grid ── */
 #upcomingEvenementen {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
     gap: 20px;
     margin-top: 40px;
 }
@@ -574,3 +577,25 @@ html.dark .inschrijf-popup-samenvatting.neutraal { background: var(--off-white);
 html.dark .inschrijf-popup-kosten   { background: #1a3a2a; color: #4caf74; }
 html.dark .aantal-minus, html.dark .aantal-plus { background: #2d3148; color: var(--primary-blue); }
 html.dark .inschrijf-popup-input    { background: var(--white); color: var(--text-dark); border-color: var(--border-color); }
+/* ── Extra mobiele fixes voor smalle schermen ── */
+@media (max-width: 400px) {
+    .evenementen-page {
+        padding: 24px 12px;
+    }
+    .featured-evenement-content {
+        padding: 20px 16px;
+    }
+    .featured-evenement-content h2 {
+        font-size: 1.3rem;
+    }
+    .evenement-card-content {
+        padding: 14px 12px;
+    }
+    .evenement-card-content h3 {
+        font-size: 1.05rem;
+    }
+    .uitgelicht-grid,
+    #upcomingEvenementen {
+        gap: 14px;
+    }
+}
