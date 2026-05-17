@@ -16,13 +16,18 @@
 .admin-container {
     background: var(--white);
     padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px var(--shadow);
+    border-radius: var(--radius-lg, 16px);
+    box-shadow: 0 4px 16px var(--shadow);
+    border-top: 3px solid var(--primary-blue);
 }
 
 .admin-container h2 {
+    font-family: 'Barlow Condensed', 'Segoe UI', sans-serif;
     color: var(--primary-blue);
-    font-size: 2rem;
+    font-size: 2.25rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
     margin-bottom: 2rem;
 }
 
@@ -36,13 +41,16 @@
 
 .tab-btn {
     position: relative;
-    padding: 1rem 2rem;
+    padding: 0.85rem 1.5rem;
     background: transparent;
     color: var(--text-gray);
+    font-family: 'Barlow Condensed', 'Segoe UI', sans-serif;
     font-weight: 600;
     font-size: 1rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
     border-bottom: 3px solid transparent;
-    transition: all 0.3s ease;
+    transition: all 0.25s ease;
 }
 
 .tab-btn:hover { color: var(--primary-blue); }
@@ -97,8 +105,8 @@
     background: var(--primary-blue);
     color: var(--white);
     font-weight: 600;
-    border-radius: 8px;
-    transition: all 0.3s ease;
+    border-radius: var(--radius, 10px);
+    transition: all 0.25s ease;
     white-space: nowrap;
     border: none;
     cursor: pointer;
@@ -165,7 +173,7 @@
 .evenement-card {
     padding: 1.5rem;
     background: var(--off-white);
-    border-radius: 8px;
+    border-radius: var(--radius-lg, 16px);
     margin-bottom: 1rem;
     display: flex;
     justify-content: space-between;
@@ -391,9 +399,10 @@
 /* ── Ranking manager ── */
 .ranking-manager {
     background: var(--white);
-    border-radius: 12px;
+    border-radius: var(--radius-lg, 16px);
     padding: 2rem;
-    box-shadow: 0 2px 8px var(--shadow);
+    box-shadow: 0 4px 16px var(--shadow);
+    border-top: 3px solid var(--primary-blue);
 }
 
 .ranking-instructions {
@@ -570,7 +579,7 @@
 
 .message-card {
     background: var(--white);
-    border-radius: 8px;
+    border-radius: var(--radius-lg, 16px);
     padding: 1.5rem;
     box-shadow: 0 2px 4px var(--shadow);
     transition: all 0.2s ease;

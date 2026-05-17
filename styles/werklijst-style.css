@@ -13,14 +13,17 @@
 
 /* ── Hero ── */
 .werklijst-hero {
-    background: linear-gradient(135deg, var(--dark-blue) 0%, var(--primary-blue) 100%);
+    background: linear-gradient(135deg, var(--header-bg) 0%, var(--dark-blue) 45%, var(--primary-blue) 100%);
     color: var(--white);
     padding: 2.5rem 1.5rem 2rem;
     text-align: center;
 }
 .werklijst-hero h2 {
-    font-size: 1.9rem;
-    font-weight: 700;
+    font-family: 'Barlow Condensed', 'Segoe UI', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
     margin-bottom: 0.4rem;
 }
 .werklijst-hero p {
@@ -60,8 +63,8 @@
     padding: 4rem 2rem;
     text-align: center;
     background: var(--white);
-    border-radius: 12px;
-    box-shadow: 0 2px 8px var(--shadow);
+    border-radius: var(--radius-lg, 16px);
+    box-shadow: 0 4px 16px var(--shadow);
     margin: 2rem auto;
     max-width: 400px;
 }
@@ -73,8 +76,8 @@
     background: var(--primary-blue);
     color: var(--white);
     padding: 0.65rem 1.75rem;
-    border-radius: 8px;
-    font-weight: 600;
+    border-radius: var(--radius, 10px);
+    font-weight: 700;
     font-size: 0.9rem;
     text-decoration: none;
     transition: background 0.2s;
@@ -143,10 +146,11 @@
     align-items: center;
     padding: 0.85rem 1.2rem;
     background: var(--white);
-    border-radius: 10px;
-    box-shadow: 0 2px 8px var(--shadow);
+    border-radius: var(--radius-lg, 16px);
+    box-shadow: 0 4px 14px var(--shadow);
+    border-top: 3px solid var(--primary-blue);
     font-size: 0.83rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem;
 }
 .wl-legend-title {
     font-weight: 700;
@@ -187,21 +191,24 @@
 /* ── Day column card ── */
 .wl-day-column {
     background: var(--white);
-    border-radius: 12px;
-    box-shadow: 0 2px 8px var(--shadow);
+    border-radius: var(--radius-lg, 16px);
+    box-shadow: 0 4px 14px var(--shadow);
     overflow: hidden;
     display: flex;
     flex-direction: column;
 }
 .wl-day-header {
-    background: linear-gradient(135deg, var(--primary-blue), var(--dark-blue));
+    background: linear-gradient(135deg, var(--header-bg) 0%, var(--primary-blue) 100%);
     color: var(--white);
     padding: 0.8rem 1rem;
     text-align: center;
 }
 .wl-day-header .day-name {
+    font-family: 'Barlow Condensed', sans-serif;
     font-weight: 700;
-    font-size: 1rem;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
 }
 .wl-day-header .day-date {
     font-size: 0.78rem;
@@ -220,7 +227,7 @@
 .wl-shift-card {
     border: 1.5px solid var(--border-color);
     background: var(--white);
-    border-radius: 10px;
+    border-radius: var(--radius, 10px);
     padding: 0.8rem 0.9rem;
     background: var(--off-white);
     cursor: pointer;
@@ -360,7 +367,8 @@ html.dark .wl-shift-card.is-signed  { background: #1a2a4a; border-color: var(--p
 
 .wl-modal {
     background: var(--white);
-    border-radius: 14px;
+    border-radius: var(--radius-lg, 16px);
+    border-top: 3px solid var(--primary-blue);
     width: 100%;
     max-width: 420px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.2);
@@ -375,7 +383,7 @@ html.dark .wl-shift-card.is-signed  { background: #1a2a4a; border-color: var(--p
     padding: 1.1rem 1.5rem;
     border-bottom: 1px solid var(--border-color);
     background: var(--off-white);
-    border-radius: 14px 14px 0 0;
+    border-radius: var(--radius-lg, 16px) var(--radius-lg, 16px) 0 0;
 }
 .wl-modal-header h4 {
     font-size: 1.1rem;
@@ -424,7 +432,7 @@ html.dark .wl-shift-card.is-signed  { background: #1a2a4a; border-color: var(--p
     padding: 0.9rem 1.5rem;
     border-top: 1px solid var(--border-color);
     background: var(--off-white);
-    border-radius: 0 0 14px 14px;
+    border-radius: 0 0 var(--radius-lg, 16px) var(--radius-lg, 16px);
 }
 .wl-modal-cancel {
     flex: 1;
@@ -449,7 +457,7 @@ html.dark .wl-shift-card.is-signed  { background: #1a2a4a; border-color: var(--p
     background: var(--text-dark);
     color: var(--white);
     padding: 0.75rem 1.3rem;
-    border-radius: 9px;
+    border-radius: var(--radius, 10px);
     font-size: 0.88rem;
     font-weight: 600;
     z-index: 9999;
@@ -544,8 +552,8 @@ html.dark .wl-shift-card.is-signed  { background: #1a2a4a; border-color: var(--p
     color: var(--text-gray);
     font-style: italic;
     background: var(--white);
-    border-radius: 10px;
-    box-shadow: 0 2px 8px var(--shadow);
+    border-radius: var(--radius-lg, 16px);
+    box-shadow: 0 4px 14px var(--shadow);
     margin: 1rem 0;
 }
 
@@ -566,7 +574,8 @@ html.dark .wl-shift-card.is-signed  { background: #1a2a4a; border-color: var(--p
 
 /* ── Shift label (zichtbaar als showLabel aan staat) ── */
 .wl-shift-label {
-    font-weight: 750;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
     color: var(--text-gray);
     text-transform: uppercase;
     letter-spacing: 0.4px;
@@ -590,12 +599,13 @@ html.dark .wl-shift-card.is-signed  { background: #1a2a4a; border-color: var(--p
 
 .rw-geen-toegang-card {
     background: var(--white, #fff);
-    border-radius: 14px;
+    border-radius: var(--radius-lg, 16px);
     padding: 2.5rem 2rem;
     max-width: 380px;
     width: 100%;
     text-align: center;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    border-top: 3px solid var(--primary-blue);
 }
 
 .rw-geen-toegang-icon {
@@ -623,7 +633,7 @@ html.dark .wl-shift-card.is-signed  { background: #1a2a4a; border-color: var(--p
     background: var(--primary-blue, #0047AB);
     color: #fff;
     padding: 0.65rem 1.75rem;
-    border-radius: 8px;
+    border-radius: var(--radius, 10px);
     font-weight: 700;
     font-size: 0.9rem;
     text-decoration: none;
