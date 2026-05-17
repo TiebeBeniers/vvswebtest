@@ -2518,3 +2518,336 @@ function openTrainingModal(training = null) {
         }
     });
 }
+
+// ===============================================
+// ADMIN TOUR – pagina 2 (vervolg van admin.html)
+// Start automatisch als ?tour=1 in de URL staat.
+// ===============================================
+
+const TOUR_KEY = 'vvs_admin_tour_v2';
+
+// ── Helpers werklijst ──────────────────────────────────────────────────────
+function _tourOpenFirstShifts() {
+    // Als we al in de editor zitten, niets doen
+    if (document.getElementById('shiftsEditorView')?.style.display !== 'none') return;
+    const firstBtn = document.querySelector('#werklijstenList .shifts-btn');
+    if (firstBtn) firstBtn.click();
+}
+function _tourCloseShiftsEditor() {
+    const back = document.getElementById('backToWerklijstenBtn');
+    if (back && document.getElementById('shiftsEditorView')?.style.display !== 'none') back.click();
+}
+
+const TOUR_STEPS_P2 = [
+    // ── Intro pagina 2 ───────────────────────────────────────────────────
+    {
+        icon: '', title: 'Pagina 2 – overzicht',
+        desc: 'Welkom op de tweede adminpagina! Hier beheer je werklijsten, trainingen, sponsors, de galerij en push-meldingen. We overlopen ze één voor één.',
+        tab: null, target: null,
+    },
+
+    // ── WERKLIJST ─────────────────────────────────────────────────────────
+    {
+        icon: '', title: 'Werklijst Beheren',
+        desc: 'Maak werklijsten aan voor evenementen. Slechts één werklijst is tegelijk <strong>actief</strong> — dit is de lijst die leden zien op de werklijstpagina.',
+        tab: 'werklijst', target: '.tab-btn[data-tab="werklijst"]',
+    },
+    {
+        icon: '', title: 'Nieuwe werklijst',
+        desc: 'Maak een nieuwe werklijst aan voor een specifiek evenement. Daarna kan je shifts (taken + tijdslot) toevoegen en leden toewijzen.',
+        tab: 'werklijst', target: '#addWerklijstBtn',
+    },
+    {
+        icon: '', title: 'Werklijstkaart',
+        desc: 'Elke werklijst heeft een reeks knoppen:<br><br>'
+            + '<strong>✔ Activeren</strong> — zet deze lijst als actieve werklijst voor leden.<br>'
+            + '<strong>🔒 Vergrendelen</strong> — leden kunnen hun inschrijvingen niet meer aanpassen. Gebruik dit vlak voor het evenement.<br>'
+            + '<strong>📥 Excel</strong> — download de volledige werklijst met alle inschrijvingen als Excel-bestand.<br>'
+            + '<strong>✏️ Naam</strong> — hernoem de werklijst.<br>'
+            + '<strong>Shiften Beheren</strong> — open de shift-editor voor deze werklijst.',
+        tab: 'werklijst', target: '#werklijstenList .wl-list-card',
+    },
+    {
+        icon: '', title: 'Shift-editor',
+        desc: 'In de shift-editor zie je alle shifts (taken) van de werklijst, gegroepeerd per dag. Elke shiftkaart toont het label, tijdstip, het aantal ingeschreven leden en badges voor opties (verantwoordelijke vereist, label zichtbaar).<br><br>'
+            + 'Via het <strong>bewerken</strong>-icoon pas je een shift aan. Met <strong>"+ Naam toevoegen"</strong> voeg je manueel een persoon toe.',
+        tab: 'werklijst', target: '#shiftsEditorGrid .shift-admin-card',
+        delay: 900,
+        onEnter() { _tourOpenFirstShifts(); },
+        onLeave() { _tourCloseShiftsEditor(); },
+    },
+
+    // ── TRAINING ──────────────────────────────────────────────────────────
+    {
+        icon: '', title: 'Training',
+        desc: 'Voeg trainingen toe met datum, tijdstip en locatie. Leden kunnen hun aanwezigheid bevestigen en de trainer ziet wie aanwezig is.',
+        tab: 'training', target: '.tab-btn[data-tab="training"]',
+    },
+
+    // ── SPONSORS ──────────────────────────────────────────────────────────
+    {
+        icon: '', title: 'Sponsors',
+        desc: 'Beheer de sponsorlogo\'s die op de website verschijnen. Voeg een naam, logo en (optionele) link toe. De volgorde pas je aan via de pijlknoppen.',
+        tab: 'sponsors', target: '.tab-btn[data-tab="sponsors"]',
+    },
+
+    // ── GALERIJ ───────────────────────────────────────────────────────────
+    {
+        icon: '', title: 'Galerij',
+        desc: 'Upload foto\'s voor de galerij op de website. Voeg een titel en beschrijving toe. Foto\'s worden gegroepeerd per album.',
+        tab: 'galerij', target: '.tab-btn[data-tab="galerij"]',
+    },
+
+    // ── MELDINGEN ─────────────────────────────────────────────────────────
+    {
+        icon: '', title: 'Meldingen',
+        desc: 'Stuur push-meldingen naar leden — voor iedereen of per ploeg. Anders dan de aankondigingsbanner zijn dit persoonlijke notificaties in het meldingencentrum van de leden.',
+        tab: 'meldingen', target: '.tab-btn[data-tab="meldingen"]',
+    },
+
+    // ── ROCK WERCHTER ─────────────────────────────────────────────────────
+    {
+        icon: '', title: 'Rock Werchter',
+        desc: 'Hier beheer je de <strong>drankkaart</strong> die op de Rock Werchter pagina te zien is. Wijzigingen zijn meteen live. Je kan ook alle bestellingen bekijken en filteren per betaalmethode.',
+        tab: 'rockwerchter', target: '.tab-btn[data-tab="rockwerchter"]',
+    },
+    {
+        icon: '', title: 'Standaard Items',
+        desc: 'Klik op <strong>"Standaard Items"</strong> om in één klik alle standaard dranken (Primus, Cola, Water, …) met hun vaste prijzen te laden. Handig als startpunt — je kan daarna elk item nog aanpassen of verwijderen.',
+        tab: 'rockwerchter', target: '#seedRwItemsBtn',
+    },
+    {
+        icon: '', title: 'Item Toevoegen',
+        desc: 'Voeg een nieuw item toe aan de drankkaart: naam, prijs, afbeelding en volgorde. Hieronder zoomen we in op de <strong>vereiste items</strong> — de krachtigste optie.',
+        tab: 'rockwerchter', target: '#addRwItemBtn',
+    },
+    {
+        icon: '', title: 'Vereiste items',
+        desc: '<strong>Vereiste items</strong> bepalen dat dit artikel pas selecteerbaar is als minstens één van de gelinkte items al in de bestelling zit.<br><br>'
+            + '💡 <em>Voorbeeld:</em> je maakt een item <strong>"Beker"</strong> aan. Als vereist item kies je "Pint" én "Cola". Dan kan een barman pas een Beker toevoegen als er al een Pint óf Cola in de bestelling zit — een Beker alleen bestellen is niet mogelijk.',
+        tab: 'rockwerchter', target: '#rwVereistItemList',
+        delay: 450,
+        onEnter() {
+            // Open de "Item Toevoegen" modal
+            const btn = document.getElementById('addRwItemBtn');
+            if (btn) btn.click();
+        },
+        onLeave() {
+            const modal = document.getElementById('rwItemModal');
+            if (modal) modal.classList.remove('active');
+        },
+    },
+
+    // ── DATA ──────────────────────────────────────────────────────────────
+    {
+        icon: '', title: 'Data beheer',
+        desc: '<strong>Let op:</strong> dit tabblad bevat knoppen om data te resetten of permanent te verwijderen. Gebruik deze enkel als je zeker bent — dit kan niet ongedaan worden gemaakt.',
+        tab: 'data', target: '.tab-btn[data-tab="data"]',
+    },
+
+    // ── REDIRECT NAAR PAGINA 3 ────────────────────────────────────────────
+    {
+        icon: '➡️', title: 'Verder naar pagina 3',
+        desc: 'Bijna klaar! Klik op <strong>Volgende</strong> om door te gaan naar pagina 3, waar we de algemene voorwaarden, de privacyverklaring en de mailfunctie bekijken.',
+        tab: null, target: null,
+        isRedirect: true,
+        redirectTo: 'admin3.html',
+    },
+];
+
+// ── Spotlight engine (identiek patroon als admin.js) ──────────────────────
+let _p2TourStep = 0;
+let _p2ResizeHandler = null;
+
+function _p2clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+function _p2switchTab(name) {
+    const btn = document.querySelector(`.tab-btn[data-tab="${name}"]`);
+    if (btn && !btn.classList.contains('active')) btn.click();
+}
+function _p2getEl(sel) {
+    if (!sel) return null;
+    try {
+        const el = document.querySelector(sel);
+        if (!el) return null;
+        const r = el.getBoundingClientRect();
+        return (r.width === 0 && r.height === 0) ? null : el;
+    } catch { return null; }
+}
+
+const _P2_PAD = 8, _P2_GAP = 14, _P2_CW = 360;
+
+function _p2Spotlight(el) {
+    const s = document.getElementById('tourSpotlight');
+    if (!s || !el) return;
+    const r = el.getBoundingClientRect();
+    s.style.top    = (r.top    - _P2_PAD) + 'px';
+    s.style.left   = (r.left   - _P2_PAD) + 'px';
+    s.style.width  = (r.width  + _P2_PAD*2) + 'px';
+    s.style.height = (r.height + _P2_PAD*2) + 'px';
+    s.style.boxShadow = '0 0 0 9999px rgba(0,0,0,0.50),0 0 0 2.5px var(--primary-blue,#0047AB),0 0 12px 4px rgba(0,71,171,0.25)';
+    s.style.display = 'block';
+}
+
+function _p2PosCard(el) {
+    const card = document.getElementById('adminTourCard');
+    if (!card || !el) return;
+    const r = el.getBoundingClientRect();
+    const vw = window.innerWidth, vh = window.innerHeight;
+    const cw = Math.min(_P2_CW, vw - 32), ch = card.offsetHeight || 260;
+    const sT = r.top - _P2_PAD, sB = r.bottom + _P2_PAD, sR = r.right + _P2_PAD;
+    const cx = r.left + r.width/2, cy = r.top + r.height/2;
+    let pos = 'bottom';
+    if (sB + ch + _P2_GAP + 16 > vh && sT - ch - _P2_GAP - 16 >= 0) pos = 'top';
+    else if (sB + ch + _P2_GAP + 16 > vh && sR + cw + _P2_GAP + 16 <= vw) pos = 'right';
+    let top, left;
+    if (pos === 'bottom') { top = sB + _P2_GAP; left = _p2clamp(cx - cw/2, 16, vw-cw-16); }
+    else if (pos === 'top') { top = sT - _P2_GAP - ch; left = _p2clamp(cx - cw/2, 16, vw-cw-16); }
+    else { top = _p2clamp(cy - ch/2, 16, vh-ch-16); left = sR + _P2_GAP; }
+    top = _p2clamp(top, 16, vh - ch - 16);
+    Object.assign(card.style, { position:'fixed', top:top+'px', left:left+'px', width:cw+'px', maxWidth:cw+'px', transform:'none', display:'block' });
+}
+
+function _p2CenterCard() {
+    const card = document.getElementById('adminTourCard');
+    if (!card) return;
+    Object.assign(card.style, { position:'fixed', top:'50%', left:'50%', width:'min(440px, calc(100vw - 2rem))', maxWidth:'', transform:'translate(-50%,-50%)', display:'block' });
+}
+
+function _p2BuildDots() {
+    const c = document.getElementById('tourProgress');
+    if (!c) return;
+    c.innerHTML = '';
+    TOUR_STEPS_P2.forEach((_, i) => {
+        const d = document.createElement('button');
+        d.className = 'tour-dot' + (i < _p2TourStep ? ' done' : '') + (i === _p2TourStep ? ' active' : '');
+        d.setAttribute('aria-label', `Stap ${i+1}`);
+        d.addEventListener('click', () => _p2GoTo(i));
+        c.appendChild(d);
+    });
+}
+
+function _p2UpdateNav() {
+    const isFirst = _p2TourStep === 0;
+    const isLast  = _p2TourStep === TOUR_STEPS_P2.length - 1;
+    const step    = TOUR_STEPS_P2[_p2TourStep];
+    const isRedir = !!(step && step.isRedirect);
+    document.getElementById('tourPrevBtn')  .style.display = isFirst ? 'none' : '';
+    document.getElementById('tourNextBtn')  .style.display = (isLast && !isRedir) ? 'none' : '';
+    document.getElementById('tourFinishBtn').style.display = (isLast && !isRedir) ? '' : 'none';
+}
+
+function _p2Render() {
+    const step = TOUR_STEPS_P2[_p2TourStep];
+    if (!step) return;
+    document.getElementById('tourStepIcon').textContent  = step.icon  || '';
+    document.getElementById('tourStepTitle').textContent = step.title || '';
+    document.getElementById('tourStepDesc').innerHTML    = step.desc  || '';
+    _p2UpdateNav();
+    _p2BuildDots();
+    document.querySelectorAll('.tab-btn.tour-tab-highlight').forEach(b => b.classList.remove('tour-tab-highlight'));
+    if (step.tab) _p2switchTab(step.tab);
+
+    const overlay = document.getElementById('adminTourOverlay');
+    const spot    = document.getElementById('tourSpotlight');
+
+    requestAnimationFrame(() => {
+        if (step.onEnter) step.onEnter();
+
+        const _afterDelay = () => {
+            const el = _p2getEl(step.target);
+            if (el) {
+                if (overlay) { overlay.style.background = 'transparent'; overlay.style.display = 'block'; }
+                el.scrollIntoView({ behavior:'instant', block:'center', inline:'nearest' });
+                requestAnimationFrame(() => {
+                    _p2Spotlight(el);
+                    _p2PosCard(el);
+                    if (step.tab) {
+                        const tb = document.querySelector(`.tab-btn[data-tab="${step.tab}"]`);
+                        if (tb) tb.classList.add('tour-tab-highlight');
+                    }
+                    if (_p2ResizeHandler) window.removeEventListener('resize', _p2ResizeHandler);
+                    _p2ResizeHandler = () => { _p2Spotlight(el); _p2PosCard(el); };
+                    window.addEventListener('resize', _p2ResizeHandler);
+                });
+            } else {
+                if (spot)    spot.style.display    = 'none';
+                if (overlay) { overlay.style.background = 'rgba(0,0,0,0.50)'; overlay.style.display = 'block'; }
+                _p2CenterCard();
+                if (step.tab) {
+                    const tb = document.querySelector(`.tab-btn[data-tab="${step.tab}"]`);
+                    if (tb) tb.classList.add('tour-tab-highlight');
+                }
+                if (_p2ResizeHandler) { window.removeEventListener('resize', _p2ResizeHandler); _p2ResizeHandler = null; }
+            }
+        };
+
+        const _delay = step.delay || 0;
+        if (_delay > 0) setTimeout(_afterDelay, _delay);
+        else requestAnimationFrame(_afterDelay);
+    });
+}
+
+function _p2GoTo(index) {
+    const prev = TOUR_STEPS_P2[_p2TourStep];
+    if (prev && prev.onLeave) prev.onLeave();
+    _p2TourStep = Math.max(0, Math.min(TOUR_STEPS_P2.length - 1, index));
+    _p2Render();
+}
+
+function _p2Advance() {
+    const cur = TOUR_STEPS_P2[_p2TourStep];
+    if (cur && cur.isRedirect) {
+        localStorage.setItem(TOUR_KEY, 'p3');
+        window.location.href = cur.redirectTo + '?tour=1';
+        return;
+    }
+    if (_p2TourStep < TOUR_STEPS_P2.length - 1) _p2GoTo(_p2TourStep + 1);
+    else _p2Close(true);
+}
+
+function _p2Close(markDone = true) {
+    const cur = TOUR_STEPS_P2[_p2TourStep];
+    if (cur && cur.onLeave) cur.onLeave();
+    ['adminTourOverlay','adminTourCard','tourSpotlight'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.style.display = 'none';
+    });
+    document.querySelectorAll('.tab-btn.tour-tab-highlight').forEach(b => b.classList.remove('tour-tab-highlight'));
+    if (_p2ResizeHandler) { window.removeEventListener('resize', _p2ResizeHandler); _p2ResizeHandler = null; }
+    if (markDone) localStorage.setItem(TOUR_KEY, '1');
+}
+
+function _p2Open() {
+    _p2TourStep = 0;
+    ['adminTourOverlay','adminTourCard'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.style.display = 'block';
+    });
+    const s = document.getElementById('tourSpotlight'); if (s) s.style.display = 'none';
+    _p2Render();
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('tourNextBtn')  ?.addEventListener('click', _p2Advance);
+    document.getElementById('tourPrevBtn')  ?.addEventListener('click', () => _p2GoTo(_p2TourStep - 1));
+    document.getElementById('tourFinishBtn')?.addEventListener('click', () => _p2Close(true));
+    document.getElementById('tourSkipBtn')  ?.addEventListener('click', () => _p2Close(true));
+    document.getElementById('adminTourBtn') ?.addEventListener('click', _p2Open);
+
+    document.getElementById('adminTourOverlay')?.addEventListener('click', e => {
+        if (e.target === document.getElementById('adminTourOverlay')) _p2Close(true);
+    });
+
+    document.addEventListener('keydown', e => {
+        const card = document.getElementById('adminTourCard');
+        if (!card || card.style.display === 'none') return;
+        if (e.key === 'ArrowRight' || e.key === 'Enter') _p2Advance();
+        if (e.key === 'ArrowLeft') _p2GoTo(_p2TourStep - 1);
+        if (e.key === 'Escape')    _p2Close(true);
+    });
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('tour') === '1') {
+        history.replaceState(null, '', window.location.pathname + window.location.hash);
+        setTimeout(_p2Open, 700);
+    }
+});

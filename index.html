@@ -3,20 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- PWA -->
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#4B6CB7">
+    <meta name="theme-color" content="#ffffff">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="VVS Rotselaar">
     <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+    <script>
+        const isDark = localStorage.getItem('vvs_theme') === 'dark';
+        if (isDark) {
+            document.documentElement.classList.add('dark');
+        }
+        const metaTheme = document.querySelector("meta[name='theme-color']");
+        if (metaTheme) {
+            metaTheme.setAttribute("content", isDark ? "#000000" : "#ffffff");
+        }
+    </script>
+
     <title>V.V.S Rotselaar - Home</title>
     <link rel="icon" type="image/png" href="assets/logo.png">
     <link rel="stylesheet" href="styles/styles.css">
     <link rel="stylesheet" href="styles/index.css">
     <link rel="stylesheet" href="styles/lineup.css">
-    <script>if(localStorage.getItem('vvs_theme')==='dark')document.documentElement.classList.add('dark');</script>
 </head>
 <body>
     <!-- Header -->

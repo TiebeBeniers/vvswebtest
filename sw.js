@@ -1,10 +1,10 @@
 // ============================================================
-//  VVS Rotselaar — Service Worker (subdirectory: /vvswebtest/)
+//  VVS Rotselaar — Service Worker (subdirectory: /vvsrotselaar/)
 // ============================================================
 
-const BASE        = '/vvswebtest';
-const CACHE_NAME  = 'vvs-static-v1';
-const PAGES_CACHE = 'vvs-pages-v1';
+const BASE        = '/vvsrotselaar';
+const CACHE_NAME  = 'vvs-static-v7'; //Last updated 14/05/2026 - 12:45
+const PAGES_CACHE = 'vvs-pages-v7';
 const OFFLINE_URL = BASE + '/offline.html';
 
 const STATIC_ASSETS = [

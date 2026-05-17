@@ -3,19 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- PWA -->
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#4B6CB7">
+    <meta name="theme-color" content="#ffffff">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="VVS Rotselaar">
     <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+    <script>
+        const isDark = localStorage.getItem('vvs_theme') === 'dark';
+        if (isDark) {
+            document.documentElement.classList.add('dark');
+        }
+        const metaTheme = document.querySelector("meta[name='theme-color']");
+        if (metaTheme) {
+            metaTheme.setAttribute("content", isDark ? "#000000" : "#ffffff");
+        }
+    </script>
+    
     <title>V.V.S Rotselaar - Admin</title>
     <link rel="icon" type="image/png" href="assets/logo.png">
     <link rel="stylesheet" href="styles/styles.css">
     <link rel="stylesheet" href="styles/admin.css">
-    <script>if(localStorage.getItem('vvs_theme')==='dark')document.documentElement.classList.add('dark');</script>
 </head>
 <body>
     <header class="main-header">
@@ -68,10 +77,16 @@
         <div class="admin-container">
             <div class="admin-header-row">
                 <h2>Administratie</h2>
-                <div class="admin-page-nav">
-                    <a class="page-nav-btn active" href="admin.html" title="Pagina 1">1</a>
-                    <a class="page-nav-btn" href="admin2.html" title="Pagina 2">2</a>
-                    <a class="page-nav-btn" href="admin3.html" title="Pagina 3">3</a>
+                <div style="display:flex;align-items:center;gap:0.75rem;">
+                    <button id="adminTourBtn" class="admin-tour-help-btn" title="Rondleiding tonen">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                        Gids
+                    </button>
+                    <div class="admin-page-nav">
+                        <a class="page-nav-btn active" href="admin.html" title="Pagina 1">1</a>
+                        <a class="page-nav-btn" href="admin2.html" title="Pagina 2">2</a>
+                        <a class="page-nav-btn" href="admin3.html" title="Pagina 3">3</a>
+                    </div>
                 </div>
             </div>
 
@@ -974,6 +989,35 @@
                     <button type="submit" class="modal-btn confirm">Account Aanmaken</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+        <!-- ═══════════════════════════════════════════
+         ADMIN TOUR / RONDLEIDING (spotlight versie)
+         ═══════════════════════════════════════════ -->
+
+    <!-- Klik-vanger / donker scherm bij gecentreerde stappen -->
+    <div id="adminTourOverlay" style="display:none;position:fixed;inset:0;z-index:9998;transition:background 0.3s;"></div>
+
+    <!-- Spotlight: transparant vakje met zware box-shadow rondom -->
+    <div id="tourSpotlight" style="display:none;position:fixed;z-index:9999;pointer-events:none;border-radius:8px;
+         transition:top 0.32s cubic-bezier(0.4,0,0.2,1),left 0.32s cubic-bezier(0.4,0,0.2,1),
+                     width 0.32s cubic-bezier(0.4,0,0.2,1),height 0.32s cubic-bezier(0.4,0,0.2,1);"></div>
+
+    <!-- Tour tooltip-kaart (zweeft naast spotlight of gecentreerd) -->
+    <div id="adminTourCard" class="admin-tour-card" style="display:none;"
+         role="dialog" aria-modal="true" aria-label="Admin rondleiding">
+        <div class="tour-progress" id="tourProgress"></div>
+        <div class="tour-step-icon" id="tourStepIcon"></div>
+        <h3  class="tour-step-title" id="tourStepTitle"></h3>
+        <p   class="tour-step-desc"  id="tourStepDesc"></p>
+        <div class="tour-nav">
+            <button class="tour-btn-skip"   id="tourSkipBtn">Overslaan</button>
+            <div class="tour-nav-right">
+                <button class="tour-btn-prev"   id="tourPrevBtn">← Vorige</button>
+                <button class="tour-btn-next"   id="tourNextBtn">Volgende →</button>
+                <button class="tour-btn-finish" id="tourFinishBtn" style="display:none;">✓ Klaar!</button>
+            </div>
         </div>
     </div>
 

@@ -539,3 +539,112 @@ html.dark .login-banner {
 }
 html.dark .login-banner a { color: #7eb3ff; }
 html.dark .login-banner svg { color: #f0c040; }
+
+/* ═══════════════════════════════════════════════
+   BARMAN TOUR  (spotlight versie)
+   ═══════════════════════════════════════════════ */
+
+/* Card */
+.rw-tour-card {
+    position: fixed;
+    z-index: 10000;
+    background: #fff;
+    border-radius: 14px;
+    padding: 1.6rem 1.75rem 1.4rem;
+    width: 360px;
+    max-width: calc(100vw - 2rem);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.22), 0 2px 8px rgba(0,0,0,0.12);
+    border-top: 4px solid #0047ab;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+}
+html.dark .rw-tour-card { background: #1e2130; }
+
+/* Progress dots */
+.rw-tour-card .tour-progress {
+    display: flex; gap: 5px; justify-content: center; margin-bottom: 1.25rem; flex-wrap: wrap;
+}
+.rw-tour-card .tour-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #ddd; border: none; padding: 0; cursor: pointer; transition: all 0.22s ease;
+}
+.rw-tour-card .tour-dot.active { background: #0047ab; width: 22px; border-radius: 4px; }
+.rw-tour-card .tour-dot.done   { background: #4a7fd4; opacity: 0.6; }
+
+/* Content */
+.rw-tour-icon  { font-size: 2.4rem; text-align: center; margin-bottom: 0.5rem; line-height: 1; }
+.rw-tour-title { color: #0047ab; font-size: 1.15rem; font-weight: 700; text-align: center; margin: 0 0 0.65rem; }
+.rw-tour-desc  { color: #555; font-size: 0.9rem; line-height: 1.65; text-align: center; margin: 0 0 1.4rem; }
+html.dark .rw-tour-title { color: #7aa7f0; }
+html.dark .rw-tour-desc  { color: #b0b8cc; }
+
+/* Nav */
+.rw-tour-nav       { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+.rw-tour-nav-right { display: flex; gap: 0.5rem; align-items: center; }
+.rw-tour-skip {
+    background: none; border: none; color: #888; font-size: 0.82rem; cursor: pointer;
+    padding: 0.35rem 0.5rem; border-radius: 5px; text-decoration: underline; transition: color 0.2s; white-space: nowrap;
+}
+.rw-tour-skip:hover { color: #c00; }
+.rw-tour-prev, .rw-tour-next, .rw-tour-finish {
+    padding: 0.5rem 1rem; border-radius: 7px; font-size: 0.84rem; font-weight: 700;
+    cursor: pointer; transition: all 0.2s ease; border: none; white-space: nowrap;
+}
+.rw-tour-prev   { background: #f0f2f5; color: #333; }
+.rw-tour-prev:hover { background: #ddd; }
+html.dark .rw-tour-prev { background: rgba(255,255,255,0.1); color: #fff; }
+.rw-tour-next   { background: #0047ab; color: #fff; }
+.rw-tour-next:hover { background: #003080; }
+.rw-tour-finish { background: #28a745; color: #fff; }
+.rw-tour-finish:hover { filter: brightness(1.1); }
+
+@media (max-width: 480px) {
+    .rw-tour-card { padding: 1.4rem 1.1rem 1.2rem; }
+    .rw-tour-title { font-size: 1rem; }
+    .rw-tour-desc  { font-size: 0.84rem; }
+    .rw-tour-prev, .rw-tour-next, .rw-tour-finish { padding: 0.45rem 0.7rem; font-size: 0.8rem; }
+}
+
+/* ── Drankkaart header: titel gecentreerd + ?-knop rechts ── */
+.drankkaart-header-row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}
+.drankkaart-header-row h2 {
+    margin: 0;           /* h2 zit in flex-center → altijd gecentreerd */
+}
+.rw-tour-circle-btn {
+    position: absolute;
+    right: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid var(--primary-blue, #0047ab);
+    background: transparent;
+    color: var(--primary-blue, #0047ab);
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    line-height: 1;
+    padding: 0;
+    flex-shrink: 0;
+}
+.rw-tour-circle-btn:hover {
+    background: var(--primary-blue, #0047ab);
+    color: #fff;
+}
+html.dark .rw-tour-circle-btn {
+    border-color: #7aa7f0;
+    color: #7aa7f0;
+}
+html.dark .rw-tour-circle-btn:hover {
+    background: #7aa7f0;
+    color: #fff;
+}

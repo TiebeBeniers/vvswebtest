@@ -1,5 +1,5 @@
 /* ===============================================
-   VVS ROTSELAAR - LOGIN PAGE STYLES
+   VVS ROTSELAAR – LOGIN PAGE  v2
    =============================================== */
 
 .login-page {
@@ -8,6 +8,7 @@
     align-items: center;
     justify-content: center;
     padding: 2rem;
+    background: var(--off-white);
 }
 
 .login-container {
@@ -18,21 +19,35 @@
 .login-box {
     background: var(--white);
     padding: 3rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px var(--shadow);
+    border-radius: var(--radius-lg, 16px);
+    box-shadow: 0 8px 32px var(--shadow-lg);
+    border-top: 3px solid var(--primary-blue);
 }
 
+.login-box-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0;
+}
+.login-box-header-row h2 { margin-bottom: 0; }
+
 .login-box h2 {
+    font-family: 'Barlow Condensed', 'Segoe UI', sans-serif;
     color: var(--primary-blue);
     text-align: center;
     margin-bottom: 0.5rem;
-    font-size: 2rem;
+    font-size: 2.25rem;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
 }
 
 .login-subtitle {
     text-align: center;
     color: var(--text-gray);
     margin-bottom: 2rem;
+    font-size: 0.95rem;
 }
 
 .login-form {
@@ -43,301 +58,219 @@
 
 /* Submit button */
 .login-btn {
-    padding: 1.2rem;
+    padding: 1.1rem;
     background: var(--primary-blue);
     color: var(--white);
-    font-size: 1.1rem;
+    font-family: 'Barlow Condensed', 'Segoe UI', sans-serif;
+    font-size: 1.15rem;
     font-weight: 700;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-    margin-top: 1rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    border-radius: var(--radius, 10px);
+    transition: all 0.25s ease;
+    margin-top: 0.5rem;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0,71,171,0.3);
 }
-
 .login-btn:hover {
     background: var(--dark-blue);
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px var(--shadow);
+    box-shadow: 0 8px 20px rgba(0,71,171,0.35);
 }
-
-.login-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
+.login-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
 
 /* ── Logged-in view ── */
 .profile-info {
     text-align: center;
-    padding: 2rem 0;
+    padding: 1.5rem 0;
 }
 
 .profile-icon {
-    width: 80px;
-    height: 80px;
+    width: 72px; height: 72px;
     color: var(--primary-blue);
     margin: 0 auto 1rem;
+    background: rgba(0,71,171,0.08);
+    border-radius: 50%;
+    padding: 14px;
+    display: flex; align-items: center; justify-content: center;
 }
 
 .profile-info h3 {
+    font-family: 'Barlow Condensed', 'Segoe UI', sans-serif;
     color: var(--primary-blue);
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.4rem;
 }
 
-.profile-info p {
-    color: var(--text-gray);
-    margin-bottom: 0.3rem;
-}
+.profile-info p { color: var(--text-gray); margin-bottom: 0.25rem; font-size: 0.95rem; }
 
 .user-role {
     display: inline-block;
-    padding: 0.4rem 1rem;
-    background: var(--light-blue);
+    padding: 0.35rem 1rem;
+    background: var(--primary-blue);
     color: var(--white);
     border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
     margin-top: 0.5rem;
 }
+html.dark .user-role { color: white !important; }
 
-html.dark .user-role {color: white !important}
-.termsModal {background: #ffffff;}
-html.dark .termsModal {background: #1e2130;}
+/* Terms modal */
+.termsModal { background: #ffffff; }
+html.dark .termsModal { background: #1e2130; }
 
+/* Action buttons */
 .logout-btn,
 .admin-btn {
     width: 100%;
     padding: 1rem;
-    font-size: 1rem;
+    font-family: 'Barlow Condensed', 'Segoe UI', sans-serif;
+    font-size: 1.05rem;
     font-weight: 700;
-    border-radius: 8px;
-    transition: all 0.3s ease;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-radius: var(--radius, 10px);
+    transition: all 0.25s ease;
     margin-top: 1rem;
+    border: none;
+    cursor: pointer;
 }
-
 html.dark .logout-btn,
-html.dark .admin-btn {
-    color: white
-}
+html.dark .admin-btn { color: white; }
 
 .logout-btn { background: var(--danger); color: var(--white); }
 .admin-btn  { background: var(--primary-blue); color: var(--white); }
 
-.logout-btn:hover,
-.admin-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px var(--shadow);
-}
+.logout-btn:hover { background: #c0392b; transform: translateY(-2px); box-shadow: 0 6px 16px rgba(229,62,62,0.3); }
+.admin-btn:hover  { background: var(--dark-blue); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,71,171,0.3); }
 
-/* ── Account request links ── */
-.account-request-link,
-.back-to-login,
-.request-subtitle {
-    text-align: center;
-    margin-top: 1.5rem;
-    color: var(--text-gray);
-    font-size: 0.95rem;
-}
-
-.account-request-link a,
-.back-to-login a {
-    color: var(--primary-blue);
-    font-weight: 600;
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
-
-.account-request-link a:hover,
-.back-to-login a:hover {
-    color: var(--dark-blue);
-    text-decoration: underline;
-}
-
-/* ── Wachtwoord vergeten link ── */
-.forgot-password-link {
-    text-align: left;
-    font-size: 0.8rem;
-    margin-top: -5px;
-    margin-bottom: -5px;;
-}
-
-.forgot-password-link a {
-    color: var(--primary-blue);
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.2s;
-}
-
-.forgot-password-link a:hover {
-    color: var(--dark-blue);
-    text-decoration: underline;
-}
-
-#requestAccountView h3 {
-    color: var(--primary-blue);
-    text-align: center;
-    margin-bottom: 0.5rem;
-    font-size: 1.8rem;
-}
-
-/* ── Multi-team checkboxes in account request form ── */
-.team-checkboxes {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    padding: 0.65rem 0.85rem;
-    border: 1.5px solid var(--border-color);
-    border-radius: 8px;
-    background: var(--white);
-    transition: border-color 0.2s;
-}
-
-.team-checkboxes:focus-within {
-    border-color: var(--primary-blue);
-}
-
-.team-checkbox-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.55rem;
-    font-size: 0.95rem;
-    font-weight: 500;
-    color: var(--text-dark);
-    cursor: pointer;
-    user-select: none;
-}
-
-.team-checkbox-label input[type="checkbox"] {
-    width: 16px;
-    height: 16px;
-    cursor: pointer;
-    accent-color: var(--primary-blue);
-    flex-shrink: 0;
-}
-
-/* ── Terms modal — dynamisch geladen inhoud ── */
-
-/* Sectie-container */
-.terms-section {
-    margin-bottom: 1.25rem;
-}
-.terms-section:last-child { margin-bottom: 0; }
-
-/* Sectietitel — h4 */
-.terms-section h4 {
-    font-size: 0.93rem;
-    font-weight: 700;
-    margin: 0 0 0.4rem;
-    color: var(--text-dark, #1a1a1a);
-}
-
-/* Sectie-inhoud — exact gelijk aan admin3 terms preview */
-.terms-body {
-    font-size: 0.9rem;
-    line-height: 1.75;
-    color: var(--text-dark, #333);
-}
-.terms-body p             { margin: 0 0 0.75rem; }
-.terms-body p:last-child  { margin-bottom: 0; }
-.terms-body ul, .terms-body ol { margin: 0.5rem 0 0.75rem 1.5rem; }
-.terms-body li            { margin-bottom: 0.25rem; }
-.terms-body strong        { font-weight: 700; }
-.terms-body em            { font-style: italic; }
-.terms-body a             { color: #1a73e8; text-decoration: underline; }
-.terms-body a:hover       { color: #0c57c0; }
-.terms-body code          { font-family: monospace; background: #f0f0f0; padding: 1px 5px; border-radius: 3px; font-size: 0.85em; }
-.terms-body hr            { border: none; border-top: 1px solid #eee; margin: 1rem 0; }
-.terms-body h3            { color: #1a1a1a; font-size: 1rem; font-weight: 700; margin: 0.6rem 0 0.3rem; }
-.terms-body h4            { color: #1a1a1a; font-size: 0.9rem; font-weight: 700; margin: 0.5rem 0 0.25rem; }
-
-/* Info-kader in terms modal */
-.terms-body .info-card {
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    padding: 0.85rem 1rem;
-    background: #fafafa;
-    margin: 0.6rem 0;
-}
-.terms-body .info-card-title {
-    font-weight: 700; font-size: 0.88rem; display: block;
-    margin-bottom: 0.3rem; color: #333;
-}
-
-/* Witruimtes */
-.terms-body .spacer-sm { display: block; height: 0.4rem; }
-.terms-body .spacer-lg { display: block; height: 1.5rem; }
-
-/* Dark mode */
-html.dark .terms-section h4   { color: #e0e0e0; }
-html.dark .terms-body         { color: #e0e0e0; }
-html.dark .terms-body .info-card { background: #2a2f45; border-color: rgba(255,255,255,0.1); }
-html.dark .terms-body code    { background: #2a2f45; color: #e0e0e0; }
-
-/* ── Login-box header row (titel + vraagteken-knop) ── */
-.login-box-header-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 0;
-}
-.login-box-header-row h2 {
-    margin-bottom: 0;
-}
-
-/* Vraagteken-knop voor algemene voorwaarden */
-.terms-quick-btn {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    border: 2px solid var(--primary-blue);
-    background: transparent;
-    color: var(--primary-blue);
-    font-size: 0.95rem;
-    font-weight: 700;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-    flex-shrink: 0;
-}
-.terms-quick-btn:hover {
-    background: var(--primary-blue);
-    color: var(--white);
-}
-html.dark .terms-quick-btn {
-    border-color: var(--light-blue);
-    color: var(--light-blue);
-}
-html.dark .terms-quick-btn:hover {
-    background: var(--light-blue);
-    color: var(--white);
-}
-
-/* ── Profiel-actie knoppen wrapper ── */
-.profile-action-btns {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-}
+/* Profile action btns wrapper */
+.profile-action-btns { display: flex; flex-direction: column; gap: 0; }
 .profile-action-btns .logout-btn,
-.profile-action-btns .admin-btn {
-    margin-top: 1rem;
-    width: 100%;
-}
+.profile-action-btns .admin-btn { margin-top: 1rem; width: 100%; }
 
-/* Grid-layout bij dual-rol (profiel + admin naast elkaar) */
 .profile-action-btns-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 0.75rem;
     margin-top: 0;
 }
-.profile-action-btns-grid .logout-btn {
-    grid-column: 1 / -1;
-    margin-top: 1rem;
+.profile-action-btns-grid .logout-btn { grid-column: 1 / -1; margin-top: 1rem; }
+.profile-action-btns-grid .profile-action-btn { margin-top: 0; font-size: 0.88rem; padding: 0.85rem 0.5rem; }
+
+/* ── Links ── */
+.account-request-link,
+.back-to-login,
+.request-subtitle {
+    text-align: center;
+    margin-top: 1.5rem;
+    color: var(--text-gray);
+    font-size: 0.92rem;
 }
-.profile-action-btns-grid .profile-action-btn {
-    margin-top: 0;
-    font-size: 0.88rem;
-    padding: 0.85rem 0.5rem;
+
+.account-request-link a,
+.back-to-login a {
+    color: var(--primary-blue);
+    font-weight: 700;
+    text-decoration: none;
+    transition: color 0.2s ease;
 }
+.account-request-link a:hover,
+.back-to-login a:hover { color: var(--dark-blue); text-decoration: underline; }
+
+.forgot-password-link {
+    text-align: left;
+    font-size: 0.82rem;
+    margin-top: -5px;
+    margin-bottom: -5px;
+}
+.forgot-password-link a {
+    color: var(--primary-blue); text-decoration: none;
+    font-weight: 600; transition: color 0.2s;
+}
+.forgot-password-link a:hover { color: var(--dark-blue); text-decoration: underline; }
+
+#requestAccountView h3 {
+    font-family: 'Barlow Condensed', 'Segoe UI', sans-serif;
+    color: var(--primary-blue); text-align: center;
+    margin-bottom: 0.5rem; font-size: 2rem; font-weight: 700;
+}
+
+/* ── Team checkboxes ── */
+.team-checkboxes {
+    display: flex; flex-direction: column; gap: 0.5rem;
+    padding: 0.65rem 0.85rem;
+    border: 1.5px solid var(--border-color);
+    border-radius: var(--radius, 10px);
+    background: var(--white); transition: border-color 0.2s;
+}
+.team-checkboxes:focus-within { border-color: var(--primary-blue); }
+
+.team-checkbox-label {
+    display: inline-flex; align-items: center; gap: 0.55rem;
+    font-size: 0.95rem; font-weight: 600; color: var(--text-dark);
+    cursor: pointer; user-select: none;
+}
+.team-checkbox-label input[type="checkbox"] {
+    width: 16px; height: 16px; cursor: pointer;
+    accent-color: var(--primary-blue); flex-shrink: 0;
+}
+
+/* ── Terms modal content ── */
+.terms-section { margin-bottom: 1.25rem; }
+.terms-section:last-child { margin-bottom: 0; }
+
+.terms-section h4 {
+    font-size: 0.93rem; font-weight: 700;
+    margin: 0 0 0.4rem; color: var(--text-dark);
+}
+
+.terms-body {
+    font-size: 0.9rem; line-height: 1.75; color: var(--text-dark);
+}
+.terms-body p            { margin: 0 0 0.75rem; }
+.terms-body p:last-child { margin-bottom: 0; }
+.terms-body ul, .terms-body ol { margin: 0.5rem 0 0.75rem 1.5rem; }
+.terms-body li           { margin-bottom: 0.25rem; }
+.terms-body strong       { font-weight: 700; }
+.terms-body em           { font-style: italic; }
+.terms-body a            { color: var(--primary-blue); text-decoration: underline; }
+.terms-body a:hover      { color: var(--dark-blue); }
+.terms-body code         { font-family: monospace; background: var(--off-white); padding: 1px 5px; border-radius: 3px; font-size: 0.85em; }
+.terms-body hr           { border: none; border-top: 1px solid var(--border-color); margin: 1rem 0; }
+.terms-body h3           { color: var(--text-dark); font-size: 1rem; font-weight: 700; margin: 0.6rem 0 0.3rem; }
+.terms-body h4           { color: var(--text-dark); font-size: 0.9rem; font-weight: 700; margin: 0.5rem 0 0.25rem; }
+
+.terms-body .info-card {
+    border: 1px solid var(--border-color); border-radius: var(--radius, 10px);
+    padding: 0.85rem 1rem; background: var(--off-white); margin: 0.6rem 0;
+}
+.terms-body .info-card-title { font-weight: 700; font-size: 0.88rem; display: block; margin-bottom: 0.3rem; }
+.terms-body .spacer-sm { display: block; height: 0.4rem; }
+.terms-body .spacer-lg { display: block; height: 1.5rem; }
+
+/* Terms quick btn */
+.terms-quick-btn {
+    width: 28px; height: 28px; border-radius: 50%;
+    border: 2px solid var(--primary-blue);
+    background: transparent; color: var(--primary-blue);
+    font-size: 0.95rem; font-weight: 700; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s ease; flex-shrink: 0;
+}
+.terms-quick-btn:hover { background: var(--primary-blue); color: var(--white); }
+html.dark .terms-quick-btn { border-color: var(--light-blue); color: var(--light-blue); }
+html.dark .terms-quick-btn:hover { background: var(--light-blue); color: var(--white); }
+
+/* Dark mode */
+html.dark .terms-section h4 { color: #e0e0e0; }
+html.dark .terms-body       { color: #e0e0e0; }
+html.dark .terms-body .info-card { background: #2a2f45; border-color: rgba(255,255,255,0.1); }
+html.dark .terms-body code  { background: #2a2f45; color: #e0e0e0; }

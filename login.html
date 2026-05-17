@@ -3,19 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- PWA -->
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#4B6CB7">
+    <meta name="theme-color" content="#ffffff">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="VVS Rotselaar">
     <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+    <script>
+        const isDark = localStorage.getItem('vvs_theme') === 'dark';
+        if (isDark) {
+            document.documentElement.classList.add('dark');
+        }
+        const metaTheme = document.querySelector("meta[name='theme-color']");
+        if (metaTheme) {
+            metaTheme.setAttribute("content", isDark ? "#000000" : "#ffffff");
+        }
+    </script>
+    
     <title>V.V.S Rotselaar - Login</title>
     <link rel="icon" type="image/png" href="assets/logo.png">
     <link rel="stylesheet" href="styles/styles.css">
     <link rel="stylesheet" href="styles/login.css">
-    <script>if(localStorage.getItem('vvs_theme')==='dark')document.documentElement.classList.add('dark');</script>
 </head>
 <body>
     <!-- Header -->
@@ -188,10 +197,12 @@
                         <p id="userEmail"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="0d68606c64614d7b62627f6f68686169236f68">[email&#160;protected]</a></p>
                         <p class="user-role" id="userRole">Clublid</p>
                     </div>
-                    <button id="logoutBtn" class="logout-btn">UITLOGGEN</button>
-                    <button id="profileBtn" class="admin-btn" style="display: none;">MIJN PROFIEL</button>
-                    <button id="adminBtn" class="admin-btn" style="display: none;">NAAR ADMIN</button>
-                    <button class="admin-btn" id="tijdelijkBtn" style="display:none;">NAAR ROCK WERCHTER</button>
+                    <div id="profileActionBtns" class="profile-action-btns">
+                        <button id="profileBtn" class="admin-btn profile-action-btn" style="display: none;">MIJN PROFIEL</button>
+                        <button id="adminBtn" class="admin-btn profile-action-btn" style="display: none;">NAAR ADMIN</button>
+                        <button class="admin-btn profile-action-btn" id="tijdelijkBtn" style="display:none;">NAAR ROCK WERCHTER</button>
+                        <button id="logoutBtn" class="logout-btn">UITLOGGEN</button>
+                    </div>
                 </div>
             </div>
         </div>

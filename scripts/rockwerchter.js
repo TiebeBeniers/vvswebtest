@@ -92,9 +92,11 @@ onAuthStateChanged(auth, async (user) => {
                 $id('paymentButtons').style.display = 'flex';
                 $id('contact') && ($id('contact').style.display = 'none');
 
-                // Bestellingen-knop voor alle ingelogde users met toegang
+                // Bestellingen-knop + tour help-knop voor alle ingelogde users met toegang
                 const bestBtn = $id('bestellingenBtn');
                 if (bestBtn) bestBtn.style.display = 'flex';
+                const tourHelpBtn = $id('rwTourHelpBtn');
+                if (tourHelpBtn) tourHelpBtn.style.display = 'flex';
             } else { guestMode(); }
         } catch (e) { console.error(e); guestMode(); }
     } else {
@@ -893,3 +895,318 @@ function showToast(msg, type = '') {
 
 
 console.log('Rockwerchter.js klaar');
+// ═══════════════════════════════════════════════
+// BARMAN TOUR – rockwerchter.html
+// Eenmalig getoond voor ingelogde leden.
+// Herstartbaar via ?tour=1 of programmatisch.
+// ═══════════════════════════════════════════════
+
+const RW_TOUR_KEY = 'vvs_rw_tour_v1';
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+
+function _rwOpenCashModal() {
+    const modal = document.getElementById('cashModal');
+    if (modal) modal.style.display = 'flex';
+    // Zet een demo-bedrag zodat de wisselgeld UI logisch aanvoelt
+    const tot = document.getElementById('cashTotaal');
+    if (tot && !tot.textContent.trim()) tot.textContent = 'Te betalen: €0,00';
+}
+function _rwCloseCashModal() {
+    const modal = document.getElementById('cashModal');
+    if (modal) modal.style.display = 'none';
+}
+
+function _rwSimulateSelect() {
+    // Selecteer de eerste twee items als voorbeeld (visuele demo)
+    const cards = document.querySelectorAll('#drankContainer .drank-card');
+    let tapped = 0;
+    cards.forEach(c => {
+        if (tapped < 2 && isLoggedIn) { c.click(); tapped++; }
+    });
+}
+
+// ── Stappen ────────────────────────────────────────────────────────────────
+
+const RW_TOUR_STEPS = [
+    // 0: Intro
+    {
+        icon: '🍺',
+        title: 'Welkom — Barman rondleiding',
+        desc: 'Deze gids legt de Rock Werchter drankkaart uit. Als barman gebruik je deze pagina om bestellingen aan te duiden en af te rekenen. We doorlopen samen de kaart, de selectie en de drie betaalmethodes.',
+        target: null,
+    },
+
+    // 1: Drankkaart algemeen
+    {
+        icon: '',
+        title: 'De drankkaart',
+        desc: 'Hier zie je alle beschikbare dranken. Elk item toont een afbeelding, naam en prijs. Klik een item aan om het aan de bestelling toe te voegen — het getal rechtsboven op de kaart toont het aantal.',
+        target: '#drankContainer',
+    },
+
+    // 2: Item met vereist item
+    {
+        icon: '',
+        title: 'Vereist item',
+        desc: 'Sommige items kunnen niet los aangeklikt worden totdat een vereist item al in de bestelling zit.<br><br>💡 <em>Voorbeeld:</em> Een Cup Refund kan pas aangeklikt worden als er een nieuwe consumtie uit een beker besteld wordt. Extra bekers via QR.',
+        target: '#drankContainer .drank-card',
+    },
+
+    // 3: Demo selectie
+    {
+        icon: '',
+        title: 'Items selecteren',
+        desc: 'We selecteren even twee items als voorbeeld. Het badge-getal op de kaart stijgt bij elke klik. Klik een al geselecteerd item opnieuw aan om de hoeveelheid te verhogen.',
+        target: '#drankContainer .drank-card',
+        onEnter() { _rwSimulateSelect(); },
+    },
+
+    // 4: Betaalrij algemeen
+    {
+        icon: '',
+        title: 'Betaalmogelijkheden',
+        desc: 'Zodra er items in de bestelling zitten worden de drie betaalknoppen actief. Kies de methode die de klant verkiest.',
+        target: '#paymentButtons',
+    },
+
+    // 5: Bancontact/kaart
+    {
+        icon: '',
+        title: 'Betalen met kaart',
+        desc: 'Klik op <strong>"Kaart"</strong> om de betaling via bancontact/terminal te verwerken. Je kiest de juiste terminal uit de lijst en bevestigt zodra de klant betaald heeft.',
+        target: '#kaartBtn',
+    },
+
+    // 6: Payconiq/QR
+    {
+        icon: '',
+        title: 'Betalen met Payconiq',
+        desc: 'Klik op <strong>"Payconiq"</strong> om een QR-code te genereren. De klant scant die op zijn telefoon. Bevestig eens de betaling geslaagd is.',
+        target: '#qrBtn',
+    },
+
+    // 7: Cash knop
+    {
+        icon: '',
+        title: 'Betalen met cash',
+        desc: 'Klik op <strong>"Cash"</strong> om het cashbetaalvenster te openen. Hieronder zoomen we in op hoe je het wisselgeld snel berekent.',
+        target: '#cashBtn',
+    },
+
+    // 8: Cash modal — snelknoppen
+    {
+        icon: '',
+        title: 'Cashbetaling & wisselgeld',
+        desc: 'Gebruik de snelknoppen (€50, €20, €10 …) om het ontvangen bedrag in te geven. Het wisselgeld wordt automatisch berekend en groot weergegeven. Meerdere knoppen klikken telt op — bv. €20 + €5 = €25.',
+        target: '.cash-snelknoppen',
+        delay: 350,
+        onEnter() { _rwOpenCashModal(); },
+        onLeave() { _rwCloseCashModal(); },
+    },
+
+    // 9: Exact knop
+    {
+        icon: '',
+        title: 'Exact betalen',
+        desc: 'Gaat hoofdrekenen nog soepel? — gebruik dan <strong>"✓ Exact"</strong>. Dat vult automatisch het totaalbedrag in als ontvangen bedrag.',
+        target: '#cashExact',
+        delay: 350,
+        onEnter() { _rwOpenCashModal(); },
+        onLeave() { _rwCloseCashModal(); },
+    },
+
+    // 10: Einde
+    {
+        icon: '🎉',
+        title: 'Klaar!',
+        desc: 'Je kent nu de volledige werking van de drankkaart. Via het vraagteken-icoontje (?) kan je de rondleiding altijd opnieuw starten. Veel succes aan de toog!',
+        target: null,
+    },
+];
+
+// ── Engine ─────────────────────────────────────────────────────────────────
+let _rwStep = 0;
+let _rwResizeH = null;
+
+const _RW_PAD = 8, _RW_GAP = 14, _RW_CW = 360;
+
+function _rwclamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+function _rwGetEl(sel) {
+    if (!sel) return null;
+    try {
+        const el = document.querySelector(sel);
+        if (!el) return null;
+        const r = el.getBoundingClientRect();
+        return (r.width === 0 && r.height === 0) ? null : el;
+    } catch { return null; }
+}
+
+function _rwSpotlight(el) {
+    const s = document.getElementById('rwTourSpotlight');
+    if (!s || !el) return;
+    const r = el.getBoundingClientRect();
+    s.style.top    = (r.top    - _RW_PAD) + 'px';
+    s.style.left   = (r.left   - _RW_PAD) + 'px';
+    s.style.width  = (r.width  + _RW_PAD*2) + 'px';
+    s.style.height = (r.height + _RW_PAD*2) + 'px';
+    s.style.boxShadow = '0 0 0 9999px rgba(0,0,0,0.50),0 0 0 2.5px #0047ab,0 0 12px 4px rgba(0,71,171,0.25)';
+    s.style.display = 'block';
+}
+
+function _rwPosCard(el) {
+    const card = document.getElementById('rwTourCard');
+    if (!card || !el) return;
+    const r = el.getBoundingClientRect();
+    const vw = window.innerWidth, vh = window.innerHeight;
+    const cw = Math.min(_RW_CW, vw - 32), ch = card.offsetHeight || 260;
+    const sT = r.top - _RW_PAD, sB = r.bottom + _RW_PAD, sR = r.right + _RW_PAD;
+    const cx = r.left + r.width/2, cy = r.top + r.height/2;
+    let pos = 'bottom';
+    if (sB + ch + _RW_GAP + 16 > vh && sT - ch - _RW_GAP - 16 >= 0) pos = 'top';
+    else if (sB + ch + _RW_GAP + 16 > vh && sR + cw + _RW_GAP + 16 <= vw) pos = 'right';
+    let top, left;
+    if (pos === 'bottom') { top = sB + _RW_GAP; left = _rwclamp(cx - cw/2, 16, vw-cw-16); }
+    else if (pos === 'top') { top = sT - _RW_GAP - ch; left = _rwclamp(cx - cw/2, 16, vw-cw-16); }
+    else { top = _rwclamp(cy - ch/2, 16, vh-ch-16); left = sR + _RW_GAP; }
+    top = _rwclamp(top, 16, vh - ch - 16);
+    Object.assign(card.style, { position:'fixed', top:top+'px', left:left+'px', width:cw+'px', maxWidth:cw+'px', transform:'none', display:'block' });
+}
+
+function _rwCenterCard() {
+    const card = document.getElementById('rwTourCard');
+    if (!card) return;
+    Object.assign(card.style, { position:'fixed', top:'50%', left:'50%', width:'min(440px, calc(100vw - 2rem))', maxWidth:'', transform:'translate(-50%,-50%)', display:'block' });
+}
+
+function _rwBuildDots() {
+    const c = document.getElementById('rwTourProgress');
+    if (!c) return;
+    c.innerHTML = '';
+    RW_TOUR_STEPS.forEach((_, i) => {
+        const d = document.createElement('button');
+        d.className = 'tour-dot' + (i < _rwStep ? ' done' : '') + (i === _rwStep ? ' active' : '');
+        d.setAttribute('aria-label', `Stap ${i+1}`);
+        d.addEventListener('click', () => _rwGoTo(i));
+        c.appendChild(d);
+    });
+}
+
+function _rwUpdateNav() {
+    const isFirst = _rwStep === 0;
+    const isLast  = _rwStep === RW_TOUR_STEPS.length - 1;
+    document.getElementById('rwTourPrev')  .style.display = isFirst ? 'none' : '';
+    document.getElementById('rwTourNext')  .style.display = isLast  ? 'none' : '';
+    document.getElementById('rwTourFinish').style.display = isLast  ? '' : 'none';
+}
+
+function _rwRender() {
+    const step = RW_TOUR_STEPS[_rwStep];
+    if (!step) return;
+    document.getElementById('rwTourIcon').textContent  = step.icon  || '';
+    document.getElementById('rwTourTitle').textContent = step.title || '';
+    document.getElementById('rwTourDesc').innerHTML    = step.desc  || '';
+    _rwUpdateNav();
+    _rwBuildDots();
+
+    const overlay = document.getElementById('rwTourOverlay');
+    const spot    = document.getElementById('rwTourSpotlight');
+
+    requestAnimationFrame(() => {
+        if (step.onEnter) step.onEnter();
+
+        const _after = () => {
+            const el = _rwGetEl(step.target);
+            if (el) {
+                if (overlay) { overlay.style.background = 'transparent'; overlay.style.display = 'block'; }
+                el.scrollIntoView({ behavior:'instant', block:'center', inline:'nearest' });
+                requestAnimationFrame(() => {
+                    _rwSpotlight(el); _rwPosCard(el);
+                    if (_rwResizeH) window.removeEventListener('resize', _rwResizeH);
+                    _rwResizeH = () => { _rwSpotlight(el); _rwPosCard(el); };
+                    window.addEventListener('resize', _rwResizeH);
+                });
+            } else {
+                if (spot)    spot.style.display    = 'none';
+                if (overlay) { overlay.style.background = 'rgba(0,0,0,0.50)'; overlay.style.display = 'block'; }
+                _rwCenterCard();
+                if (_rwResizeH) { window.removeEventListener('resize', _rwResizeH); _rwResizeH = null; }
+            }
+        };
+
+        const d = step.delay || 0;
+        if (d > 0) setTimeout(_after, d); else requestAnimationFrame(_after);
+    });
+}
+
+function _rwGoTo(index) {
+    const prev = RW_TOUR_STEPS[_rwStep];
+    if (prev && prev.onLeave) prev.onLeave();
+    _rwStep = Math.max(0, Math.min(RW_TOUR_STEPS.length - 1, index));
+    _rwRender();
+}
+
+function _rwClose(markDone = true) {
+    const cur = RW_TOUR_STEPS[_rwStep];
+    if (cur && cur.onLeave) cur.onLeave();
+    ['rwTourOverlay','rwTourCard','rwTourSpotlight'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.style.display = 'none';
+    });
+    if (_rwResizeH) { window.removeEventListener('resize', _rwResizeH); _rwResizeH = null; }
+    if (markDone) localStorage.setItem(RW_TOUR_KEY, '1');
+}
+
+function startRwTour() {
+    if (!isLoggedIn) return;          // only for logged-in users
+    _rwStep = 0;
+    ['rwTourOverlay','rwTourCard'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.style.display = 'block';
+    });
+    const s = document.getElementById('rwTourSpotlight'); if (s) s.style.display = 'none';
+    _rwRender();
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('rwTourNext')  ?.addEventListener('click', () => {
+        if (_rwStep < RW_TOUR_STEPS.length - 1) _rwGoTo(_rwStep + 1); else _rwClose(true);
+    });
+    document.getElementById('rwTourPrev')  ?.addEventListener('click', () => _rwGoTo(_rwStep - 1));
+    document.getElementById('rwTourFinish')?.addEventListener('click', () => location.reload());
+    document.getElementById('rwTourSkip')  ?.addEventListener('click', () => _rwClose(true));
+
+    // Close on overlay click
+    document.getElementById('rwTourOverlay')?.addEventListener('click', e => {
+        if (e.target === document.getElementById('rwTourOverlay')) _rwClose(true);
+    });
+
+    // Keyboard
+    document.addEventListener('keydown', e => {
+        const card = document.getElementById('rwTourCard');
+        if (!card || card.style.display === 'none') return;
+        if (e.key === 'ArrowRight' || e.key === 'Enter') {
+            if (_rwStep < RW_TOUR_STEPS.length - 1) _rwGoTo(_rwStep + 1); else _rwClose(true);
+        }
+        if (e.key === 'ArrowLeft') _rwGoTo(_rwStep - 1);
+        if (e.key === 'Escape')    _rwClose(true);
+    });
+
+    // Auto-start: wait for auth to settle (Firebase auth is async)
+    // We hook into the auth-ready event dispatched by the main script
+    // or fall back to a setTimeout watching isLoggedIn
+    const _tryAutoStart = () => {
+        if (!isLoggedIn) return;                          // not logged in — skip
+        if (localStorage.getItem(RW_TOUR_KEY)) return;   // already seen
+        setTimeout(startRwTour, 1200);                    // small delay so drankkaart can render
+    };
+
+    // If auth resolves quickly
+    setTimeout(_tryAutoStart, 1500);
+    // Also try a bit later in case Firebase is slow
+    setTimeout(_tryAutoStart, 4000);
+});
+
+// Also expose so the help button (if any) can call it
+window.startRwTour = startRwTour;

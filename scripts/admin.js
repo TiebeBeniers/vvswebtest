@@ -1664,7 +1664,7 @@ function renderMatchList() {
     }
 
     if (filtered.length === 0) {
-        matchesList.innerHTML = '<p class="text-center">Geen wedstrijden gevonden voor dit filter.</p>';
+        matchesList.innerHTML = '<p class="text-center">Geen wedstrijden gevonden voor deze filter.</p>';
         return;
     }
 
@@ -3605,3 +3605,407 @@ async function retroFinalize() {
         if (btn) { btn.disabled = false; btn.textContent = '💾 Opslaan in database'; }
     }
 }
+// ===============================================
+// ADMIN TOUR / RONDLEIDING  (spotlight versie)
+// Pagina 1 van 2. Vervolg op admin2.html?tour=1
+// ===============================================
+
+const TOUR_KEY = 'vvs_admin_tour_v2';
+
+// Helper: open evenement-modal programmatisch (voor tour stap)
+function _tourOpenEvenementModal() {
+    const btn = document.getElementById('addEvenementBtn');
+    if (btn) btn.click();          // triggert de bestaande listener die reset + opent
+}
+function _tourCloseEvenementModal() {
+    const cancel = document.getElementById('evenementModalCancel');
+    if (cancel) cancel.click();
+}
+function _tourEnableInschrijvingen() {
+    const cb = document.getElementById('evenementInschrijvingen');
+    const opties = document.getElementById('inschrijfOpties');
+    if (cb && !cb.checked) {
+        cb.checked = true;
+        cb.dispatchEvent(new Event('change'));   // toont #inschrijfOpties
+    }
+    if (opties) opties.style.display = '';
+}
+
+const TOUR_STEPS = [
+    // ── 0: Welkom ─────────────────────────────────────────────────────────
+    {
+        icon: '👋',
+        title: 'Welkom bij de Admin rondleiding!',
+        desc:  'In deze gids overlopen we samen alle onderdelen van het beheerpaneel. Gebruik de pijltoetsen of de knoppen om te navigeren. Via de <strong>"Gids"</strong> knop kan je de rondleiding altijd opnieuw starten.',
+        tab: null, target: null,
+    },
+
+    // ── LEDEN ─────────────────────────────────────────────────────────────
+    {
+        icon: '', title: 'Leden',
+        desc: 'De Leden-tab is je startpunt voor ledenbeheer. Hier zie je alle clubleden in één overzicht.',
+        tab: 'members', target: '.tab-btn[data-tab="members"]',
+    },
+    {
+        icon: '', title: 'Aanvragen behandelen',
+        desc: 'Nieuwe leden kunnen een account aanvragen via de website. Die aanvragen verschijnen hier. Je kan ze <strong>goedkeuren</strong> (account wordt aangemaakt) of <strong>weigeren</strong>. Het oranje bolletje toont het aantal wachtende aanvragen.',
+        tab: 'members', target: '#manageRequestsBtn',
+    },
+    {
+        icon: '', title: 'Nieuw lid toevoegen',
+        desc: 'Maak handmatig een nieuw account aan. Handig voor leden die geen accountaanvraag via de website kunnen indienen.',
+        tab: 'members', target: '#addMemberBtn',
+    },
+    {
+        icon: '', title: 'Tijdelijk account',
+        desc: 'Maak een account aan met een specifieke geldigheidsperiode. Het account vervalt automatisch na de ingestelde einddatum — ideaal voor evenementen of tijdelijke helpers.',
+        tab: 'members', target: '#addTempAccountBtn',
+    },
+    {
+        icon: '', title: 'Ledenzoekbalk',
+        desc: 'Zoek snel op naam, e-mailadres of ploeg. De lijst filtert live terwijl je typt. Klik het kruisje om de zoekterm te wissen.',
+        tab: 'members', target: '.member-search-wrap',
+    },
+    {
+        icon: '', title: 'Spelerkaart',
+        desc: 'Elk account heeft een profiel met naam, ploeg en rol. Klik <strong>Bewerken</strong> om gegevens aan te passen of <strong>Verwijderen</strong> om een account te wissen.',
+        tab: 'members', target: '#membersList .member-card',
+    },
+
+    // ── WEDSTRIJDEN ───────────────────────────────────────────────────────
+    {
+        icon: '', title: 'Wedstrijden',
+        desc: 'Beheer alle wedstrijden van de club. Voeg nieuwe wedstrijden toe, werk resultaten bij of registreer de opstelling.',
+        tab: 'matches', target: '.tab-btn[data-tab="matches"]',
+    },
+    {
+        icon: '', title: 'Nieuwe wedstrijd toevoegen',
+        desc: 'Maak een nieuwe wedstrijd aan met datum, tegenstander, thuis/uit en ploeg. Wanneer een wedstrijd niet live gevolgd werd kan je het resultaat, de opstelling en tijdslijn handmatig invoeren.',
+        tab: 'matches', target: '#addMatchBtn',
+    },
+    {
+        icon: '', title: 'Wedstrijdkaart',
+        desc: 'Elke wedstrijd toont ploegen, datum, locatie en score. Geplande wedstrijden hebben een <strong>Bewerken</strong>-knop. Afgelopen wedstrijden (die niet gevolgd werden) tonen een <strong>Tijdslijn invoeren</strong>-knop om opstelling en gebeurtenissen in te geven.',
+        tab: 'matches', target: '#matchesList .match-card',
+    },
+
+    // ── RANGSCHIKKING ─────────────────────────────────────────────────────
+    {
+        icon: '', title: 'Rangschikking',
+        desc: 'Werk het klassement bij via drie methodes: plak de volledige tabel van de RBFA-website, voer een matchresultaat manueel in, of bekijk het huidig opgeslagen klassement.',
+        tab: 'ranking', target: '.tab-btn[data-tab="ranking"]',
+    },
+    {
+        icon: '', title: 'Subtabs rangschikking',
+        desc: '<strong>Volledig plakken:</strong> kopieer de tabel van de RBFA-website en plak ze hier. <strong>Matchresultaat:</strong> voer één resultaat in om de stand te herberekenen. <strong>Huidig klassement:</strong> bekijk de opgeslagen stand.',
+        tab: 'ranking', target: '.ranking-subtabs',
+    },
+
+    // ── EVENEMENTEN ───────────────────────────────────────────────────────
+    {
+        icon: '', title: 'Evenementen',
+        desc: 'Maak clubevenementen aan met datum, locatie en omschrijving. Evenementen verschijnen op de publieke evenementenpagina en in de clubkalender.',
+        tab: 'evenementen', target: '.tab-btn[data-tab="evenementen"]',
+    },
+    {
+        icon: '', title: 'Nieuw evenement aanmaken',
+        desc: 'Klik hier om een nieuw evenement aan te maken. Je vult naam, datum, locatie en beschrijving in. Hieronder zoomen we in op de inschrijvingsopties onderaan het formulier.',
+        tab: 'evenementen', target: '#addEvenementBtn',
+    },
+    {
+        icon: '', title: 'Inschrijvingen inschakelen',
+        desc: 'Met de toggle laat je ingelogde leden zich inschrijven voor het evenement. Eenmaal ingeschakeld verschijnen extra opties: een maximum aantal deelnemers (leeg = onbeperkt) en een beschrijving die getoond wordt in het inschrijfvenster van de spelers.',
+        tab: 'evenementen', target: '#evenementInschrijvingen',
+        onEnter() { _tourOpenEvenementModal(); },
+        onLeave() { /* modal blijft open voor volgende stap */ },
+    },
+    {
+        icon: '', title: 'Extra velden',
+        desc: 'Via <strong>"+ Veld toevoegen"</strong> voeg je extra vragen toe aan het inschrijfformulier. Ideaal voor bijhorende vragen, zoals: "Neem je vrienden/familie mee?".',
+        tab: 'evenementen', target: '#addExtraVeldBtn',
+        onEnter() { _tourEnableInschrijvingen(); },
+        onLeave() { _tourCloseEvenementModal(); },
+    },
+
+    // ── CONTACTBERICHTEN ──────────────────────────────────────────────────
+    {
+        icon: '', title: 'Contactberichten',
+        desc: 'Alle berichten ingediend via het contactformulier op de website komen hier binnen. Markeer berichten als gelezen of verwijder ze. Het bolletje toont het aantal ongelezen berichten.',
+        tab: 'contactberichten', target: '.tab-btn[data-tab="contactberichten"]',
+    },
+
+    // ── AANKONDIGINGEN ────────────────────────────────────────────────────
+    {
+        icon: '', title: 'Aankondigingsbanner',
+        desc: 'Hier pas je de <strong>horizontale tekstbalk bovenaan de homepagina</strong> aan. Kies een icoon en typ een korte boodschap — bv. "Bier van de maand: ...". De preview toont meteen hoe de banner er op de website uitziet.',
+        tab: 'announcements', target: '.tab-btn[data-tab="announcements"]',
+    },
+
+    // ── NAAR PAGINA 2 ─────────────────────────────────────────────────────
+    {
+        icon: '➡️', title: 'Verder naar pagina 2',
+        desc: 'Pagina 1 zit erop! Klik op <strong>Volgende</strong> om door te gaan naar de tweede adminpagina, waar we werklijsten, training, sponsors, galerij en meldingen bekijken.',
+        tab: null, target: null,
+        isRedirect: true,          // speciale vlag: volgende-knop redirect naar admin2
+        redirectTo: 'admin2.html',
+    },
+];
+
+// ── State ──────────────────────────────────────────────────────────────────
+let tourStep = 0;
+let _tourResizeHandler = null;
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+function _clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+function switchToTab(tabName) {
+    const btn = document.querySelector(`.tab-btn[data-tab="${tabName}"]`);
+    if (btn && !btn.classList.contains('active')) btn.click();
+}
+
+function getTargetEl(selector) {
+    if (!selector) return null;
+    try {
+        const el = document.querySelector(selector);
+        if (!el) return null;
+        const r = el.getBoundingClientRect();
+        if (r.width === 0 && r.height === 0) return null;
+        return el;
+    } catch (e) { return null; }
+}
+
+// ── Spotlight positioning ──────────────────────────────────────────────────
+const SPOT_PAD = 8;
+const CARD_GAP = 14;
+const CARD_W   = 360;
+
+function _applySpotlight(el) {
+    const spot = document.getElementById('tourSpotlight');
+    if (!spot || !el) return;
+    const r = el.getBoundingClientRect();
+    spot.style.top    = (r.top    - SPOT_PAD) + 'px';
+    spot.style.left   = (r.left   - SPOT_PAD) + 'px';
+    spot.style.width  = (r.width  + SPOT_PAD * 2) + 'px';
+    spot.style.height = (r.height + SPOT_PAD * 2) + 'px';
+    spot.style.boxShadow =
+        '0 0 0 9999px rgba(0,0,0,0.50),' +
+        '0 0 0 2.5px var(--primary-blue, #0047AB),' +
+        '0 0 12px 4px rgba(0,71,171,0.25)';
+    spot.style.display = 'block';
+}
+
+function _positionCard(el) {
+    const card = document.getElementById('adminTourCard');
+    if (!card || !el) return;
+    const r  = el.getBoundingClientRect();
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const cardW = Math.min(CARD_W, vw - 32);
+    const cardH = card.offsetHeight || 260;
+    const spotT = r.top    - SPOT_PAD;
+    const spotB = r.bottom + SPOT_PAD;
+    const spotL = r.left   - SPOT_PAD;
+    const spotR = r.right  + SPOT_PAD;
+
+    let pos = 'bottom';
+    if (spotB + cardH + CARD_GAP + 16 > vh && spotT - cardH - CARD_GAP - 16 >= 0) pos = 'top';
+    else if (spotB + cardH + CARD_GAP + 16 > vh && spotR + cardW + CARD_GAP + 16 <= vw) pos = 'right';
+
+    const cx = r.left + r.width  / 2;
+    const cy = r.top  + r.height / 2;
+    let top, left;
+    if (pos === 'bottom')      { top = spotB + CARD_GAP; left = _clamp(cx - cardW/2, 16, vw-cardW-16); }
+    else if (pos === 'top')    { top = spotT - CARD_GAP - cardH; left = _clamp(cx - cardW/2, 16, vw-cardW-16); }
+    else                       { top = _clamp(cy - cardH/2, 16, vh-cardH-16); left = spotR + CARD_GAP; }
+
+    top = _clamp(top, 16, vh - cardH - 16);
+    card.style.position  = 'fixed';
+    card.style.top       = top + 'px';
+    card.style.left      = left + 'px';
+    card.style.width     = cardW + 'px';
+    card.style.maxWidth  = cardW + 'px';
+    card.style.transform = 'none';
+    card.style.display   = 'block';
+}
+
+function _centerCard() {
+    const card = document.getElementById('adminTourCard');
+    if (!card) return;
+    card.style.position  = 'fixed';
+    card.style.top       = '50%';
+    card.style.left      = '50%';
+    card.style.width     = 'min(440px, calc(100vw - 2rem))';
+    card.style.maxWidth  = '';
+    card.style.transform = 'translate(-50%, -50%)';
+    card.style.display   = 'block';
+}
+
+// ── Tour rendering ─────────────────────────────────────────────────────────
+function buildTourDots() {
+    const c = document.getElementById('tourProgress');
+    if (!c) return;
+    c.innerHTML = '';
+    TOUR_STEPS.forEach((_, i) => {
+        const dot = document.createElement('button');
+        dot.className = 'tour-dot'
+            + (i < tourStep  ? ' done'   : '')
+            + (i === tourStep ? ' active' : '');
+        dot.setAttribute('aria-label', `Stap ${i + 1}`);
+        dot.addEventListener('click', () => goToTourStep(i));
+        c.appendChild(dot);
+    });
+}
+
+function _updateNavButtons() {
+    const isFirst = tourStep === 0;
+    const isLast  = tourStep === TOUR_STEPS.length - 1;
+    const step    = TOUR_STEPS[tourStep];
+    const isRedirect = !!(step && step.isRedirect);
+    const prev    = document.getElementById('tourPrevBtn');
+    const next    = document.getElementById('tourNextBtn');
+    const finish  = document.getElementById('tourFinishBtn');
+    if (prev)   prev.style.display   = isFirst ? 'none' : '';
+    // On redirect step: show "Volgende" (which will navigate), hide Klaar
+    if (next)   next.style.display   = (isLast && !isRedirect) ? 'none' : '';
+    if (finish) finish.style.display = (isLast && !isRedirect) ? ''     : 'none';
+}
+
+function renderTourStep() {
+    const step = TOUR_STEPS[tourStep];
+    if (!step) return;
+
+    document.getElementById('tourStepIcon').textContent  = step.icon  || '';
+    document.getElementById('tourStepTitle').textContent = step.title || '';
+    document.getElementById('tourStepDesc').innerHTML    = step.desc  || '';
+    _updateNavButtons();
+    buildTourDots();
+
+    document.querySelectorAll('.tab-btn.tour-tab-highlight')
+        .forEach(b => b.classList.remove('tour-tab-highlight'));
+
+    if (step.tab) switchToTab(step.tab);
+
+    const overlay   = document.getElementById('adminTourOverlay');
+    const spotlight = document.getElementById('tourSpotlight');
+
+    requestAnimationFrame(() => {
+        // Run onEnter callback if present (e.g. open a modal)
+        if (step.onEnter) step.onEnter();
+
+        // Wait step.delay ms (or two rAFs) so modal animations can settle
+        const _afterDelay = () => {
+            const targetEl = getTargetEl(step.target);
+
+            if (targetEl) {
+                if (overlay) { overlay.style.background = 'transparent'; overlay.style.display = 'block'; }
+                targetEl.scrollIntoView({ behavior: 'instant', block: 'center', inline: 'nearest' });
+                requestAnimationFrame(() => {
+                    _applySpotlight(targetEl);
+                    _positionCard(targetEl);
+                    if (step.tab) {
+                        const tabBtn = document.querySelector(`.tab-btn[data-tab="${step.tab}"]`);
+                        if (tabBtn) tabBtn.classList.add('tour-tab-highlight');
+                    }
+                    _setupResizeHandler(targetEl);
+                });
+            } else {
+                if (spotlight) spotlight.style.display = 'none';
+                if (overlay)  { overlay.style.background = 'rgba(0,0,0,0.50)'; overlay.style.display = 'block'; }
+                _centerCard();
+                if (step.tab) {
+                    const tabBtn = document.querySelector(`.tab-btn[data-tab="${step.tab}"]`);
+                    if (tabBtn) tabBtn.classList.add('tour-tab-highlight');
+                }
+                _setupResizeHandler(null);
+            }
+        };
+        const _delay = step.delay || 0;
+        if (_delay > 0) setTimeout(_afterDelay, _delay);
+        else requestAnimationFrame(_afterDelay);
+    });
+}
+
+function _setupResizeHandler(targetEl) {
+    if (_tourResizeHandler) window.removeEventListener('resize', _tourResizeHandler);
+    if (!targetEl) { _tourResizeHandler = null; return; }
+    _tourResizeHandler = () => { _applySpotlight(targetEl); _positionCard(targetEl); };
+    window.addEventListener('resize', _tourResizeHandler);
+}
+
+// ── Public API ────────────────────────────────────────────────────────────
+function goToTourStep(newIndex) {
+    const prev = TOUR_STEPS[tourStep];
+    if (prev && prev.onLeave) prev.onLeave();
+    tourStep = Math.max(0, Math.min(TOUR_STEPS.length - 1, newIndex));
+    const cur = TOUR_STEPS[tourStep];
+    // Redirect step: clicking "Volgende" sends to admin2 with tour flag
+    if (cur && cur.isRedirect && newIndex > tourStep - 1) {
+        // we arrived at redirect step normally – just render it
+    }
+    renderTourStep();
+}
+
+function _advanceTour() {
+    const cur = TOUR_STEPS[tourStep];
+    if (cur && cur.isRedirect) {
+        // Persist progress, then navigate
+        localStorage.setItem(TOUR_KEY, 'p2');   // "p2" = continue on page 2
+        window.location.href = cur.redirectTo + '?tour=1';
+        return;
+    }
+    if (tourStep < TOUR_STEPS.length - 1) goToTourStep(tourStep + 1);
+    else closeTour(true);
+}
+
+function openTour() {
+    tourStep = 0;
+    const overlay  = document.getElementById('adminTourOverlay');
+    const card     = document.getElementById('adminTourCard');
+    const spotlight = document.getElementById('tourSpotlight');
+    if (overlay)   overlay.style.display   = 'block';
+    if (card)      card.style.display      = 'block';
+    if (spotlight) spotlight.style.display = 'none';
+    renderTourStep();
+}
+
+function closeTour(markDone = true) {
+    const cur = TOUR_STEPS[tourStep];
+    if (cur && cur.onLeave) cur.onLeave();
+    ['adminTourOverlay', 'adminTourCard', 'tourSpotlight'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+    });
+    document.querySelectorAll('.tab-btn.tour-tab-highlight')
+        .forEach(b => b.classList.remove('tour-tab-highlight'));
+    if (_tourResizeHandler) { window.removeEventListener('resize', _tourResizeHandler); _tourResizeHandler = null; }
+    if (markDone) localStorage.setItem(TOUR_KEY, '1');
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+    // "Volgende" uses _advanceTour so redirect steps work
+    document.getElementById('tourNextBtn')  ?.addEventListener('click', _advanceTour);
+    document.getElementById('tourPrevBtn')  ?.addEventListener('click', () => goToTourStep(tourStep - 1));
+    document.getElementById('tourFinishBtn')?.addEventListener('click', () => closeTour(true));
+    document.getElementById('tourSkipBtn')  ?.addEventListener('click', () => closeTour(true));
+    document.getElementById('adminTourBtn') ?.addEventListener('click', openTour);
+
+    document.getElementById('adminTourOverlay')?.addEventListener('click', e => {
+        if (e.target === document.getElementById('adminTourOverlay')) closeTour(true);
+    });
+
+    document.addEventListener('keydown', e => {
+        const card = document.getElementById('adminTourCard');
+        if (!card || card.style.display === 'none') return;
+        if (e.key === 'ArrowRight' || e.key === 'Enter') _advanceTour();
+        if (e.key === 'ArrowLeft') goToTourStep(tourStep - 1);
+        if (e.key === 'Escape')    closeTour(true);
+    });
+
+    // Auto-show: first visit OR returning from page 2 (shouldn't happen, but safeguard)
+    const tourFlag = localStorage.getItem(TOUR_KEY);
+    if (!tourFlag) {
+        setTimeout(openTour, 900);
+    }
+    // "p2" flag means tour was in progress going to admin2 – nothing to do on page 1
+});

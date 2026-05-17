@@ -670,22 +670,22 @@ onAuthStateChanged(auth, async (user) => {
 
                 if (tijdelijkBtn) tijdelijkBtn.style.display = 'none';
 
-                // Profiel-knop: toon als speler (ook als tevens admin)
+                // Profiel-knop: toon als speler OF als admin (admins hebben ook een profiel)
                 if (profileBtn) {
                     const userPloegen = Array.isArray(userData.ploegen) && userData.ploegen.length > 0
                         ? userData.ploegen : (userData.categorie ? [userData.categorie] : []);
                     const isBestuurslid = userPloegen.includes('bestuurslid')
                         || userData.categorie === 'bestuurslid'
                         || userData.rol === 'bestuurslid';
-                    // Toon profiel-knop als speler (ook naast admin-knop bij dual-rol)
-                    profileBtn.style.display = (isSpeler && !isBestuurslid) ? 'block' : 'none';
+                    // Toon profiel-knop als speler of admin (ook naast admin-knop)
+                    profileBtn.style.display = (isAdmin || (isSpeler && !isBestuurslid)) ? 'block' : 'none';
                 }
 
-                // Layout: naast elkaar bij meerdere knoppen
+                // Layout: naast elkaar bij meerdere actie-knoppen (excl. logout)
                 const actionBtns = document.getElementById('profileActionBtns');
                 if (actionBtns) {
-                    const visibleBtns = actionBtns.querySelectorAll('button:not(#logoutBtn):not([style*="display: none"]):not([style*="display:none"])');
-                    actionBtns.classList.toggle('profile-action-btns-grid', visibleBtns.length > 1);
+                    const visibleBtns = Array.from(actionBtns.querySelectorAll('button:not(#logoutBtn)')).filter(b => b.style.display !== 'none');
+                    actionBtns.classList.toggle('profile-action-btns-grid', visibleBtns.length >= 2);
                 }
 
                 // Roltext aanpassen
@@ -704,8 +704,8 @@ onAuthStateChanged(auth, async (user) => {
                 // Herbereken layout na render (knoppen kunnen display:none zijn)
                 setTimeout(() => {
                     if (!actionBtns) return;
-                    const vis = Array.from(actionBtns.querySelectorAll('button')).filter(b => b.style.display !== 'none');
-                    actionBtns.classList.toggle('profile-action-btns-grid', vis.length > 2);
+                    const vis = Array.from(actionBtns.querySelectorAll('button:not(#logoutBtn)')).filter(b => b.style.display !== 'none');
+                    actionBtns.classList.toggle('profile-action-btns-grid', vis.length >= 2);
                 }, 50);
             } else {
                 console.error('No user data found in Firestore for UID:', user.uid);

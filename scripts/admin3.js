@@ -785,3 +785,258 @@ function showToast(msg, type = '') {
         t.style.transform = 'translateY(80px)'; t.style.opacity = '0';
     }, 3500);
 }
+
+// ===============================================
+// ADMIN TOUR – pagina 3 (vervolg van admin2.html)
+// ===============================================
+
+const TOUR_KEY = 'vvs_admin_tour_v2';
+
+const TOUR_STEPS_P3 = [
+    // ── Intro pagina 3 ────────────────────────────────────────────────────
+    {
+        icon: '', title: 'Pagina 3 – overzicht',
+        desc: 'De laatste adminpagina bevat de juridische teksten van de website en een ingebouwde mailfunctie. We overlopen elk onderdeel.',
+        tab: null, target: null,
+    },
+
+    // ── ALGEMENE VOORWAARDEN ──────────────────────────────────────────────
+    {
+        icon: '', title: 'Algemene Voorwaarden',
+        desc: 'Dit zijn de voorwaarden die nieuwe leden moeten accepteren bij het aanmaken van een account. Pas de tekst hier aan via de sectie-editor.',
+        tab: 'terms', target: '.tab-btn[data-tab="terms"]',
+    },
+    {
+        icon: '', title: 'Secties bewerken',
+        desc: 'De voorwaarden zijn opgebouwd uit secties. Klik op een sectie om de titel en inhoud te bewerken. Voeg nieuwe secties toe onderaan via <strong>"+ Nieuwe sectie toevoegen"</strong>.',
+        tab: 'terms', target: '#termsSectionList',
+    },
+    {
+        icon: '', title: 'Voorvertoning & opslaan',
+        desc: 'Schakel tussen <strong>Bewerken</strong> en <strong>Voorvertoning</strong> om te zien hoe de tekst er voor leden uitziet. Vergeet niet <strong>"💾 Opslaan"</strong> te klikken om de wijzigingen op te slaan in de database.',
+        tab: 'terms', target: '.save-bar',
+    },
+
+    // ── PRIVACYVERKLARING ─────────────────────────────────────────────────
+    {
+        icon: '', title: 'Privacyverklaring',
+        desc: 'De privacyverklaring is zichtbaar op de website voor alle bezoekers. Werkt identiek aan de Algemene Voorwaarden: sectie-editor, voorvertoning en opslaan.',
+        tab: 'privacy', target: '.tab-btn[data-tab="privacy"]',
+    },
+    {
+        icon: '', title: 'Privacysecties',
+        desc: 'Bewerk elke sectie afzonderlijk. Denk aan: welke gegevens worden verzameld, hoe worden ze gebruikt, en hoe kunnen leden hun gegevens laten verwijderen.',
+        tab: 'privacy', target: '#privacySectionList',
+    },
+
+    // ── MAILEN ────────────────────────────────────────────────────────────
+    {
+        icon: '', title: 'Mailen',
+        desc: 'Stuur een e-mail rechtstreeks vanuit het beheerpaneel naar één of meerdere groepen leden.',
+        tab: 'mail', target: '.tab-btn[data-tab="mail"]',
+    },
+    {
+        icon: '', title: 'Ontvangers kiezen',
+        desc: 'Selecteer wie de mail ontvangt: <strong>Iedereen</strong>, een specifieke ploeg (Veteranen, Zaterdag, Zondag) of <strong>Specifieke leden</strong> die je handmatig aanvinkt in de lijst die verschijnt.',
+        tab: 'mail', target: '.mail-recipient-grid',
+    },
+    {
+        icon: '', title: 'Onderwerp & bericht',
+        desc: 'Vul een duidelijk onderwerp in en schrijf je bericht in de tekstverwerker. Je kan tekst <strong>vetgedrukt</strong>, <em>cursief</em> of onderlijnd opmaken via de werkbalk. Klik <strong>"📩 Versturen"</strong> om de mail te verzenden.',
+        tab: 'mail', target: '#mailBodyEditor',
+    },
+
+    // ── AFSLUITING ────────────────────────────────────────────────────────
+    {
+        icon: '🎉', title: 'Rondleiding voltooid!',
+        desc: 'Je hebt nu een compleet overzicht van alle drie adminpagina\'s. Vergeet niet dat je de gids altijd opnieuw kan starten via de <strong>"Gids"</strong> knop bovenaan. Heb je vragen, contacteer Tiebe Beniers. Veel succes!',
+        tab: null, target: null,
+    },
+];
+
+// ── Spotlight engine ──────────────────────────────────────────────────────
+let _p3TourStep = 0;
+let _p3ResizeHandler = null;
+
+function _p3clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+function _p3switchTab(name) {
+    const btn = document.querySelector(`.tab-btn[data-tab="${name}"]`);
+    if (btn && !btn.classList.contains('active')) btn.click();
+}
+function _p3getEl(sel) {
+    if (!sel) return null;
+    try {
+        const el = document.querySelector(sel);
+        if (!el) return null;
+        const r = el.getBoundingClientRect();
+        return (r.width === 0 && r.height === 0) ? null : el;
+    } catch { return null; }
+}
+
+const _P3_PAD = 8, _P3_GAP = 14, _P3_CW = 360;
+
+function _p3Spotlight(el) {
+    const s = document.getElementById('tourSpotlight');
+    if (!s || !el) return;
+    const r = el.getBoundingClientRect();
+    s.style.top    = (r.top    - _P3_PAD) + 'px';
+    s.style.left   = (r.left   - _P3_PAD) + 'px';
+    s.style.width  = (r.width  + _P3_PAD*2) + 'px';
+    s.style.height = (r.height + _P3_PAD*2) + 'px';
+    s.style.boxShadow = '0 0 0 9999px rgba(0,0,0,0.50),0 0 0 2.5px var(--primary-blue,#0047AB),0 0 12px 4px rgba(0,71,171,0.25)';
+    s.style.display = 'block';
+}
+
+function _p3PosCard(el) {
+    const card = document.getElementById('adminTourCard');
+    if (!card || !el) return;
+    const r = el.getBoundingClientRect();
+    const vw = window.innerWidth, vh = window.innerHeight;
+    const cw = Math.min(_P3_CW, vw - 32), ch = card.offsetHeight || 260;
+    const sT = r.top - _P3_PAD, sB = r.bottom + _P3_PAD, sR = r.right + _P3_PAD;
+    const cx = r.left + r.width/2, cy = r.top + r.height/2;
+    let pos = 'bottom';
+    if (sB + ch + _P3_GAP + 16 > vh && sT - ch - _P3_GAP - 16 >= 0) pos = 'top';
+    else if (sB + ch + _P3_GAP + 16 > vh && sR + cw + _P3_GAP + 16 <= vw) pos = 'right';
+    let top, left;
+    if (pos === 'bottom') { top = sB + _P3_GAP; left = _p3clamp(cx - cw/2, 16, vw-cw-16); }
+    else if (pos === 'top') { top = sT - _P3_GAP - ch; left = _p3clamp(cx - cw/2, 16, vw-cw-16); }
+    else { top = _p3clamp(cy - ch/2, 16, vh-ch-16); left = sR + _P3_GAP; }
+    top = _p3clamp(top, 16, vh - ch - 16);
+    Object.assign(card.style, { position:'fixed', top:top+'px', left:left+'px', width:cw+'px', maxWidth:cw+'px', transform:'none', display:'block' });
+}
+
+function _p3CenterCard() {
+    const card = document.getElementById('adminTourCard');
+    if (!card) return;
+    Object.assign(card.style, { position:'fixed', top:'50%', left:'50%', width:'min(440px, calc(100vw - 2rem))', maxWidth:'', transform:'translate(-50%,-50%)', display:'block' });
+}
+
+function _p3BuildDots() {
+    const c = document.getElementById('tourProgress');
+    if (!c) return;
+    c.innerHTML = '';
+    TOUR_STEPS_P3.forEach((_, i) => {
+        const d = document.createElement('button');
+        d.className = 'tour-dot' + (i < _p3TourStep ? ' done' : '') + (i === _p3TourStep ? ' active' : '');
+        d.setAttribute('aria-label', `Stap ${i+1}`);
+        d.addEventListener('click', () => _p3GoTo(i));
+        c.appendChild(d);
+    });
+}
+
+function _p3UpdateNav() {
+    const isFirst = _p3TourStep === 0;
+    const isLast  = _p3TourStep === TOUR_STEPS_P3.length - 1;
+    document.getElementById('tourPrevBtn')  .style.display = isFirst ? 'none' : '';
+    document.getElementById('tourNextBtn')  .style.display = isLast  ? 'none' : '';
+    document.getElementById('tourFinishBtn').style.display = isLast  ? '' : 'none';
+}
+
+function _p3Render() {
+    const step = TOUR_STEPS_P3[_p3TourStep];
+    if (!step) return;
+    document.getElementById('tourStepIcon').textContent  = step.icon  || '';
+    document.getElementById('tourStepTitle').textContent = step.title || '';
+    document.getElementById('tourStepDesc').innerHTML    = step.desc  || '';
+    _p3UpdateNav();
+    _p3BuildDots();
+    document.querySelectorAll('.tab-btn.tour-tab-highlight').forEach(b => b.classList.remove('tour-tab-highlight'));
+    if (step.tab) _p3switchTab(step.tab);
+
+    const overlay = document.getElementById('adminTourOverlay');
+    const spot    = document.getElementById('tourSpotlight');
+
+    requestAnimationFrame(() => {
+        if (step.onEnter) step.onEnter();
+        const _afterDelay = () => {
+            const el = _p3getEl(step.target);
+            if (el) {
+                if (overlay) { overlay.style.background = 'transparent'; overlay.style.display = 'block'; }
+                el.scrollIntoView({ behavior:'instant', block:'center', inline:'nearest' });
+                requestAnimationFrame(() => {
+                    _p3Spotlight(el); _p3PosCard(el);
+                    if (step.tab) {
+                        const tb = document.querySelector(`.tab-btn[data-tab="${step.tab}"]`);
+                        if (tb) tb.classList.add('tour-tab-highlight');
+                    }
+                    if (_p3ResizeHandler) window.removeEventListener('resize', _p3ResizeHandler);
+                    _p3ResizeHandler = () => { _p3Spotlight(el); _p3PosCard(el); };
+                    window.addEventListener('resize', _p3ResizeHandler);
+                });
+            } else {
+                if (spot)    spot.style.display = 'none';
+                if (overlay) { overlay.style.background = 'rgba(0,0,0,0.50)'; overlay.style.display = 'block'; }
+                _p3CenterCard();
+                if (step.tab) {
+                    const tb = document.querySelector(`.tab-btn[data-tab="${step.tab}"]`);
+                    if (tb) tb.classList.add('tour-tab-highlight');
+                }
+                if (_p3ResizeHandler) { window.removeEventListener('resize', _p3ResizeHandler); _p3ResizeHandler = null; }
+            }
+        };
+        const d = step.delay || 0;
+        if (d > 0) setTimeout(_afterDelay, d); else requestAnimationFrame(_afterDelay);
+    });
+}
+
+function _p3GoTo(index) {
+    const prev = TOUR_STEPS_P3[_p3TourStep];
+    if (prev && prev.onLeave) prev.onLeave();
+    _p3TourStep = Math.max(0, Math.min(TOUR_STEPS_P3.length - 1, index));
+    _p3Render();
+}
+
+function _p3Close(markDone = true) {
+    const cur = TOUR_STEPS_P3[_p3TourStep];
+    if (cur && cur.onLeave) cur.onLeave();
+    ['adminTourOverlay','adminTourCard','tourSpotlight'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.style.display = 'none';
+    });
+    document.querySelectorAll('.tab-btn.tour-tab-highlight').forEach(b => b.classList.remove('tour-tab-highlight'));
+    if (_p3ResizeHandler) { window.removeEventListener('resize', _p3ResizeHandler); _p3ResizeHandler = null; }
+    if (markDone) localStorage.setItem(TOUR_KEY, '1');
+}
+
+function _p3Open() {
+    _p3TourStep = 0;
+    ['adminTourOverlay','adminTourCard'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.style.display = 'block';
+    });
+    const s = document.getElementById('tourSpotlight'); if (s) s.style.display = 'none';
+    _p3Render();
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('tourNextBtn')  ?.addEventListener('click', () => {
+        if (_p3TourStep < TOUR_STEPS_P3.length - 1) _p3GoTo(_p3TourStep + 1);
+        else _p3Close(true);
+    });
+    document.getElementById('tourPrevBtn')  ?.addEventListener('click', () => _p3GoTo(_p3TourStep - 1));
+    document.getElementById('tourFinishBtn')?.addEventListener('click', () => _p3Close(true));
+    document.getElementById('tourSkipBtn')  ?.addEventListener('click', () => _p3Close(true));
+    document.getElementById('adminTourBtn') ?.addEventListener('click', _p3Open);
+
+    document.getElementById('adminTourOverlay')?.addEventListener('click', e => {
+        if (e.target === document.getElementById('adminTourOverlay')) _p3Close(true);
+    });
+
+    document.addEventListener('keydown', e => {
+        const card = document.getElementById('adminTourCard');
+        if (!card || card.style.display === 'none') return;
+        if (e.key === 'ArrowRight' || e.key === 'Enter') {
+            if (_p3TourStep < TOUR_STEPS_P3.length - 1) _p3GoTo(_p3TourStep + 1);
+            else _p3Close(true);
+        }
+        if (e.key === 'ArrowLeft') _p3GoTo(_p3TourStep - 1);
+        if (e.key === 'Escape')    _p3Close(true);
+    });
+
+    // Auto-start when redirected from page 2
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('tour') === '1') {
+        history.replaceState(null, '', window.location.pathname + window.location.hash);
+        setTimeout(_p3Open, 700);
+    }
+});

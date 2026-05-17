@@ -1,5 +1,5 @@
 /* ===============================================
-   VVS ROTSELAAR - GALERIJ PAGE STYLES
+   VVS ROTSELAAR – GALERIJ PAGE  v2
    =============================================== */
 
 .gallery-page {
@@ -15,10 +15,12 @@
 }
 
 .gallery-header h1 {
+    font-family: 'Barlow Condensed', 'Segoe UI', sans-serif;
     color: var(--primary-blue);
-    font-size: 2.5rem;
+    font-size: 3rem;
     font-weight: 800;
-    margin-bottom: 0.5rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
 }
 
 /* ── Grid ── */
@@ -32,22 +34,34 @@
 .gallery-item {
     position: relative;
     overflow: hidden;
-    border-radius: 8px;
+    border-radius: var(--radius-lg, 16px);
     cursor: pointer;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .gallery-item:hover {
     transform: scale(1.02);
-    box-shadow: 0 8px 20px var(--shadow-lg);
+    box-shadow: 0 12px 32px var(--shadow-lg);
 }
 
-.gallery-item img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
+/* Blue overlay on hover */
+.gallery-item::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,71,171,0.35), transparent 50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
 }
+.gallery-item:hover::after { opacity: 1; }
+
+.gallery-item img {
+    width: 100%; height: 100%;
+    object-fit: cover; display: block;
+    transition: transform 0.4s ease;
+}
+.gallery-item:hover img { transform: scale(1.04); }
 
 /* Span variants */
 .gallery-item.large { grid-column: span 2; grid-row: span 2; }
@@ -61,57 +75,48 @@
 
 /* ── Lightbox ── */
 .lightbox {
-    position: fixed;
-    top: 0; left: 0;
+    position: fixed; top: 0; left: 0;
     width: 100%; height: 100%;
-    background: rgba(0,0,0,0.9);
+    background: rgba(11,29,58,0.94);
     display: none;
-    align-items: center;
-    justify-content: center;
+    align-items: center; justify-content: center;
     z-index: 3000;
+    backdrop-filter: blur(8px);
 }
-
 .lightbox.active { display: flex; }
 
 .lightbox img {
-    max-width: 90%;
-    max-height: 90%;
+    max-width: 90%; max-height: 90%;
     object-fit: contain;
-    border-radius: 8px;
+    border-radius: var(--radius, 10px);
+    box-shadow: 0 24px 80px rgba(0,0,0,0.6);
 }
 
 .lightbox-close {
     position: absolute;
     top: 2rem; right: 2rem;
-    background: var(--white);
-    color: var(--text-dark);
-    width: 50px; height: 50px;
+    background: rgba(255,255,255,0.12);
+    color: var(--white);
+    width: 48px; height: 48px;
     border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2rem;
-    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.8rem; font-weight: 700;
     cursor: pointer;
-    transition: all 0.3s ease;
-    padding-bottom: 8px;
+    transition: all 0.25s ease;
+    border: 1.5px solid rgba(255,255,255,0.25);
+    padding-bottom: 4px;
+    backdrop-filter: blur(4px);
 }
-
 .lightbox-close:hover {
     background: var(--primary-blue);
-    color: var(--white);
+    border-color: var(--primary-blue);
     transform: rotate(90deg);
 }
 
 @media (max-width: 768px) {
-    .gallery-page { padding: 2rem 1rem; }
+    .gallery-page   { padding: 2rem 1rem; }
     .gallery-header h1 { font-size: 2rem; }
-
-    .gallery-grid {
-        grid-template-columns: 1fr;
-        gap: 0.8rem;
-    }
-
+    .gallery-grid   { grid-template-columns: 1fr; gap: 0.75rem; }
     .gallery-item.large,
     .gallery-item.wide,
     .gallery-item.tall {

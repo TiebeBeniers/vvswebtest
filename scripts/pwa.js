@@ -11,7 +11,7 @@
   // ── 1. Service Worker registreren ─────────────────────────
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/vvswebtest/sw.js', { scope: '/vvswebtest/' })
+      navigator.serviceWorker.register('/vvsrotselaar/sw.js', { scope: '/vvsrotselaar/' })
         .then(reg => {
           console.log('[PWA] Service Worker geregistreerd:', reg.scope);
 
@@ -171,7 +171,7 @@
 
     const banner = createBanner(`
       <div class="pwa-banner-inner">
-        <img src="/vvswebtest/assets/icons/icon-192.png" class="pwa-banner-logo" alt="VVS">
+        <img src="/vvsrotselaar/assets/icons/icon-192.png" class="pwa-banner-logo" alt="VVS">
         <div class="pwa-banner-text">
           <div class="pwa-banner-title">Toevoegen aan startscherm</div>
           <div class="pwa-banner-sub">Gebruik V.V.S Rotselaar als een echte app — sneller en altijd bij de hand.</div>
@@ -208,7 +208,7 @@
 
     const banner = createBanner(`
       <div class="pwa-banner-inner">
-        <img src="/vvswebtest/assets/icons/icon-192.png" class="pwa-banner-logo" alt="VVS">
+        <img src="/vvsrotselaar/assets/icons/icon-192.png" class="pwa-banner-logo" alt="VVS">
         <div class="pwa-banner-text">
           <div class="pwa-banner-title">Toevoegen aan beginscherm</div>
           <div class="pwa-banner-sub">Installeer VVS Rotselaar als app op je iPhone of iPad.</div>
@@ -247,7 +247,7 @@
 
     const banner = createBanner(`
       <div class="pwa-banner-inner">
-        <img src="/vvswebtest/assets/icons/icon-192.png" class="pwa-banner-logo" alt="VVS">
+        <img src="/vvsrotselaar/assets/icons/icon-192.png" class="pwa-banner-logo" alt="VVS">
         <div class="pwa-banner-text">
           <div class="pwa-banner-title">🆕 Update beschikbaar</div>
           <div class="pwa-banner-sub">Er is een nieuwe versie van de VVS app beschikbaar.</div>

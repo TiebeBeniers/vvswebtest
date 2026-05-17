@@ -1,5 +1,5 @@
 /* ===============================================
-   VVS ROTSELAAR - CONTACT PAGE STYLES
+   VVS ROTSELAAR – CONTACT PAGE  v2
    =============================================== */
 
 .contact-page {
@@ -9,179 +9,198 @@
     margin: 0 auto;
 }
 
+/* ── Page header ── */
 .contact-header {
     text-align: center;
     margin-bottom: 3rem;
 }
 
 .contact-header h1 {
+    font-family: 'Barlow Condensed', 'Segoe UI', sans-serif;
     color: var(--primary-blue);
-    font-size: 2.5rem;
+    font-size: 3rem;
     font-weight: 800;
-    margin-bottom: 0.5rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
 }
 
 /* ── FAQ ── */
 .faq-section {
     background: var(--white);
     padding: 2.5rem;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px var(--shadow);
-    margin-bottom: 3rem;
+    border-radius: var(--radius-lg, 16px);
+    box-shadow: 0 4px 16px var(--shadow);
+    margin-bottom: 2.5rem;
+    border-top: 3px solid var(--primary-blue);
 }
 
 .faq-item {
-    margin-bottom: 2rem;
+    margin-bottom: 1.75rem;
+    padding-bottom: 1.75rem;
+    border-bottom: 1px solid var(--border-color);
 }
-
 .faq-item:last-child {
-    margin-bottom: 0;
+    margin-bottom: 0; padding-bottom: 0; border-bottom: none;
 }
 
 .faq-question {
+    font-family: 'Barlow Condensed', 'Segoe UI', sans-serif;
     color: var(--primary-blue);
-    font-size: 1.2rem;
+    font-size: 1.25rem;
     font-weight: 700;
+    letter-spacing: 0.03em;
     margin-bottom: 0.5rem;
 }
 
 .faq-answer {
     color: var(--text-gray);
-    font-size: 1.05rem;
-    line-height: 1.6;
+    font-size: 1rem;
+    line-height: 1.7;
 }
 
 /* ── Contact Form ── */
 .contact-form-section {
     background: var(--off-white);
     padding: 3rem;
-    border-radius: 12px;
-    margin-bottom: 3rem;
+    border-radius: var(--radius-lg, 16px);
+    margin-bottom: 2.5rem;
+    border: 1px solid var(--border-color);
 }
 
 .contact-form-section h2 {
+    font-family: 'Barlow Condensed', 'Segoe UI', sans-serif;
     color: var(--text-dark);
     font-size: 2rem;
     font-weight: 700;
+    letter-spacing: 2px;
     text-align: center;
-    margin-bottom: 1rem;
-    font-style: italic;
+    margin-bottom: 0.75rem;
 }
 
 .contact-form-section .subtitle {
     text-align: center;
     color: var(--text-gray);
-    font-size: 1rem;
+    font-size: 0.97rem;
     margin-bottom: 2.5rem;
-    line-height: 1.6;
+    line-height: 1.65;
 }
 
-.contact-form {
-    max-width: 600px;
-    margin: 0 auto;
-}
+.contact-form { max-width: 600px; margin: 0 auto; }
 
 .submit-btn {
     display: block;
     margin: 0 auto;
-    padding: 1rem 3rem;
-    background: var(--white);
-    color: var(--text-dark);
-    font-size: 1rem;
+    padding: 1rem 3.5rem;
+    background: var(--primary-blue);
+    color: var(--white);
+    font-family: 'Barlow Condensed', 'Segoe UI', sans-serif;
+    font-size: 1.05rem;
     font-weight: 700;
-    border: 2px solid var(--text-dark);
-    border-radius: 8px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    border: 2px solid var(--primary-blue);
+    border-radius: var(--radius, 10px);
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.25s ease;
+}
+.submit-btn:hover {
+    background: var(--dark-blue);
+    border-color: var(--dark-blue);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,71,171,0.3);
 }
 
-.submit-btn:hover {
-    background: var(--text-dark);
-    color: var(--white);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px var(--shadow);
+.submit-btn.cooldown-active {
+    background: var(--text-gray);
+    border-color: var(--text-gray);
+    cursor: not-allowed;
+    opacity: 0.75;
+    transform: none;
+    box-shadow: none;
 }
 
 /* ── Club Info & Bestuur ── */
 .contact-info-section {
     background: var(--white);
     padding: 2.5rem;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px var(--shadow);
+    border-radius: var(--radius-lg, 16px);
+    box-shadow: 0 4px 16px var(--shadow);
     margin-bottom: 2rem;
+    border-top: 3px solid var(--primary-blue);
 }
 
-.club-info {
-    margin-bottom: 2rem;
-}
+.club-info { margin-bottom: 2rem; }
 
 .club-info h3 {
+    font-family: 'Barlow Condensed', 'Segoe UI', sans-serif;
     color: var(--primary-blue);
-    font-size: 1.3rem;
+    font-size: 1.5rem;
     font-weight: 700;
+    letter-spacing: 0.05em;
     margin-bottom: 1rem;
+    text-transform: uppercase;
 }
 
 .club-info p {
     color: var(--text-gray);
-    font-size: 1rem;
+    font-size: 0.97rem;
     line-height: 1.8;
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.25rem;
 }
+
+.club-info a {
+    color: var(--primary-blue);
+    font-weight: 600;
+    transition: color 0.2s;
+}
+.club-info a:hover { color: var(--dark-blue); text-decoration: underline; }
 
 .bestuur-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
+    gap: 1.5rem;
     margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
 }
 
-.bestuur-item {
-    text-align: center;
-}
+.bestuur-item { text-align: center; }
 
 .bestuur-title {
+    font-family: 'Barlow Condensed', 'Segoe UI', sans-serif;
     color: var(--primary-blue);
-    font-size: 0.9rem;
+    font-size: 0.82rem;
     font-weight: 700;
     text-transform: uppercase;
-    margin-bottom: 0.5rem;
-    letter-spacing: 0.5px;
+    letter-spacing: 1.5px;
+    margin-bottom: 0.4rem;
 }
 
 .bestuur-name {
     color: var(--text-dark);
-    font-size: 1.1rem;
-    font-weight: 600;
+    font-size: 1rem;
+    font-weight: 700;
 }
+
+/* Dark mode */
+html.dark .faq-section          { background: var(--white); }
+html.dark .faq-answer           { color: var(--text-gray); }
+html.dark .contact-form-section { background: var(--off-white); border-color: var(--border-color); }
+html.dark .contact-info-section { background: var(--white); }
+html.dark .club-info h3         { color: var(--primary-blue); }
+html.dark .club-info p          { color: var(--text-gray); }
+html.dark .bestuur-name         { color: var(--text-dark); }
 
 @media (max-width: 768px) {
-    .contact-page { padding: 2rem 1rem; }
-    .contact-header h1 { font-size: 2rem; }
+    .contact-page          { padding: 2rem 1rem; }
+    .contact-header h1     { font-size: 2.25rem; }
     .faq-section,
     .contact-form-section,
-    .contact-info-section { padding: 1.5rem; }
-    .bestuur-grid { grid-template-columns: 1fr; gap: 1.5rem; }
-    .contact-form-section h2 { font-size: 1.6rem; }
+    .contact-info-section  { padding: 1.5rem 1.25rem; }
+    .bestuur-grid          { grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+    .contact-form-section h2 { font-size: 1.5rem; }
 }
 
-/* ── Contact section ── */
-html.dark .contact-section          { background: var(--white); }
-html.dark .club-info h3             { color: var(--text-dark); }
-html.dark .club-info p              { color: var(--text-dark); }
-html.dark .bestuur-title            { color: var(--primary-blue); }
-html.dark .bestuur-name             { color: var(--text-dark); }
-html.dark .faq-section              { background: var(--white); }
-html.dark .faq-answer               { color: var(--text-dark); }
-html.dark .contact-info-section     { background: var(--white); }
-html.dark .contact-form-section     { background: var(--off-white); }
-/* ── Cooldown knopstijl ── */
-.submit-btn.cooldown-active {
-    background: var(--text-gray, #4A4A4A);
-    color: var(--white);
-    border-color: var(--text-gray, #4A4A4A);
-    cursor: not-allowed;
-    opacity: 0.75;
-    transform: none;
-    box-shadow: none;
+@media (max-width: 480px) {
+    .bestuur-grid { grid-template-columns: 1fr; }
 }
