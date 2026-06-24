@@ -1951,7 +1951,9 @@ if (evenementForm) {
         e.preventDefault();
         
         const evenementId = document.getElementById('evenementId').value;
-        const datum = document.getElementById('evenementDatum').value;
+        const datum      = document.getElementById('evenementDatum').value;
+        const eindDatum = document.getElementById('evenementEindDatum')?.value || '';
+        const eindTijd  = document.getElementById('evenementEindTijd')?.value  || '';
         const tijd = document.getElementById('evenementTijd').value;
         const titel = document.getElementById('evenementTitel').value.trim();
         const locatie = document.getElementById('evenementLocatie').value.trim();
@@ -1970,6 +1972,8 @@ if (evenementForm) {
 
         const evenementData = {
             datum,
+            eindDatum: eindDatum || null,
+            eindTijd:  eindTijd  || null,
             tijd,
             titel,
             locatie,
@@ -2115,7 +2119,9 @@ function createEvenementCard(evenement) {
 function editEvenement(evenement) {
     document.getElementById('evenementModalTitle').textContent = 'Evenement Bewerken';
     document.getElementById('evenementId').value = evenement.id;
-    document.getElementById('evenementDatum').value = evenement.datum;
+    document.getElementById('evenementDatum').value    = evenement.datum    || '';
+    document.getElementById('evenementEindDatum').value = evenement.eindDatum || '';
+    document.getElementById('evenementEindTijd').value  = evenement.eindTijd  || '';
     document.getElementById('evenementTijd').value = evenement.tijd;
     document.getElementById('evenementTitel').value = evenement.titel;
     document.getElementById('evenementLocatie').value = evenement.locatie;
@@ -2459,7 +2465,7 @@ function createMessageCard(bericht) {
     card.innerHTML = `
         <div class="message-header">
             <div class="message-info">
-                <div class="message-email">${bericht.email}</div>
+                <a class="message-email" href="mailto:${bericht.email}" title="Reageer via e-mail">${bericht.email}</a>
                 <div class="message-date">${datum}</div>
             </div>
             <span class="message-badge ${bericht.gelezen ? 'read' : 'unread'}">
@@ -3685,7 +3691,7 @@ const TOUR_STEPS = [
     },
     {
         icon: '', title: 'Wedstrijdkaart',
-        desc: 'Elke wedstrijd toont ploegen, datum, locatie en score. Geplande wedstrijden hebben een <strong>Bewerken</strong>-knop. Afgelopen wedstrijden (die niet gevolgd werden) tonen een <strong>Tijdslijn invoeren</strong>-knop om opstelling en gebeurtenissen in te geven.',
+        desc: 'Elke wedstrijd toont ploegen, datum, locatie en score. Geplande wedstrijden hebben een <strong>Bewerken</strong>-knop. Afgelopen wedstrijden (die niet live gevolgd werden) tonen een <strong>Tijdslijn invoeren</strong>-knop om opstelling en gebeurtenissen in te geven.',
         tab: 'matches', target: '#matchesList .match-card',
     },
 
@@ -3714,7 +3720,7 @@ const TOUR_STEPS = [
     },
     {
         icon: '', title: 'Inschrijvingen inschakelen',
-        desc: 'Met de toggle laat je ingelogde leden zich inschrijven voor het evenement. Eenmaal ingeschakeld verschijnen extra opties: een maximum aantal deelnemers (leeg = onbeperkt) en een beschrijving die getoond wordt in het inschrijfvenster van de spelers.',
+        desc: 'Met de toggle geef je ingelogde leden de optie zich inschrijven voor het evenement. Eenmaal ingeschakeld verschijnen extra opties: een maximum aantal deelnemers (leeg = onbeperkt) en een beschrijving die getoond wordt in het inschrijfvenster van de spelers.',
         tab: 'evenementen', target: '#evenementInschrijvingen',
         onEnter() { _tourOpenEvenementModal(); },
         onLeave() { /* modal blijft open voor volgende stap */ },

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#ffffff">
+    <meta name="theme-color" content="#0B1D3A">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -17,7 +17,7 @@
         }
         const metaTheme = document.querySelector("meta[name='theme-color']");
         if (metaTheme) {
-            metaTheme.setAttribute("content", isDark ? "#000000" : "#ffffff");
+            metaTheme.setAttribute("content", isDark ? "#080F1E" : "#0B1D3A");
         }
     </script>
     
@@ -378,6 +378,71 @@
         html.dark .mail-radio-label { border-color: var(--border-color); color: #e0e0e0; }
         html.dark .mail-input,
         html.dark .mail-user-list   { background: #252840; border-color: var(--border-color); color: #e0e0e0; }
+
+        /* ── Admin setting card ─────────────────────────────────── */
+        .admin-setting-card {
+            background: var(--off-white);
+            border: 1.5px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+        .admin-setting-row {
+            display: flex; align-items: flex-start; gap: 1.25rem;
+            justify-content: space-between;
+        }
+        .admin-setting-info {
+            display: flex; flex-direction: column; gap: 0.3rem; flex: 1;
+        }
+        .admin-setting-info strong { font-size: 1rem; color: var(--text-dark); }
+        .admin-setting-desc { font-size: 0.88rem; color: var(--text-gray); line-height: 1.5; }
+        .admin-setting-status { font-size: 0.85rem; margin-top: 0.75rem; color: var(--success); }
+
+        /* ── Toggle switch ──────────────────────────────────────── */
+        .admin-toggle-switch {
+            position: relative; display: inline-block;
+            width: 48px; height: 26px; flex-shrink: 0; cursor: pointer;
+        }
+        .admin-toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .admin-toggle-slider {
+            position: absolute; inset: 0; border-radius: 26px;
+            background: var(--border-color);
+            transition: background 0.25s;
+        }
+        .admin-toggle-slider::before {
+            content: ''; position: absolute;
+            width: 20px; height: 20px; border-radius: 50%;
+            left: 3px; top: 3px; background: white;
+            transition: transform 0.25s;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+        }
+        .admin-toggle-switch input:checked + .admin-toggle-slider { background: var(--primary-blue); }
+        .admin-toggle-switch input:checked + .admin-toggle-slider::before { transform: translateX(22px); }
+
+        /* ── Logo grid ──────────────────────────────────────────── */
+        .admin-logo-grid {
+            display: flex; flex-wrap: wrap; gap: 1.1rem; margin-bottom: 0.5rem;
+        }
+        .admin-logo-option {
+            display: flex; flex-direction: column; align-items: center; gap: 0.6rem;
+            padding: 1rem 1.25rem; border: 2.5px solid var(--border-color);
+            border-radius: 14px; cursor: pointer;
+            transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+            min-width: 130px; text-align: center;
+            background: var(--off-white);
+        }
+        .admin-logo-option:hover { border-color: var(--primary-blue); }
+        .admin-logo-option.selected {
+            border-color: var(--primary-blue); background: #e8f0ff;
+            box-shadow: 0 0 0 3px rgba(0,71,171,0.18);
+        }
+        .admin-logo-option img { width: 72px; height: 72px; object-fit: contain; border-radius: 8px; }
+        .admin-logo-option .logo-opt-label {
+            font-size: 0.82rem; font-weight: 700; color: var(--text-dark); letter-spacing: 0.02em;
+        }
+        html.dark .admin-setting-card { background: #1e2130; border-color: var(--border-color); }
+        html.dark .admin-logo-option  { background: #1e2130; }
+        html.dark .admin-logo-option.selected { background: #1a2a50; }
     </style>
 </head>
 <body>
@@ -445,6 +510,8 @@
                 <button class="tab-btn active" data-tab="terms">Algemene Voorwaarden</button>
                 <button class="tab-btn" data-tab="privacy">Privacyverklaring</button>
                 <button class="tab-btn" data-tab="mail">&#9993; Mailen</button>
+                <button class="tab-btn" data-tab="wrapped">&#127942; VVS Wrapped</button>
+                <button class="tab-btn" data-tab="logo">&#127279; Logo</button>
             </div>
 
             <!-- ══ Tab: Algemene Voorwaarden ═══════════════════════════════════ -->
@@ -576,6 +643,94 @@
                 </div>
             </div>
 
+
+            <!-- ══ Tab: VVS Wrapped ══════════════════════════════════════════ -->
+            <div class="tab-content" id="wrappedTab">
+                <div class="section-header">
+                    <h3>&#127942; VVS Wrapped</h3>
+                </div>
+                <p class="ce-intro">
+                    Wanneer <strong>VVS Wrapped</strong> ingeschakeld is, ziet elke ingelogde speler bij het 
+                    openen van de homepage eenmalig per sessie een persoonlijke seizoensamenvatting — 
+                    vergelijkbaar met Spotify Wrapped. De speler ziet alleen statistieken &gt; 0
+                    (kaarten worden altijd getoond indien aanwezig).
+                </p>
+
+                <div class="admin-setting-card" id="wrappedSettingCard">
+                    <div class="admin-setting-row">
+                        <div class="admin-setting-info">
+                            <strong>VVS Wrapped inschakelen</strong>
+                            <span class="admin-setting-desc">
+                                Toon de Wrapped-slideshow op de homepage voor alle ingelogde spelers.
+                                Zet dit AAN aan het einde van het seizoen, en UIT wanneer het niet meer relevant is.
+                            </span>
+                        </div>
+                        <label class="admin-toggle-switch">
+                            <input type="checkbox" id="wrappedToggle">
+                            <span class="admin-toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="admin-setting-status" id="wrappedStatus"></div>
+                </div>
+
+                <div class="admin-setting-card" style="margin-top:1.25rem;">
+                    <div class="admin-setting-row" style="flex-direction:column;gap:0.75rem;">
+                        <strong>Seizoenssleutel</strong>
+                        <span class="admin-setting-desc">
+                            Spelers die op "Niet meer tonen" klikken, worden gekoppeld aan deze sleutel.
+                            Klik op <em>Reset seizoen</em> om iedereen de Wrapped opnieuw te laten zien
+                            (bv. bij een nieuw seizoen of na een grote update).
+                        </span>
+                        <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;">
+                            <input type="text" id="wrappedSeasonKey" class="mail-input"
+                                style="max-width:260px;font-size:0.85rem;"
+                                placeholder="Automatisch gegenereerd" readonly>
+                            <button class="add-btn" id="wrappedResetBtn"
+                                style="background:#e74c3c;white-space:nowrap;">
+                                &#128260; Reset seizoen
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="save-bar">
+                    <button class="add-btn" id="wrappedSaveBtn">&#128190; Opslaan</button>
+                    <span class="save-status" id="wrappedSaveStatus">&#10003; Opgeslagen</span>
+                </div>
+            </div>
+
+            <!-- ══ Tab: Logo ══════════════════════════════════════════════════ -->
+            <div class="tab-content" id="logoTab">
+                <div class="section-header">
+                    <h3>&#127279; Logo beheer</h3>
+                </div>
+                <p class="ce-intro">
+                    Selecteer welk logo getoond wordt in de <strong>header</strong> van de website en als 
+                    <strong>opstartlogo</strong> van de mobiele app. Het browser-icoon (favicon bovenaan in de tab) 
+                    blijft altijd het standaard logo. Wijzigingen zijn meteen zichtbaar voor alle bezoekers.
+                </p>
+
+                <div class="admin-logo-grid" id="logoGrid">
+                    <!-- Gevuld via JS -->
+                    <div style="color:var(--text-gray);font-size:0.9rem;padding:1rem 0;">Laden&#8230;</div>
+                </div>
+
+                <div style="margin-top:1.5rem;">
+                    <div class="mail-section-label">Eigen logo-URL (optioneel)</div>
+                    <input type="url" id="customLogoUrl" class="mail-input"
+                        placeholder="https://... (laat leeg om bovenstaande selectie te gebruiken)">
+                    <p style="font-size:0.82rem;color:var(--text-gray);margin-top:0.35rem;">
+                        Vul een directe URL in naar een PNG/JPG afbeelding (vierkant, minimaal 192×192 px aanbevolen).
+                        Dit overschrijft de geselecteerde optie hierboven.
+                    </p>
+                </div>
+
+                <div class="save-bar">
+                    <button class="add-btn" id="logoSaveBtn">&#128190; Logo opslaan</button>
+                    <span class="save-status" id="logoSaveStatus">&#10003; Opgeslagen</span>
+                </div>
+            </div>
+
         </div>
     </main>
 
@@ -612,6 +767,8 @@
     <script type="module" src="scripts/header.js"></script>
     <script type="module" src="scripts/theme.js"></script>
     <script type="module" src="scripts/notifications.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tsparticles/confetti@4.0.5/tsparticles.confetti.bundle.min.js"></script>
+    <script src="scripts/vvs-extras.js" defer></script>
     <script src="scripts/pwa.js" defer></script>
 </body>
 </html>

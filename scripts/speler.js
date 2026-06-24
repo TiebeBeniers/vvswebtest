@@ -20,8 +20,8 @@ import {
 // Profieldata:          5 minuten  — stats kunnen na een wedstrijd veranderen
 // Wedstrijdgeschiedenis: 10 minuten — verandert zelden, bevat veel reads
 //
-const CACHE_TTL_PROFILE = 5  * 60 * 1000;   // 5 min in ms
-const CACHE_TTL_HISTORY = 10 * 60 * 1000;   // 10 min in ms
+const CACHE_TTL_PROFILE = 10 * 60 * 1000;   // 10 min — F5 vernieuwt altijd
+const CACHE_TTL_HISTORY = 30 * 60 * 1000;   // 30 min — wedstrijdhistoriek verandert zelden
 
 function cacheKey(type, uid) {
     return `vvs_${type}_${uid}`;

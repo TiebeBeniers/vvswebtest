@@ -12,6 +12,9 @@ import {
     collection, doc, addDoc, getDocs, getDoc, setDoc, deleteDoc,
     query, where, orderBy, onSnapshot, serverTimestamp, writeBatch, updateDoc
 } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject }
+    from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
+const storage = getStorage();
 
 // ── State ──────────────────────────────────────────────────────────────────────
 let werklijstenCache   = {};   // id → { id, naam, active, createdAt }
@@ -918,7 +921,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 
 // ── Data reset ───────────────────────────────────────────────────────────────
 
-const SUBCOLLECTIONS = ['availability', 'playerMinutes', 'lineup', 'events'];
+const SUBCOLLECTIONS = ['availability', 'playerMinutes', 'lineup', 'events', 'motm'];
 
 /**
  * Delete all documents in a subcollection of a match using a batch.
@@ -954,7 +957,8 @@ async function resetStats(team) {
         }
         batch.update(d.ref, {
             goals: 0, assists: 0, matchen: 0,
-            minuten: 0, geelKaarten: 0, roodKaarten: 0
+            minuten: 0, geelKaarten: 0, roodKaarten: 0,
+            motmPunten: 0, motmHistory: []
         });
         count++;
     });
@@ -1005,6 +1009,235 @@ async function resetMatches(team) {
     return toDelete.length;
 }
 
+
+// ── Rock Werchter — hulpfuncties vanuit data-tab ─────────────────────────────
+
+// Laad SheetJS dynamisch als het nog niet beschikbaar is
+async function loadXLSX() {
+    if (typeof XLSX !== 'undefined') return XLSX;
+    return new Promise((resolve, reject) => {
+        const s  = document.createElement('script');
+        s.src    = 'https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js';
+        s.onload = () => resolve(window.XLSX);
+        s.onerror = () => reject(new Error('SheetJS kon niet laden'));
+        document.head.appendChild(s);
+    });
+}
+
+// Haal alle bestellingen op en return { rijen, docIds, naam }
+async function fetchRwData() {
+    const snap = await getDocs(
+        query(collection(db, 'rockwerchter_bestellingen'), orderBy('datum', 'asc'))
+    );
+    if (snap.empty) return null;
+
+    const rijen = [['Datum', 'Tijd', 'Naam', 'Betaalmethode', 'Items',
+                     'Totaal (€)', 'Ontvangen (€)', 'Wisselgeld (€)', 'Terminal', 'ID']];
+    const docIds = [];
+    snap.forEach(d => {
+        const data     = d.data();
+        const datum    = data.datum?.toDate ? data.datum.toDate() : new Date();
+        const datumStr = datum.toLocaleDateString('nl-BE',
+            { day: '2-digit', month: '2-digit', year: 'numeric' });
+        const tijdStr  = datum.toLocaleTimeString('nl-BE',
+            { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        const items = Object.entries(data.items || {})
+            .map(([n, v]) => `${v.count}x ${n}`).join(', ');
+        docIds.push(d.id);
+        rijen.push([datumStr, tijdStr, data.userName || '', data.betaalmethode || '',
+            items, data.totaal ?? 0, data.ontvangen ?? '',
+            data.wisselgeld ?? '', data.terminal ?? '', d.id]);
+    });
+    const now  = new Date();
+    const naam = `rockwerchter_${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}.xlsx`;
+    return { rijen, docIds, naam };
+}
+
+// Knop 1: alleen exporteren naar Excel
+async function exportRwExcel() {
+    const btn      = document.getElementById('rwExportBtn');
+    const statusEl = document.getElementById('rwExportStatus');
+    setRwStatus(statusEl, 'info', 'Bestellingen ophalen…');
+    if (btn) { btn.disabled = true; }
+
+    try {
+        const data = await fetchRwData();
+        if (!data) {
+            setRwStatus(statusEl, 'info', 'ℹ️ Geen bestellingen om te exporteren.');
+            return;
+        }
+        setRwStatus(statusEl, 'info', 'Excel aanmaken…');
+        const XLSXLib = await loadXLSX();
+        const ws = XLSXLib.utils.aoa_to_sheet(data.rijen);
+        ws['!cols'] = [{ wch:12 },{ wch:10 },{ wch:20 },{ wch:14 },
+                       { wch:50 },{ wch:10 },{ wch:12 },{ wch:14 },{ wch:12 },{ wch:28 }];
+        const wb = XLSXLib.utils.book_new();
+        XLSXLib.utils.book_append_sheet(wb, ws, 'Bestellingen');
+        XLSXLib.writeFile(wb, data.naam);
+        setRwStatus(statusEl, 'success', `✅ ${data.docIds.length} bestellingen geëxporteerd naar ${data.naam}`);
+        showToast(`✅ Geëxporteerd: ${data.naam}`, 'success');
+    } catch (err) {
+        console.error('[RW export]', err);
+        setRwStatus(statusEl, 'error', '❌ Fout: ' + err.message);
+        showToast('Exportfout: ' + err.message, 'error');
+    } finally {
+        if (btn) btn.disabled = false;
+    }
+}
+
+// Knop 2: verwijder alle bestellingen (na modal-bevestiging)
+async function verwijderRwBestellingen() {
+    const btn      = document.getElementById('rwDeleteBtn');
+    const statusEl = document.getElementById('rwExportStatus');
+
+    // Tel eerst hoeveel er zijn
+    setRwStatus(statusEl, 'info', 'Ophalen…');
+    let docIds = [];
+    try {
+        const snap = await getDocs(collection(db, 'rockwerchter_bestellingen'));
+        if (snap.empty) {
+            setRwStatus(statusEl, 'info', 'ℹ️ Er zijn geen bestellingen om te verwijderen.');
+            return;
+        }
+        snap.forEach(d => docIds.push(d.id));
+    } catch (err) {
+        setRwStatus(statusEl, 'error', '❌ Fout bij ophalen: ' + err.message);
+        return;
+    }
+
+    // Professionele bevestigingsmodal
+    showRwDeleteConfirm(docIds.length, async () => {
+        if (btn) btn.disabled = true;
+        setRwStatus(statusEl, 'info', `Verwijderen (0/${docIds.length})…`);
+        try {
+            for (let i = 0; i < docIds.length; i++) {
+                await deleteDoc(doc(db, 'rockwerchter_bestellingen', docIds[i]));
+                setRwStatus(statusEl, 'info', `Verwijderen (${i + 1}/${docIds.length})…`);
+            }
+            setRwStatus(statusEl, 'success', `✅ ${docIds.length} bestellingen verwijderd.`);
+            showToast(`✅ ${docIds.length} bestellingen verwijderd.`, 'success');
+        } catch (err) {
+            console.error('[RW delete]', err);
+            setRwStatus(statusEl, 'error', '❌ Fout: ' + err.message);
+            showToast('Fout bij verwijderen: ' + err.message, 'error');
+        } finally {
+            if (btn) btn.disabled = false;
+        }
+    });
+}
+
+function setRwStatus(el, type, msg) {
+    if (!el) return;
+    const colors = { info: 'var(--text-gray)', success: 'var(--success,#16a34a)', error: 'var(--danger,#dc2626)' };
+    el.style.color   = colors[type] || colors.info;
+    el.textContent   = msg;
+}
+
+// Professionele bevestigingsmodal voor verwijderen bestellingen
+function showRwDeleteConfirm(aantal, onConfirmed) {
+    let modal = document.getElementById('rwDeleteConfirmModal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id        = 'rwDeleteConfirmModal';
+        modal.className = 'modal';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <h3 style="color:var(--danger);margin-bottom:0.5rem;">
+                    <svg style="vertical-align:-3px;margin-right:6px;" width="22" height="22"
+                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                    Bestellingen verwijderen
+                </h3>
+                <p id="rwdcDesc" style="color:var(--text-gray);line-height:1.6;margin-bottom:1.25rem;"></p>
+                <div class="data-reset-code-box">
+                    <span>Typ deze code om te bevestigen:</span>
+                    <strong id="rwdcCode" class="data-reset-code"></strong>
+                </div>
+                <div class="form-group" style="margin-top:0.75rem;">
+                    <input type="text" id="rwdcInput" autocomplete="off" autocorrect="off"
+                        spellcheck="false" placeholder="Typ de code hier"
+                        style="letter-spacing:0.15em;font-weight:700;font-size:1.05rem;">
+                </div>
+                <p id="rwdcError" style="color:var(--danger);font-size:0.88rem;min-height:1.2rem;margin-bottom:0.5rem;"></p>
+                <div class="modal-actions">
+                    <button class="modal-btn cancel" id="rwdcCancelBtn">Annuleren</button>
+                    <button class="modal-btn danger" id="rwdcConfirmBtn" disabled>Verwijderen</button>
+                </div>
+            </div>`;
+        document.body.appendChild(modal);
+        modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('active'); });
+    }
+
+    const code       = generateCode();
+    const input      = modal.querySelector('#rwdcInput');
+    const errorEl    = modal.querySelector('#rwdcError');
+    const codeEl     = modal.querySelector('#rwdcCode');
+    const descEl     = modal.querySelector('#rwdcDesc');
+    const confirmBtn = modal.querySelector('#rwdcConfirmBtn');
+    const cancelBtn  = modal.querySelector('#rwdcCancelBtn');
+
+    descEl.innerHTML = `Je staat op het punt om <strong>${aantal} bestelling${aantal !== 1 ? 'en' : ''}</strong>
+        permanent te verwijderen uit de database. <br><strong>Dit kan niet ongedaan worden gemaakt.</strong>`;
+    codeEl.textContent  = code;
+    input.value         = '';
+    errorEl.textContent = '';
+    confirmBtn.disabled = true;
+
+    input.oninput = () => {
+        const match = input.value.trim().toUpperCase() === code;
+        confirmBtn.disabled = !match;
+        if (errorEl.textContent && match) errorEl.textContent = '';
+    };
+
+    cancelBtn.onclick = () => modal.classList.remove('active');
+    confirmBtn.onclick = () => {
+        if (input.value.trim().toUpperCase() !== code) {
+            errorEl.textContent = 'Code komt niet overeen.';
+            return;
+        }
+        modal.classList.remove('active');
+        onConfirmed();
+    };
+
+    modal.classList.add('active');
+    setTimeout(() => input.focus(), 50);
+}
+
+// ── Trainingen verwijderen ────────────────────────────────────────────────────
+async function resetTrainingen(team) {
+    const snap = await getDocs(collection(db, 'trainingen'));
+    const ops  = [];
+    snap.forEach(d => {
+        const data = d.data();
+        if (team === 'all'
+            || data.team === team
+            || data.categorie === team
+            || data.ploeg === team) {
+            ops.push(d.ref);
+        }
+    });
+    if (ops.length === 0) return 0;
+    // Verwijder ook availability-subcollecties van trainingen
+    const MAX = 400;
+    let allRefs = [];
+    for (const ref of ops) {
+        try {
+            const avSnap = await getDocs(collection(db, 'trainingen', ref.id, 'availability'));
+            avSnap.forEach(d => allRefs.push(d.ref));
+        } catch (_) {}
+        allRefs.push(ref);
+    }
+    for (let i = 0; i < allRefs.length; i += MAX) {
+        const batch = writeBatch(db);
+        allRefs.slice(i, i + MAX).forEach(r => batch.delete(r));
+        await batch.commit();
+    }
+    return ops.length;
+}
+
 async function resetRanking(team) {
     const snap = await getDocs(collection(db, 'ranking'));
     const batch = writeBatch(db);
@@ -1019,6 +1252,12 @@ async function resetRanking(team) {
     await batch.commit();
     return count;
 }
+
+// Wire up RW export knop
+document.getElementById('rwExportBtn')?.addEventListener('click', exportRwExcel);
+
+// Wire up RW verwijder knop
+document.getElementById('rwDeleteBtn')?.addEventListener('click', verwijderRwBestellingen);
 
 // Wire up reset buttons
 document.querySelectorAll('.data-reset-btn').forEach(btn => {
@@ -1042,8 +1281,9 @@ document.querySelectorAll('.data-reset-btn').forEach(btn => {
                 document.querySelectorAll('.data-reset-btn').forEach(b => b.disabled = true);
                 try {
                     let count = 0;
-                    if (action === 'stats')   count = await resetStats(team);
-                    if (action === 'matches') count = await resetMatches(team);
+                    if (action === 'stats')    count = await resetStats(team);
+                    if (action === 'matches')  count = await resetMatches(team);
+                    if (action === 'training') count = await resetTrainingen(team);
                     if (action === 'ranking') count = await resetRanking(team);
                     statusEl.innerHTML = `<p style="color:var(--success);font-weight:600;">✓ Klaar — ${count} record(s) verwijderd/gereset.</p>`;
                     showToast('Reset geslaagd', 'success');
@@ -1108,8 +1348,8 @@ function renderSponsorsList() {
         card.className = 'sponsor-admin-card';
         card.innerHTML = `
             <div class="sponsor-admin-logo">
-                ${sponsor.afbeeldingNaam
-                    ? `<img src="assets/${sponsor.afbeeldingNaam}" alt="${htmlEscAdmin(sponsor.naam)}" onerror="this.style.display='none'">`
+                ${sponsor.afbeeldingUrl
+                    ? `<img src="${sponsor.afbeeldingUrl}" alt="${htmlEscAdmin(sponsor.naam)}" onerror="this.style.display='none'">`
                     : `<div class="sponsor-admin-logo-placeholder">📷</div>`}
             </div>
             <div class="sponsor-admin-info">
@@ -1121,8 +1361,8 @@ function renderSponsorsList() {
                     ? `<a href="${htmlEscAdmin(sponsor.website)}" target="_blank" rel="noopener noreferrer"
                           class="sponsor-admin-link">${htmlEscAdmin(sponsor.websiteLabel || sponsor.website)}</a>`
                     : ''}
-                ${sponsor.afbeeldingNaam
-                    ? `<span class="sponsor-admin-img-tag">🖼 ${htmlEscAdmin(sponsor.afbeeldingNaam)}</span>`
+                ${sponsor.afbeeldingUrl
+                    ? `<span class="sponsor-admin-img-tag">🖼 Afbeelding aanwezig</span>`
                     : ''}
             </div>
             <div class="sponsor-admin-actions">
@@ -1198,18 +1438,70 @@ const sponsorForm   = document.getElementById('sponsorForm');
 
 function openSponsorModal(sponsor = null) {
     document.getElementById('sponsorModalTitle').textContent = sponsor ? 'Sponsor Bewerken' : 'Sponsor Toevoegen';
-    document.getElementById('sponsorId').value             = sponsor ? sponsor.id              : '';
-    document.getElementById('sponsorNaam').value           = sponsor ? (sponsor.naam           || '') : '';
-    document.getElementById('sponsorBeschrijving').value   = sponsor ? (sponsor.beschrijving   || '') : '';
-    document.getElementById('sponsorWebsite').value        = sponsor ? (sponsor.website        || '') : '';
-    document.getElementById('sponsorWebsiteLabel').value   = sponsor ? (sponsor.websiteLabel   || '') : '';
-    document.getElementById('sponsorAfbeelding').value     = sponsor ? (sponsor.afbeeldingNaam || '') : '';
+    document.getElementById('sponsorId').value             = sponsor?.id              || '';
+    document.getElementById('sponsorNaam').value           = sponsor?.naam            || '';
+    document.getElementById('sponsorBeschrijving').value   = sponsor?.beschrijving    || '';
+    document.getElementById('sponsorWebsite').value        = sponsor?.website         || '';
+    document.getElementById('sponsorWebsiteLabel').value   = sponsor?.websiteLabel    || '';
+
+    // Storage afbeelding
+    const url = sponsor?.afbeeldingUrl || '';
+    document.getElementById('sponsorAfbeeldingUrl').value = url;
+    document.getElementById('sponsorAfbeeldingFile').value = '';
+    document.getElementById('sponsorUploadProgress').style.display = 'none';
+    const preview = document.getElementById('sponsorImgPreview');
+    const previewImg = document.getElementById('sponsorImgPreviewImg');
+    if (url) {
+        previewImg.src = url;
+        preview.style.display = 'flex';
+    } else {
+        preview.style.display = 'none';
+    }
+
     sponsorModal.classList.add('active');
 }
 
 document.getElementById('addSponsorBtn')?.addEventListener('click', () => openSponsorModal());
 document.getElementById('sponsorModalCancel')?.addEventListener('click', () => sponsorModal.classList.remove('active'));
 sponsorModal?.addEventListener('click', e => { if (e.target === sponsorModal) sponsorModal.classList.remove('active'); });
+
+// ── Sponsor afbeelding uploaden ───────────────────────────────────────────────
+document.getElementById('sponsorAfbeeldingFile')?.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const progressEl = document.getElementById('sponsorUploadProgress');
+    progressEl.style.display = 'block';
+    progressEl.textContent = 'Uploaden… 0%';
+    const filename = `sponsors/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+    const storageRef = ref(storage, filename);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+    uploadTask.on('state_changed',
+        (snap) => {
+            const pct = Math.round(snap.bytesTransferred / snap.totalBytes * 100);
+            progressEl.textContent = `Uploaden… ${pct}%`;
+        },
+        (err) => { progressEl.textContent = '❌ Upload mislukt: ' + err.message; },
+        async () => {
+            const url = await getDownloadURL(uploadTask.snapshot.ref);
+            document.getElementById('sponsorAfbeeldingUrl').value = url;
+            document.getElementById('sponsorImgPreviewImg').src = url;
+            document.getElementById('sponsorImgPreview').style.display = 'flex';
+            progressEl.style.display = 'none';
+            showToast('✅ Afbeelding geüpload!', 'success');
+        }
+    );
+});
+
+document.getElementById('sponsorImgDeleteBtn')?.addEventListener('click', async () => {
+    const url = document.getElementById('sponsorAfbeeldingUrl').value;
+    if (!url || !confirm('Afbeelding verwijderen uit Storage?')) return;
+    try {
+        await deleteObject(ref(storage, url));
+    } catch (e) { console.warn('Storage delete sponsor:', e.message); }
+    document.getElementById('sponsorAfbeeldingUrl').value = '';
+    document.getElementById('sponsorImgPreview').style.display = 'none';
+    showToast('↩️ Afbeelding verwijderd.', 'success');
+});
 
 sponsorForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -1218,7 +1510,7 @@ sponsorForm?.addEventListener('submit', async (e) => {
     const beschrijving    = document.getElementById('sponsorBeschrijving').value.trim();
     const website         = document.getElementById('sponsorWebsite').value.trim();
     const websiteLabel    = document.getElementById('sponsorWebsiteLabel').value.trim();
-    const afbeeldingNaam  = document.getElementById('sponsorAfbeelding').value.trim();
+    const afbeeldingUrl = document.getElementById('sponsorAfbeeldingUrl').value.trim();
 
     if (!naam) return;
 
@@ -1229,7 +1521,7 @@ sponsorForm?.addEventListener('submit', async (e) => {
         if (id) {
             // Update bestaande sponsor
             await setDoc(doc(db, 'sponsors', id), {
-                naam, beschrijving, website, websiteLabel, afbeeldingNaam
+                naam, beschrijving, website, websiteLabel, afbeeldingUrl
             }, { merge: true });
             showToast('✅ Sponsor bijgewerkt!', 'success');
         // Cache op sponsors.html ongeldig maken
@@ -1239,7 +1531,7 @@ sponsorForm?.addEventListener('submit', async (e) => {
             const maxVolgorde = Object.values(sponsorsCache)
                 .reduce((m, s) => Math.max(m, s.volgorde ?? 0), -1);
             await addDoc(collection(db, 'sponsors'), {
-                naam, beschrijving, website, websiteLabel, afbeeldingNaam,
+                naam, beschrijving, website, websiteLabel, afbeeldingUrl,
                 volgorde: maxVolgorde + 1,
                 createdAt: serverTimestamp()
             });
@@ -1336,11 +1628,11 @@ function buildGalerijAdminCell(item, idx) {
     cell.dataset.idx = idx;
     cell.draggable = true;
 
-    const imgPath = 'assets/galerij/' + item.bestandsnaam;
+    const imgPath = item.storageUrl || ('assets/galerij/' + item.bestandsnaam);
     cell.innerHTML = `
-        <div class="galerij-admin-img-wrap">
-            <img src="${imgPath}" alt="${item.bestandsnaam}"
-                 onerror="this.parentElement.classList.add('img-error');this.style.display='none'">
+    <div class="galerij-admin-img-wrap">
+        <img src="${imgPath}" alt="${item.bestandsnaam || ''}"
+             onerror="this.parentElement.classList.add('img-error');this.style.display='none'">
             <div class="galerij-admin-missing">⚠️ Niet gevonden</div>
         </div>
         <div class="galerij-admin-overlay">
@@ -1496,8 +1788,21 @@ const fotoForm  = document.getElementById('fotoForm');
 
 function openFotoModal(item = null) {
     document.getElementById('fotoModalTitle').textContent = item ? 'Foto Bewerken' : 'Foto Toevoegen';
-    document.getElementById('fotoId').value           = item ? item.id : '';
-    document.getElementById('fotoBestandsnaam').value = item ? (item.bestandsnaam || '') : '';
+    document.getElementById('fotoId').value           = item?.id || '';
+    document.getElementById('fotoBestandsnaam').value = item?.bestandsnaam || '';
+    document.getElementById('fotoStorageUrl').value   = item?.storageUrl || '';
+    document.getElementById('fotoBestandFile').value  = '';
+    document.getElementById('fotoUploadProgress').style.display = 'none';
+
+    const preview = document.getElementById('fotoImgPreview');
+    const previewImg = document.getElementById('fotoImgPreviewImg');
+    const url = item?.storageUrl || '';
+    if (url) {
+        previewImg.src = url;
+        preview.style.display = 'flex';
+    } else {
+        preview.style.display = 'none';
+    }
 
     const grootte = item?.grootte || 'normal';
     fotoForm.querySelectorAll('input[name="fotoGrootte"]').forEach(r => {
@@ -1511,10 +1816,53 @@ document.getElementById('addFotoBtn')?.addEventListener('click', () => openFotoM
 document.getElementById('fotoModalCancel')?.addEventListener('click', () => fotoModal.classList.remove('active'));
 fotoModal?.addEventListener('click', e => { if (e.target === fotoModal) fotoModal.classList.remove('active'); });
 
+// ── Galerij foto uploaden ─────────────────────────────────────────────────────
+document.getElementById('fotoBestandFile')?.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const progressEl = document.getElementById('fotoUploadProgress');
+    progressEl.style.display = 'block';
+    progressEl.textContent = 'Uploaden… 0%';
+    const filename = `galerij/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+    const storageRef = ref(storage, filename);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+    uploadTask.on('state_changed',
+        (snap) => {
+            const pct = Math.round(snap.bytesTransferred / snap.totalBytes * 100);
+            progressEl.textContent = `Uploaden… ${pct}%`;
+        },
+        (err) => { progressEl.textContent = '❌ Upload mislukt: ' + err.message; },
+        async () => {
+            const url = await getDownloadURL(uploadTask.snapshot.ref);
+            const originalName = file.name;
+            document.getElementById('fotoBestandsnaam').value = originalName;
+            document.getElementById('fotoStorageUrl').value   = url;
+            document.getElementById('fotoImgPreviewImg').src  = url;
+            document.getElementById('fotoImgPreview').style.display = 'flex';
+            progressEl.style.display = 'none';
+            showToast('✅ Foto geüpload!', 'success');
+        }
+    );
+});
+
+document.getElementById('fotoImgDeleteBtn')?.addEventListener('click', async () => {
+    const url = document.getElementById('fotoStorageUrl').value;
+    if (!url || !confirm('Foto verwijderen uit Storage?')) return;
+    try {
+        await deleteObject(ref(storage, url));
+    } catch (e) { console.warn('Storage delete foto:', e.message); }
+    document.getElementById('fotoStorageUrl').value = '';
+    document.getElementById('fotoBestandsnaam').value = '';
+    document.getElementById('fotoImgPreview').style.display = 'none';
+    showToast('↩️ Foto verwijderd.', 'success');
+});
+
 fotoForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const id          = document.getElementById('fotoId').value.trim();
     const bestandsnaam = document.getElementById('fotoBestandsnaam').value.trim();
+    const storageUrl   = document.getElementById('fotoStorageUrl').value.trim();
+    if (!bestandsnaam && !storageUrl) return; // niets geselecteerd
     const grootte     = fotoForm.querySelector('input[name="fotoGrootte"]:checked')?.value || 'normal';
 
     if (!bestandsnaam) return;
@@ -1525,15 +1873,15 @@ fotoForm?.addEventListener('submit', async (e) => {
     try {
         if (id) {
             // Bewerk bestaande foto
-            await setDoc(doc(db, 'galerij', id), { bestandsnaam, grootte }, { merge: true });
+            await setDoc(doc(db, 'galerij', id), { bestandsnaam, storageUrl, grootte }, { merge: true });
             const item = galerijItems.find(i => i.id === id);
             if (item) { item.bestandsnaam = bestandsnaam; item.grootte = grootte; }
             showToast('✅ Foto bijgewerkt!', 'success');
         } else {
             // Nieuwe foto — volgorde achteraan
             const volgorde = galerijItems.length;
-            const ref = await addDoc(collection(db, 'galerij'), {
-                bestandsnaam, grootte, volgorde, createdAt: serverTimestamp()
+            const ref2 = await addDoc(collection(db, 'galerij'), {
+                bestandsnaam, storageUrl, grootte, volgorde, createdAt: serverTimestamp()
             });
             galerijItems.push({ id: ref.id, bestandsnaam, grootte, volgorde });
             showToast('✅ Foto toegevoegd!', 'success');

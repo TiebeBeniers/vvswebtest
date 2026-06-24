@@ -460,3 +460,19 @@ html.dark .inschrijf-popup-input     { background: var(--white); color: var(--te
     .uitgelicht-grid, #upcomingEvenementen { gap: 14px; }
     .inschrijf-popup-card { padding: 1.5rem 1rem; }
 }
+/* ── Meerdaagse periode badge ── */
+.period-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 1px 8px;
+    background: var(--primary-blue);
+    color: #fff;
+    border-radius: 20px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    vertical-align: middle;
+    margin-left: 6px;
+}

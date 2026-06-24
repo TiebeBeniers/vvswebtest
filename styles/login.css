@@ -105,7 +105,7 @@
     margin-bottom: 0.4rem;
 }
 
-.profile-info p { color: var(--text-gray); margin-bottom: 0.25rem; font-size: 0.95rem; }
+.profile-info p { margin-bottom: 0.25rem; font-size: 0.95rem; }
 
 .user-role {
     display: inline-block;

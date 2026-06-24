@@ -1,64 +1,33 @@
 // ===============================================
-// SPONSORS.JS
-// V.V.S Rotselaar – Sponsorpagina
-// Sponsors worden gecached in localStorage (24u TTL).
-// Firestore wordt alleen bevraagd bij een cache-miss of
-// wanneer de admin de cache ongeldig maakt via:
-//   localStorage.removeItem('vvs_sponsors_cache')
+// SPONSORS.JS  v2
+// Cache: CACHE_TTL.static (7 dagen) met SWR
+// Sponsors veranderen nauwelijks — 7 dagen is veilig.
+// Admin kan cache wissen via: tcClear('sponsors')
 // ===============================================
 
 import { db } from './firebase-config.js';
 import { collection, getDocs, query, orderBy }
     from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { tcSwr, CACHE_TTL } from './vvs-cache.js';
 
-const CACHE_KEY = 'vvs_sponsors_cache';
-const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 uur
-
-// ── Cache helpers ─────────────────────────────────────────────────────────────
-function cacheGet() {
-    try {
-        const raw = localStorage.getItem(CACHE_KEY);
-        if (!raw) return null;
-        const { ts, data } = JSON.parse(raw);
-        if (Date.now() - ts > CACHE_TTL) {
-            localStorage.removeItem(CACHE_KEY);
-            return null;
-        }
-        return data;
-    } catch (_) { return null; }
-}
-
-function cacheSet(data) {
-    try {
-        localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data }));
-    } catch (_) { /* quota vol — geen probleem */ }
-}
-
-// ── Load & render ─────────────────────────────────────────────────────────────
 async function loadSponsors() {
     const container = document.getElementById('sponsorsContainer');
     if (!container) return;
 
-    // ── Cache check ────────────────────────────────────────────────────────────
-    const cached = cacheGet();
-    if (cached) {
-        console.log('[cache] sponsors geladen uit localStorage');
-        render(container, cached);
-        return;
-    }
-
-    // ── Firestore fetch ────────────────────────────────────────────────────────
     try {
-        const snap = await getDocs(
-            query(collection(db, 'sponsors'), orderBy('volgorde', 'asc'))
+        await tcSwr(
+            'sponsors',
+            CACHE_TTL.static,
+            async () => {
+                const snap = await getDocs(
+                    query(collection(db, 'sponsors'), orderBy('volgorde', 'asc'))
+                );
+                const sponsors = [];
+                snap.forEach(d => sponsors.push({ id: d.id, ...d.data() }));
+                return sponsors;
+            },
+            (sponsors) => render(container, sponsors)
         );
-
-        const sponsors = [];
-        snap.forEach(d => sponsors.push({ id: d.id, ...d.data() }));
-
-        cacheSet(sponsors);
-        render(container, sponsors);
-
     } catch (err) {
         console.error('Sponsors laden mislukt:', err);
         container.innerHTML =
@@ -76,19 +45,15 @@ function render(container, sponsors) {
     sponsors.forEach(s => container.appendChild(buildSponsorCard(s)));
 }
 
-// ── Card builder ──────────────────────────────────────────────────────────────
 function buildSponsorCard(sponsor) {
     const card = document.createElement('div');
     card.className = 'sponsor-card';
 
-    // Logo column
     const logoDiv = document.createElement('div');
     logoDiv.className = 'sponsor-logo';
     if (sponsor.website) {
         const a = document.createElement('a');
-        a.href = sponsor.website;
-        a.target = '_blank';
-        a.rel = 'noopener noreferrer';
+        a.href = sponsor.website; a.target = '_blank'; a.rel = 'noopener noreferrer';
         if (sponsor.afbeeldingNaam) {
             const img = document.createElement('img');
             img.src = 'assets/' + sponsor.afbeeldingNaam;
@@ -103,7 +68,6 @@ function buildSponsorCard(sponsor) {
         logoDiv.appendChild(img);
     }
 
-    // Info column
     const infoDiv = document.createElement('div');
     infoDiv.className = 'sponsor-info';
 
@@ -119,9 +83,7 @@ function buildSponsorCard(sponsor) {
 
     if (sponsor.website) {
         const a = document.createElement('a');
-        a.href = sponsor.website;
-        a.target = '_blank';
-        a.rel = 'noopener noreferrer';
+        a.href = sponsor.website; a.target = '_blank'; a.rel = 'noopener noreferrer';
         a.className = 'sponsor-link';
         a.textContent = sponsor.websiteLabel || 'Bezoek website →';
         infoDiv.appendChild(a);

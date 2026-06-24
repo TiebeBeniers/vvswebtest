@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#ffffff">
+    <meta name="theme-color" content="#0B1D3A">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -17,7 +17,7 @@
         }
         const metaTheme = document.querySelector("meta[name='theme-color']");
         if (metaTheme) {
-            metaTheme.setAttribute("content", isDark ? "#000000" : "#ffffff");
+            metaTheme.setAttribute("content", isDark ? "#080F1E" : "#0B1D3A");
         }
     </script>
     
@@ -550,7 +550,7 @@
                         <span class="detail-key">Rol</span>
                         <span class="detail-val" id="detailRol">—</span>
                     </div>
-                    <div class="detail-row">
+                    <div class="detail-item">
                         <span class="detail-key">Rechten</span>
                         <span class="detail-val" id="detailRechten">—</span>
                     </div>
@@ -808,12 +808,22 @@
             <form id="evenementForm" class="admin-form">
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="evenementDatum">Datum *</label>
+                        <label for="evenementDatum">Startdatum *</label>
                         <input type="date" id="evenementDatum" required>
                     </div>
                     <div class="form-group">
-                        <label for="evenementTijd">Tijd *</label>
+                        <label for="evenementTijd">Starttijd *</label>
                         <input type="time" id="evenementTijd" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="evenementEindDatum">Einddatum <small style="font-weight:400;color:var(--text-gray);">(optioneel — voor meerdaagse evenementen)</small></label>
+                        <input type="date" id="evenementEindDatum">
+                    </div>
+                    <div class="form-group">
+                        <label for="evenementEindTijd">Eindtijd <small style="font-weight:400;color:var(--text-gray);">(optioneel)</small></label>
+                        <input type="time" id="evenementEindTijd">
                     </div>
                 </div>
                 <div class="form-group">
@@ -1026,6 +1036,8 @@
     <script type="module" src="scripts/header.js"></script>
     <script type="module" src="scripts/theme.js"></script>
     <script type="module" src="scripts/notifications.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tsparticles/confetti@4.0.5/tsparticles.confetti.bundle.min.js"></script>
+    <script src="scripts/vvs-extras.js" defer></script>
     <script src="scripts/pwa.js" defer></script>
 </body>
 </html>

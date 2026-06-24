@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#ffffff">
+    <meta name="theme-color" content="#0B1D3A">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -17,7 +17,7 @@
         }
         const metaTheme = document.querySelector("meta[name='theme-color']");
         if (metaTheme) {
-            metaTheme.setAttribute("content", isDark ? "#000000" : "#ffffff");
+            metaTheme.setAttribute("content", isDark ? "#080F1E" : "#0B1D3A");
         }
     </script>
     
@@ -225,6 +225,7 @@
                 <div class="section-header">
                     <h3>Drankkaart Items</h3>
                     <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+                        <button class="add-btn" onclick="window.location.href='rockwerchter.html'">Naar Drankkaart</button>
                         <button class="add-btn secondary upload" id="seedRwItemsBtn"><img src="assets/upload.png" style="filter: invert(1);"class="icon" alt=""> Standaard Items</button>
                         <button class="add-btn" id="addRwItemBtn">+ Item Toevoegen</button>
                     </div>
@@ -278,7 +279,7 @@
                     <div class="data-reset-card-header">
                         <div>
                             <h4>Spelersstatistieken</h4>
-                            <p>Verwijdert goals, assists, matchen, minuten, kaarten van alle leden.</p>
+                            <p>Zet goals, assists, matchen, minuten, gele/rode kaarten, MOTM-punten en MOTM-geschiedenis op 0.</p>
                         </div>
                     </div>
                     <div class="data-reset-team-row">
@@ -319,6 +320,41 @@
                         <button class="data-reset-btn" data-action="ranking" data-team="zaterdag">Zaterdag</button>
                         <button class="data-reset-btn" data-action="ranking" data-team="zondag">Zondag</button>
                     </div>
+                </div>
+
+                <!-- Trainingen -->
+                <div class="data-reset-card">
+                    <div class="data-reset-card-header">
+                        <div>
+                            <h4>Trainingen</h4>
+                            <p>Verwijdert alle geplande trainingen inclusief aanwezigheidsdata per ploeg.</p>
+                        </div>
+                    </div>
+                    <div class="data-reset-team-row">
+                        <button class="data-reset-btn" data-action="training" data-team="all">Alle ploegen</button>
+                        <button class="data-reset-btn" data-action="training" data-team="veteranen">Veteranen</button>
+                        <button class="data-reset-btn" data-action="training" data-team="zaterdag">Zaterdag</button>
+                        <button class="data-reset-btn" data-action="training" data-team="zondag">Zondag</button>
+                    </div>
+                </div>
+
+                <!-- Rock Werchter bestellingen -->
+                <div class="data-reset-card" style="border-left-color:#e67e22;">
+                    <div class="data-reset-card-header">
+                        <div>
+                            <h4>&#127867; Rock Werchter Bestellingen</h4>
+                            <p>Exporteer alle bestellingen naar Excel, of verwijder ze definitief uit de database.</p>
+                        </div>
+                    </div>
+                    <div class="data-reset-team-row" style="gap:0.65rem;">
+                        <button class="add-btn" id="rwExportBtn" style="background:#0047AB;">
+                            Exporteer naar Excel
+                        </button>
+                        <button class="data-reset-btn" id="rwDeleteBtn" style="background:var(--danger,#dc2626);color:#fff;border:none;">
+                            Verwijder alle bestellingen
+                        </button>
+                    </div>
+                    <div id="rwExportStatus" style="margin-top:0.6rem;font-size:0.85rem;min-height:1.2rem;"></div>
                 </div>
 
                 <!-- ── Export sectie ── -->
@@ -482,9 +518,14 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="sponsorAfbeelding">Afbeeldingsnaam (in assets/)</label>
-                    <input type="text" id="sponsorAfbeelding" placeholder="bv. sponsor1_logo.png">
-                    <small style="color:var(--text-gray);font-size:0.85rem;">Zorg dat het bestand in de assets-map staat.</small>
+                    <label>Afbeelding</label>
+                    <div id="sponsorImgPreview" style="display:none;align-items:center;gap:0.75rem;margin-bottom:0.5rem;">
+                        <img id="sponsorImgPreviewImg" style="max-height:70px;max-width:140px;border-radius:6px;border:1px solid var(--border-color);" alt="Preview">
+                        <button type="button" id="sponsorImgDeleteBtn" class="modal-btn cancel" style="padding:0.3rem 0.75rem;font-size:0.82rem;">🗑 Verwijder</button>
+                    </div>
+                    <input type="file" id="sponsorAfbeeldingFile" accept="image/*">
+                    <div id="sponsorUploadProgress" style="display:none;font-size:0.82rem;color:var(--text-gray);margin-top:0.3rem;">Uploaden…</div>
+                    <input type="hidden" id="sponsorAfbeeldingUrl">
                 </div>
                 <input type="hidden" id="sponsorId">
                 <div class="modal-actions">
@@ -677,6 +718,8 @@
     <script type="module" src="scripts/header.js"></script>
     <script type="module" src="scripts/theme.js"></script>
     <script type="module" src="scripts/notifications.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tsparticles/confetti@4.0.5/tsparticles.confetti.bundle.min.js"></script>
+    <script src="scripts/vvs-extras.js" defer></script>
     <script src="scripts/pwa.js" defer></script>
 </body>
 </html>

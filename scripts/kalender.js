@@ -14,6 +14,7 @@
 // ===============================================
 
 import { auth, db } from './firebase-config.js';
+import { tcGet, tcSet, CACHE_TTL, PAGE_REFRESHED } from './vvs-cache.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 import {
     collection, query, where, getDocs, doc, setDoc, addDoc,
@@ -113,7 +114,19 @@ async function loadWeek() {
     const weekStart = isoDate(currentWeekStart);
     const weekEnd   = isoDate(addDays(currentWeekStart, 6));
 
+    // ── Cache: 30 min per week-blok (publieke data) ──────────────────────────
+    const _weekKey = `cal_week_${weekStart}`;
+    const _cached  = tcGet(_weekKey, CACHE_TTL.medium);
+    if (_cached && !PAGE_REFRESHED) {
+        // Cache vers — render direct, geen Firebase reads
+        calItems.push(..._cached);
+    }
+
     try {
+        if (_cached && !PAGE_REFRESHED) {
+            // Skip naar user-specifieke data (werklijst-shiften)
+        } else {
+
         // Parallel load: trainingen + matches + evenementen — allemaal publiek leesbaar
         const results = await Promise.allSettled([
             getDocs(query(collection(db, 'trainingen'), where('datum', '>=', weekStart), where('datum', '<=', weekEnd))),
@@ -142,17 +155,37 @@ async function loadWeek() {
                 ...data });
         });
 
-        // Evenementen (filter op week)
+        // Evenementen (filter op week + meerdaagse periodes)
         evSnap.forEach(d => {
             const data = d.data();
-            if (data.datum >= weekStart && data.datum <= weekEnd) {
-                calItems.push({ id: d.id, type: 'event', source: 'event',
-                    datum: data.datum, startTijd: data.tijd || '',
-                    titel: data.titel, locatie: data.locatie, ...data });
+            const evStart = data.datum;
+            const evEnd   = data.eindDatum || data.datum;
+            // Toon op elke dag die overlapt met de zichtbare week
+            if (evEnd >= weekStart && evStart <= weekEnd) {
+                // Voeg toe op elke dag van de periode die in de week valt
+                let cur = new Date(evStart + 'T12:00');
+                const endDt = new Date(evEnd + 'T12:00');
+                while (cur <= endDt) {
+                    const dayStr = cur.toISOString().split('T')[0];
+                    if (dayStr >= weekStart && dayStr <= weekEnd) {
+                        const isFirst = dayStr === evStart;
+                        const isLast  = dayStr === evEnd;
+                        calItems.push({ id: d.id + '_' + dayStr, type: 'event', source: 'event',
+                            datum: dayStr, startTijd: isFirst ? (data.tijd || '') : '',
+                            titel: data.titel + (data.eindDatum ? (isFirst ? ' (start)' : isLast ? ' (einde)' : '') : ''),
+                            locatie: data.locatie, eindDatum: data.eindDatum, ...data });
+                    }
+                    cur.setDate(cur.getDate() + 1);
+                }
             }
         });
 
-        // Werklijst-shiften voor ingelogde gebruiker
+        // Sla publieke items op in cache (exclusief user-specifieke shiften)
+        tcSet(_weekKey, calItems.filter(i => i.source !== 'shift'));
+
+        } // end if(!cached)
+
+        // Werklijst-shiften voor ingelogde gebruiker (nooit gecacht — user-specifiek)
         if (currentUser) {
             try {
                 const wlSnap = await getDocs(query(collection(db, 'werklijsten'), where('active', '==', true)));
@@ -246,7 +279,12 @@ function openPopup(item) {
 
     const isSigned    = item.type === 'training' && (item.aanwezigen||[]).some(p => p.uid === currentUser?.uid);
     const aanwezigen  = item.aanwezigen || [];
-    const dateFmt     = item.datum ? new Date(item.datum + 'T12:00').toLocaleDateString('nl-BE', { weekday:'long', day:'numeric', month:'long' }) : '';
+    const startDate    = item.datum ? new Date(item.datum + 'T12:00') : null;
+    const startFmtOpts = { weekday:'long', day:'numeric', month:'long' };
+    const startStr     = startDate ? startDate.toLocaleDateString('nl-BE', startFmtOpts) : '';
+    const dateFmt      = item.eindDatum
+        ? startStr + ' — ' + new Date(item.eindDatum + 'T12:00').toLocaleDateString('nl-BE', startFmtOpts)
+        : startStr;
     const tijdFmt     = [item.startTijd, item.eindTijd].filter(Boolean).join(' – ');
 
     const scoreStr = item.type === 'match' && item.status === 'finished'

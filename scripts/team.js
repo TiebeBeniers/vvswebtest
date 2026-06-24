@@ -21,10 +21,10 @@ console.log('Team.js loaded');
 // Availability wordt NIET gecached — dat is real-time via onSnapshot.
 //
 const CACHE_TTL = {
-    recentMatches: 30 * 60 * 1000,
-    nextMatch:     10 * 60 * 1000,
-    teamStats:     60 * 60 * 1000,
-    timeline:      7 * 24 * 60 * 60 * 1000,   // 1 week — afgelopen wedstrijden veranderen niet
+    recentMatches: 30 * 60 * 1000,           // 30 min — verandert na wedstrijden
+    nextMatch:     15 * 60 * 1000,           // 15 min — volgende wedstrijd
+    teamStats:     60 * 60 * 1000,           // 60 min — statistieken
+    timeline:      7 * 24 * 60 * 60 * 1000, // 7 dagen — afgelopen tijdlijnen (immutable)
 };
 
 // Hoe lang (minuten) na aftrap een geplande match nog als "bezig" getoond wordt
@@ -625,7 +625,34 @@ async function loadRanking() {
 
         if (!snap.exists() || !snap.data().teams?.length) {
             console.warn('No ranking in Firestore for', TEAM_TYPE);
-            tbody.innerHTML = '<tr><td colspan="10">Geen ranking beschikbaar.</td></tr>';
+            // Mooie lege staat in plaats van kale tekst
+            const container = tbody.closest('.ranking-table-container');
+            if (container) {
+                container.innerHTML = `
+                    <div style="
+                        display:flex; flex-direction:column; align-items:center;
+                        justify-content:center; padding:3rem 1.5rem; gap:0.75rem;
+                        color:var(--text-gray,#6b7280); text-align:center;
+                    ">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="1.5" opacity="0.45">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            <line x1="3" y1="9" x2="21" y2="9"/>
+                            <line x1="3" y1="15" x2="21" y2="15"/>
+                            <line x1="9" y1="9" x2="9" y2="21"/>
+                        </svg>
+                        <p style="font-size:1.05rem;font-weight:700;margin:0;
+                                  color:var(--text-dark,#1a202c);">
+                            Nog geen klassement beschikbaar
+                        </p>
+                        <p style="font-size:0.88rem;margin:0;max-width:300px;line-height:1.5;">
+                            Het klassement wordt toegevoegd zodra de competitie van start gaat.
+                            Kom later terug!
+                        </p>
+                    </div>`;
+            } else {
+                tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:2rem;color:var(--text-gray);">Nog geen klassement beschikbaar.</td></tr>';
+            }
             return;
         }
 

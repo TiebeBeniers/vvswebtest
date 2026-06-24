@@ -93,7 +93,10 @@ async function loadLiveMatch() {
             collection(db, 'matches'),
             where('status', 'in', ['live', 'rust'])
         ));
-        if (snap.empty) { window.location.href = 'index.html'; return; }
+        if (snap.empty) {
+            showNoMatchState();
+            return;
+        }
 
         currentMatchId = snap.docs[0].id;
         currentMatch   = snap.docs[0].data();
@@ -528,8 +531,22 @@ async function handleEndMatch() {
             localStorage.removeItem(`vvs_next_match_${team}`);
         } catch (_) {}
 
-        showToast('Wedstrijd beëindigd', 'success');
-        window.location.href = 'index.html';
+        showToast('Wedstrijd beëindigd! ✅', 'success');
+
+        // Confetti als VVS gewonnen heeft
+        const vvsScore = vvsSide === 'home'
+            ? (currentMatch.scoreThuis ?? 0)
+            : (currentMatch.scoreUit   ?? 0);
+        const oppScore = vvsSide === 'home'
+            ? (currentMatch.scoreUit   ?? 0)
+            : (currentMatch.scoreThuis ?? 0);
+        if (vvsScore > oppScore) {
+            launchWinConfetti();
+        }
+
+        // Toon eindstand UI (geen redirect)
+        showMatchFinishedState();
+
     } catch (e) { console.error('Error ending match:', e); showToast('Fout bij beëindigen: ' + e.message, 'error'); }
 }
 
@@ -1503,4 +1520,203 @@ function showToast(msg, type = '') {
     t.style.opacity    = '1';
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => { t.style.transform = 'translateY(80px)'; t.style.opacity = '0'; }, 3500);
+}
+
+// ── Geen live wedstrijd ───────────────────────────────────────────────────────
+async function showNoMatchState() {
+    // Verberg controlpanel
+    const panel = document.getElementById('controlPanel');
+    if (panel) panel.style.display = 'none';
+
+    // Scorebord neutraal zetten
+    const homeTeam = document.getElementById('homeTeamName');
+    const awayTeam = document.getElementById('awayTeamName');
+    const minute   = document.getElementById('currentMinute');
+    const status   = document.getElementById('matchStatus');
+    if (homeTeam) homeTeam.textContent = 'V.V.S. Rotselaar';
+    if (awayTeam) awayTeam.textContent = '—';
+    if (minute)   minute.textContent   = '—';
+    if (status) {
+        status.textContent      = 'Geen wedstrijd';
+        status.style.background = '#6c757d';
+    }
+
+    // Zoek eerstvolgende geplande wedstrijd
+    let nextMatch = null;
+    try {
+        const snap = await getDocs(query(
+            collection(db, 'matches'),
+            where('status', '==', 'planned')
+        ));
+        const now = Date.now();
+        snap.forEach(d => {
+            const data = d.data();
+            const ts   = new Date(`${data.datum}T${data.uur}`).getTime();
+            if (ts > now) {
+                if (!nextMatch || ts < new Date(`${nextMatch.datum}T${nextMatch.uur}`).getTime()) {
+                    nextMatch = { id: d.id, ...data };
+                }
+            }
+        });
+    } catch (_) {}
+
+    // Banner bouwen
+    const matchHeader = document.querySelector('.match-header');
+    if (!matchHeader || document.getElementById('noMatchBanner')) return;
+
+    const banner = document.createElement('div');
+    banner.id = 'noMatchBanner';
+    banner.style.cssText = [
+        'background:var(--off-white,#f5f7fa)',
+        'border:2px solid var(--border-color,#e0e4ed)',
+        'border-radius:14px',
+        'padding:1.5rem 1.75rem',
+        'margin:1.25rem auto',
+        'max-width:620px',
+        'text-align:center',
+        'font-family:Barlow Condensed,sans-serif',
+    ].join(';');
+
+    if (nextMatch) {
+        const matchTs   = new Date(`${nextMatch.datum}T${nextMatch.uur}`).getTime();
+        const homeLabel = nextMatch.thuisploeg || 'Thuisploeg';
+        const awayLabel = nextMatch.uitploeg   || 'Uitploeg';
+
+        banner.innerHTML = `
+            <div style="font-size:0.85rem;font-weight:700;letter-spacing:.08em;color:var(--text-gray,#6b7280);margin-bottom:.6rem;">
+                VOLGENDE WEDSTRIJD
+            </div>
+            <div style="font-size:1.3rem;font-weight:800;color:var(--primary-blue,#0047AB);letter-spacing:.04em;margin-bottom:.9rem;">
+                ${homeLabel} &nbsp;–&nbsp; ${awayLabel}
+            </div>
+            <div id="liveCountdown" style="display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;"></div>
+            <div style="font-size:.88rem;color:var(--text-gray,#6b7280);">
+                📅 ${new Date(`${nextMatch.datum}T${nextMatch.uur}`).toLocaleString('nl-BE',
+                    { weekday:'long', day:'numeric', month:'long', hour:'2-digit', minute:'2-digit' })}
+            </div>
+            <div style="margin-top:1rem;">
+                <a href="index.html" style="color:var(--primary-blue,#0047AB);font-size:.9rem;text-decoration:underline;">← Terug naar home</a>
+            </div>`;
+
+        matchHeader.parentNode.insertBefore(banner, matchHeader.nextSibling);
+        startCountdown(matchTs);
+
+    } else {
+        banner.innerHTML = `
+            <div style="font-size:1.05rem;font-weight:600;color:var(--text-gray,#6b7280);letter-spacing:.03em;">
+                ⚽ Er is momenteel geen live wedstrijd gepland.
+            </div>
+            <div style="margin-top:.9rem;">
+                <a href="index.html" style="color:var(--primary-blue,#0047AB);font-size:.9rem;text-decoration:underline;">← Terug naar home</a>
+            </div>`;
+        matchHeader.parentNode.insertBefore(banner, matchHeader.nextSibling);
+    }
+}
+
+// ── Aftelklok ────────────────────────────────────────────────────────────────
+let _countdownInterval = null;
+function startCountdown(targetTs) {
+    function unit(val, label) {
+        return `<div style="background:var(--primary-blue,#0047AB);color:#fff;border-radius:10px;
+                            padding:.6rem .9rem;min-width:60px;text-align:center;">
+                    <div style="font-size:1.7rem;font-weight:800;line-height:1;">${String(val).padStart(2,'0')}</div>
+                    <div style="font-size:.62rem;letter-spacing:.08em;opacity:.8;margin-top:2px;">${label}</div>
+                </div>`;
+    }
+
+    function render() {
+        const diff = targetTs - Date.now();
+        const el   = document.getElementById('liveCountdown');
+        if (!el) { clearInterval(_countdownInterval); return; }
+
+        if (diff <= 0) {
+            clearInterval(_countdownInterval);
+            el.innerHTML = '<span style="font-size:1.1rem;font-weight:700;color:var(--primary-blue,#0047AB);">⚽ Aftrap verwacht!</span>';
+            return;
+        }
+
+        const d = Math.floor(diff / 86400000);
+        const h = Math.floor((diff % 86400000) / 3600000);
+        const m = Math.floor((diff % 3600000)  / 60000);
+        const s = Math.floor((diff % 60000)    / 1000);
+
+        let html = '';
+        if (d > 0) html += unit(d, d === 1 ? 'DAG' : 'DAGEN');
+        html += unit(h, 'UUR');
+        html += unit(m, 'MIN');
+        html += unit(s, 'SEC');
+        el.innerHTML = html;
+    }
+
+    render();
+    clearInterval(_countdownInterval);
+    _countdownInterval = setInterval(render, 1000);
+}
+
+// ── Eindstand banner na beëindigen ───────────────────────────────────────────
+function showMatchFinishedState() {
+    // Status badge updaten
+    const statusEl = document.getElementById('matchStatus');
+    if (statusEl) {
+        statusEl.textContent      = 'Afgelopen';
+        statusEl.style.background = '#6c757d';
+    }
+
+    // Minuut-display
+    const minuteEl = document.getElementById('currentMinute');
+    if (minuteEl) minuteEl.textContent = 'FT';
+
+    // Controlpanel verbergen
+    const panel = document.getElementById('controlPanel');
+    if (panel) panel.style.display = 'none';
+
+    // Eindstand-banner tonen
+    const matchHeader = document.querySelector('.match-header');
+    if (matchHeader && !document.getElementById('finishedBanner')) {
+        const banner = document.createElement('div');
+        banner.id = 'finishedBanner';
+        banner.style.cssText = [
+            'background:#d1fae5',
+            'border:2px solid #6ee7b7',
+            'border-radius:12px',
+            'padding:1.25rem 1.5rem',
+            'margin:1.5rem auto',
+            'max-width:600px',
+            'text-align:center',
+            'font-family:Barlow Condensed,sans-serif',
+            'font-size:1.2rem',
+            'font-weight:700',
+            'color:#065f46',
+            'letter-spacing:0.04em',
+        ].join(';');
+        banner.innerHTML = '✅ Wedstrijd beëindigd! De eindstand is opgeslagen. ' +
+            '<br><a href="index.html" style="color:#047857;text-decoration:underline;font-size:1rem;">Terug naar home →</a>';
+        matchHeader.parentNode.insertBefore(banner, matchHeader.nextSibling);
+    }
+}
+
+// ── VVS WIN CONFETTI ─────────────────────────────────────────────────────────
+function launchWinConfetti() {
+    if (typeof confetti !== 'function') return;
+
+    const end    = Date.now() + 2 * 1000;
+    const colors = ['#0047AB', '#ffffff'];
+
+    (function frame() {
+        confetti({
+            particleCount: 2,
+            angle:  60,
+            spread: 55,
+            origin: { x: 0 },
+            colors
+        });
+        confetti({
+            particleCount: 2,
+            angle:  120,
+            spread: 55,
+            origin: { x: 1 },
+            colors
+        });
+        if (Date.now() < end) requestAnimationFrame(frame);
+    })();
 }

@@ -933,7 +933,7 @@ const RW_TOUR_STEPS = [
     {
         icon: '🍺',
         title: 'Welkom — Barman rondleiding',
-        desc: 'Deze gids legt de Rock Werchter drankkaart uit. Als barman gebruik je deze pagina om bestellingen aan te duiden en af te rekenen. We doorlopen samen de kaart, de selectie en de drie betaalmethodes.',
+        desc: 'Deze gids legt de Rock Werchter drankkaart uit. Als barman gebruik je deze pagina om bestellingen in te geven en af te rekenen. We doorlopen samen de kaart, de selectie en de drie betaalmethodes.',
         target: null,
     },
 
@@ -949,7 +949,7 @@ const RW_TOUR_STEPS = [
     {
         icon: '',
         title: 'Vereist item',
-        desc: 'Sommige items kunnen niet los aangeklikt worden totdat een vereist item al in de bestelling zit.<br><br>💡 <em>Voorbeeld:</em> Een Cup Refund kan pas aangeklikt worden als er een nieuwe consumtie uit een beker besteld wordt. Extra bekers via QR.',
+        desc: 'Sommige items kunnen niet los aangeklikt worden totdat een vereist item al in de bestelling zit.<br><br>💡 <em>Voorbeeld:</em> Een Cup Refund kan pas aangeklikt worden als er een nieuwe consumptie met beker besteld wordt. Extra bekers via QR.',
         target: '#drankContainer .drank-card',
     },
 

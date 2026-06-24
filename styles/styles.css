@@ -930,6 +930,7 @@ a.sr-item { cursor: pointer; }
 .sr-sub   { display: block; font-size: 0.78rem; color: var(--text-gray); margin-top: 1px; }
 .sr-arrow { color: var(--text-gray); flex-shrink: 0; font-size: 1.2rem; }
 .sr-mark  { background: #FFF3CD; color: var(--text-dark); border-radius: 2px; }
+html.dark .sr-mark { background: #4b3e0f; color: #f1c40f; }
 .sr-live-badge {
     display: inline-block; background: var(--danger); color: #fff;
     font-size: 0.68rem; font-weight: 700; padding: 1px 6px; border-radius: 4px;

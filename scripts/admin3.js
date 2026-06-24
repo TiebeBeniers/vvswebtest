@@ -9,8 +9,9 @@
 
 import { auth, db } from './firebase-config.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-import { collection, query, where, getDocs, doc, getDoc, setDoc, addDoc, serverTimestamp }
+import { collection, query, where, getDocs, doc, getDoc, setDoc, addDoc, updateDoc, serverTimestamp }
     from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { LOGO_OPTIONS } from './vvs-logo.js';
 
 // ── Standaardinhoud ───────────────────────────────────────────────────────────
 
@@ -747,6 +748,10 @@ async function initMailTab() {
             sendBtn.textContent = '&#9993; Versturen';
         }
     });
+
+    // Nieuwe tabbladen
+    initWrappedTab();
+    initLogoTab();
 }
 
 // ── Mail-tab koppelen ────────────────────────────────────────────────────────
@@ -844,6 +849,25 @@ const TOUR_STEPS_P3 = [
         icon: '', title: 'Onderwerp & bericht',
         desc: 'Vul een duidelijk onderwerp in en schrijf je bericht in de tekstverwerker. Je kan tekst <strong>vetgedrukt</strong>, <em>cursief</em> of onderlijnd opmaken via de werkbalk. Klik <strong>"📩 Versturen"</strong> om de mail te verzenden.',
         tab: 'mail', target: '#mailBodyEditor',
+    },
+
+    // ── VVS WRAPPED ───────────────────────────────────────────────────────
+    {
+        icon: '', title: 'VVS Wrapped',
+        desc: 'Schakel op het einde van een seizoen de <strong>"VVS Wrapped"</strong> tab in om automatisch een gepersonaliseerde terugblik te genereren voor elk lid. Weergegeven op de startpagina.',
+        tab: 'wrapped', target: '.tab-btn[data-tab="wrapped"]',
+    },
+
+    // ── LOGO ───────────────────────────────────────────────────────
+    {
+        icon: '', title: 'Logo aanpassen',
+        desc: 'Pas het logo van de hoofdbalk aan door een nieuwe afbeelding te uploaden. Zorg dat het logo een transparante achtergrond heeft en bij voorkeur in PNG-formaat is voor de beste weergave.',
+        tab: 'logo', target: '.tab-btn[data-tab="logo"]',
+    },
+    {
+        icon: '', title: 'Standaard logo\'s',
+        desc: 'Het standaard- & feestlogo zijn al geüpload, maak een selectie.',
+        tab: 'logo', target: '#logoGrid',
     },
 
     // ── AFSLUITING ────────────────────────────────────────────────────────
@@ -1040,3 +1064,140 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(_p3Open, 700);
     }
 });
+
+// ── VVS Wrapped Tab ───────────────────────────────────────────────────────────
+async function initWrappedTab() {
+    const toggle   = document.getElementById('wrappedToggle');
+    const saveBtn  = document.getElementById('wrappedSaveBtn');
+    const saveStatus = document.getElementById('wrappedSaveStatus');
+    const statusEl = document.getElementById('wrappedStatus');
+    if (!toggle || !saveBtn) return;
+
+    // Laad huidige waarde
+    try {
+        const snap = await getDoc(doc(db, 'settings', 'siteSettings'));
+        if (snap.exists()) {
+            toggle.checked = !!snap.data().wrappedEnabled;
+        }
+    } catch (e) { console.warn('Wrapped: kon instellingen niet laden', e); }
+
+    // Live status label
+    function updateStatus() {
+        statusEl.textContent = toggle.checked
+            ? '✅ Wrapped is momenteel INGESCHAKELD — spelers zien hun seizoensamenvatting.'
+            : '⏸️ Wrapped is momenteel UITGESCHAKELD.';
+        statusEl.style.color = toggle.checked ? 'var(--success)' : 'var(--text-gray)';
+    }
+    updateStatus();
+    toggle.addEventListener('change', updateStatus);
+
+    // Seizoenssleutel ophalen/tonen
+    const seasonInput = document.getElementById('wrappedSeasonKey');
+    try {
+        const snap = await getDoc(doc(db, 'settings', 'siteSettings'));
+        if (snap.exists() && seasonInput) {
+            seasonInput.value = snap.data().wrappedSeasonKey || '';
+        }
+    } catch (_) {}
+
+    // Reset: genereer nieuwe seizoenssleutel (invalideert alle "Niet meer tonen")
+    document.getElementById('wrappedResetBtn')?.addEventListener('click', async () => {
+        const newKey = 'seizoen_' + Date.now();
+        if (seasonInput) seasonInput.value = newKey;
+        try {
+            await setDoc(doc(db, 'settings', 'siteSettings'),
+                { wrappedSeasonKey: newKey }, { merge: true });
+            showAdminToast('✅ Seizoenssleutel gereset — alle spelers zien de Wrapped opnieuw.');
+        } catch (e) { alert('Fout: ' + e.message); }
+    });
+
+    // Opslaan
+    saveBtn.addEventListener('click', async () => {
+        saveBtn.disabled = true;
+        try {
+            const payload = { wrappedEnabled: toggle.checked };
+            if (seasonInput?.value) payload.wrappedSeasonKey = seasonInput.value;
+            await setDoc(doc(db, 'settings', 'siteSettings'), payload, { merge: true });
+            saveStatus.style.display = 'inline';
+            setTimeout(() => saveStatus.style.display = 'none', 2500);
+        } catch (e) {
+            alert('Fout bij opslaan: ' + e.message);
+        }
+        saveBtn.disabled = false;
+    });
+}
+
+// ── Logo Tab ─────────────────────────────────────────────────────────────────
+async function initLogoTab() {
+    const grid       = document.getElementById('logoGrid');
+    const customInput = document.getElementById('customLogoUrl');
+    const saveBtn    = document.getElementById('logoSaveBtn');
+    const saveStatus = document.getElementById('logoSaveStatus');
+    if (!grid || !saveBtn) return;
+
+    let selectedId = 'default';
+
+    // Laad huidige waarde
+    try {
+        const snap = await getDoc(doc(db, 'settings', 'siteSettings'));
+        if (snap.exists()) {
+            selectedId = snap.data().activeLogo || 'default';
+            if (customInput) customInput.value = snap.data().customLogoUrl || '';
+        }
+    } catch (e) { console.warn('Logo: kon instellingen niet laden', e); }
+
+    // Render logo-opties
+    grid.innerHTML = '';
+    LOGO_OPTIONS.forEach(opt => {
+        const card = document.createElement('div');
+        card.className = 'admin-logo-option' + (opt.id === selectedId ? ' selected' : '');
+        card.dataset.id = opt.id;
+        card.innerHTML = `
+            <img src="${opt.src}" alt="${opt.label}" loading="lazy">
+            <span class="logo-opt-label">${opt.label}</span>`;
+        card.addEventListener('click', () => {
+            selectedId = opt.id;
+            grid.querySelectorAll('.admin-logo-option').forEach(c =>
+                c.classList.toggle('selected', c.dataset.id === selectedId));
+            if (customInput) customInput.value = ''; // wis custom URL bij keuze
+        });
+        grid.appendChild(card);
+    });
+
+    // Opslaan
+    saveBtn.addEventListener('click', async () => {
+        saveBtn.disabled = true;
+        const customUrl = customInput?.value?.trim() || '';
+        try {
+            await setDoc(doc(db, 'settings', 'siteSettings'),
+                {
+                    activeLogo:    customUrl ? 'custom' : selectedId,
+                    customLogoUrl: customUrl,
+                }, { merge: true });
+
+            // Pas logo direct toe in de huidige admin-pagina
+            const { applyLogo } = await import('./vvs-logo.js');
+            applyLogo(customUrl ? 'custom' : selectedId, customUrl || null);
+
+            saveStatus.style.display = 'inline';
+            setTimeout(() => saveStatus.style.display = 'none', 2500);
+        } catch (e) {
+            alert('Fout bij opslaan: ' + e.message);
+        }
+        saveBtn.disabled = false;
+    });
+}
+
+function showAdminToast(msg) {
+    const t = document.createElement('div');
+    t.textContent = msg;
+    t.style.cssText = [
+        'position:fixed','bottom:2rem','left:50%',
+        'transform:translateX(-50%)','background:#0047AB','color:#fff',
+        'padding:0.7rem 1.5rem','border-radius:24px','font-size:0.95rem',
+        'font-weight:700','z-index:99999','box-shadow:0 4px 16px rgba(0,0,0,0.25)',
+        'transition:opacity 0.4s','pointer-events:none',
+    ].join(';');
+    document.body.appendChild(t);
+    setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 400); }, 3000);
+}

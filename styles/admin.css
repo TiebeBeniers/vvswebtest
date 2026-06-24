@@ -607,6 +607,16 @@
 
 .message-info { flex: 1; }
 
+a.message-email {
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.2s, text-decoration 0.2s;
+}
+a.message-email:hover {
+    color: var(--dark-blue);
+    text-decoration: underline;
+}
+
 .message-email {
     color: var(--primary-blue);
     font-size: 1.1rem;
@@ -4329,7 +4339,7 @@ html.dark .tour-step-desc { color: #b0b8cc; }
     background: var(--bg-gray, #f0f2f5);
     color: var(--text-dark);
 }
-html.dark .tour-btn-prev { background: rgba(255,255,255,0.1); color: var(--white); }
+html.dark .tour-btn-prev { background: rgba(255,255,255,0.1); }
 .tour-btn-prev:hover { background: var(--border-color, #ddd); }
 .tour-btn-next {
     background: var(--primary-blue);
